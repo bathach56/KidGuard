@@ -43,7 +43,7 @@ Use this format for every working day.
 ```md
 ## YYYY-MM-DD
 
-### Phạm Bá Thạch
+### Pham Ba Thach
 
 Done
 
@@ -63,7 +63,7 @@ Next
 
 ---
 
-### Trần Phúc Thịnh
+### Tran Phuc Thinh
 
 Done
 
@@ -108,7 +108,7 @@ Planned work for the next session.
 
 ## 2026-06-28
 
-### Phạm Bá Thạch
+### Pham Ba Thach
 
 Done
 
@@ -116,10 +116,15 @@ Done
 - Confirmed project scope for Demo V1.
 - Added Windows Agent design documentation.
 - Added daily progress tracking rule.
+- Created Windows Agent solution under `windows-agent`.
+- Created .NET Worker Service project `KidGuard.Agent`.
+- Configured Windows Service hosting support.
+- Added initial agent services for API communication, local cache, process monitoring, and process blocking.
+- Verified Windows Agent solution builds successfully with 0 warnings and 0 errors.
 
 In Progress
 
-- Preparing Windows Agent implementation plan.
+- Preparing pair code, heartbeat, mode synchronization, log upload, and offline protection for backend integration.
 
 Blocked
 
@@ -127,14 +132,13 @@ Blocked
 
 Next
 
-- Create Windows Agent solution.
-- Implement pair code request flow.
-- Implement heartbeat service.
-- Implement mode synchronization.
+- Add secure device token storage strategy.
+- Test pair code request against Backend API when available.
+- Test heartbeat and mode synchronization against Backend API.
 
 ---
 
-### Trần Phúc Thịnh
+### Tran Phuc Thinh
 
 Done
 

@@ -57,7 +57,7 @@ Mobile
 
 Windows Agent
 
-- [ ] Create Windows Agent project
+- [x] Create Windows Agent project
 - [ ] Create pair code request
 - [ ] Store Device Token securely
 - [ ] Send heartbeat
@@ -188,13 +188,13 @@ Windows Agent
 
 ## Windows Agent Tasks
 
-- [ ] Create Solution
+- [x] Create Solution
   Priority: High
 
-- [ ] Create Worker Service
+- [x] Create Worker Service
   Priority: High
 
-- [ ] Configure Windows Service hosting
+- [x] Configure Windows Service hosting
   Priority: High
 
 - [ ] Implement Device Registration / Pair Code request
