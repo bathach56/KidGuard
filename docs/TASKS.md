@@ -40,7 +40,7 @@ Backend
 
 - [ ] Login API
 - [x] Pair Code API
-- [ ] Device Pair API
+- [x] Device Pair API
 - [ ] Device List API
 - [ ] Mode Update API
 - [ ] Mode Sync API
@@ -118,7 +118,7 @@ Backend + Mobile
 - [ ] Create Device API
   Priority: High
 
-- [ ] Create Pair API
+- [x] Create Pair API
   Priority: High
 
 - [ ] Create Mode API
@@ -391,6 +391,7 @@ These features are not part of Demo V1 and must not delay Demo V1.
 - AI Recommendation
 - Remote Desktop
 - Multi-platform Agent
+
 
 
 

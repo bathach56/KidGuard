@@ -188,6 +188,7 @@ In Progress
 - Backend foundation is ready for API implementation.
 - JWT authentication setup and Login API are implemented.
 - Pair Code API is implemented with Setup Token authentication.
+- Device Pair API is implemented and returns Device Token once after pairing.
 
 Blocked
 
@@ -197,5 +198,6 @@ Next
 
 - Implement JWT authentication setup.
 - Implement Login API.
+
 
 

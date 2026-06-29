@@ -20,6 +20,7 @@ builder.Services.AddScoped<IPasswordHasher, BCryptPasswordHasher>();
 builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
 builder.Services.AddScoped<ISetupTokenValidator, SetupTokenValidator>();
 builder.Services.AddSingleton<IPairCodeGenerator, PairCodeGenerator>();
+builder.Services.AddSingleton<IDeviceTokenGenerator, DeviceTokenGenerator>();
 
 var jwtSettings = builder.Configuration.GetSection(JwtSettings.SectionName).Get<JwtSettings>() ?? new JwtSettings();
 
@@ -60,6 +61,7 @@ app.UseAuthorization();
 
 app.MapAuthEndpoints();
 app.MapPairCodeEndpoints();
+app.MapDeviceEndpoints();
 
 app.MapGet("/health", () => Results.Ok(new
 {
@@ -75,4 +77,5 @@ app.MapGet("/health", () => Results.Ok(new
 .WithOpenApi();
 
 app.Run();
+
 
