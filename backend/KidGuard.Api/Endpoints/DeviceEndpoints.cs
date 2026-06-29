@@ -10,6 +10,7 @@ namespace KidGuard.Api.Endpoints;
 
 public static class DeviceEndpoints
 {
+    private const string BearerPrefix = "Bearer ";
     private static readonly string[] AllowedModes = ["fun", "study", "punishment"];
 
     public static RouteGroupBuilder MapDeviceEndpoints(this IEndpointRouteBuilder routes)
@@ -24,6 +25,10 @@ public static class DeviceEndpoints
         group.MapGet("/{deviceId:guid}", GetDeviceAsync)
             .RequireAuthorization()
             .WithName("GetDevice")
+            .WithOpenApi();
+
+        group.MapGet("/{deviceId:guid}/mode", GetDeviceModeAsync)
+            .WithName("GetDeviceMode")
             .WithOpenApi();
 
         group.MapPut("/{deviceId:guid}/mode", UpdateDeviceModeAsync)
@@ -115,6 +120,43 @@ public static class DeviceEndpoints
         catch (Exception exception)
         {
             logger.LogError(exception, "Unexpected device detail error for device {DeviceId} and user {UserId}.", deviceId, userId);
+
+            return ServerError();
+        }
+    }
+
+    private static async Task<IResult> GetDeviceModeAsync(
+        Guid deviceId,
+        HttpContext httpContext,
+        ApplicationDbContext dbContext,
+        ILoggerFactory loggerFactory,
+        CancellationToken cancellationToken)
+    {
+        var logger = loggerFactory.CreateLogger("DeviceEndpoints");
+
+        if (!TryGetBearerToken(httpContext.Request.Headers.Authorization, out var deviceToken))
+        {
+            return Unauthorized();
+        }
+
+        try
+        {
+            var device = await dbContext.Devices
+                .AsNoTracking()
+                .Where(item => item.Id == deviceId && item.DeviceToken == deviceToken)
+                .Select(item => new DeviceModeResponse(item.CurrentMode, item.UpdatedAt))
+                .FirstOrDefaultAsync(cancellationToken);
+
+            if (device is null)
+            {
+                return DeviceNotFound();
+            }
+
+            return Results.Ok(ApiResponse<DeviceModeResponse>.Ok("Mode retrieved.", device));
+        }
+        catch (Exception exception)
+        {
+            logger.LogError(exception, "Unexpected mode sync error for device {DeviceId}.", deviceId);
 
             return ServerError();
         }
@@ -254,6 +296,20 @@ public static class DeviceEndpoints
             ?? currentUser.FindFirstValue(ClaimTypes.NameIdentifier);
 
         return Guid.TryParse(userIdValue, out userId);
+    }
+
+    private static bool TryGetBearerToken(string? authorizationHeader, out string token)
+    {
+        token = string.Empty;
+
+        if (string.IsNullOrWhiteSpace(authorizationHeader)
+            || !authorizationHeader.StartsWith(BearerPrefix, StringComparison.OrdinalIgnoreCase))
+        {
+            return false;
+        }
+
+        token = authorizationHeader[BearerPrefix.Length..].Trim();
+        return !string.IsNullOrWhiteSpace(token);
     }
 
     private static async Task<string> GenerateUniqueDeviceTokenAsync(

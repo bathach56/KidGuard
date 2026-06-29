@@ -43,7 +43,7 @@ Backend
 - [x] Device Pair API
 - [x] Device List API
 - [x] Mode Update API
-- [ ] Mode Sync API
+- [x] Mode Sync API
 - [ ] Heartbeat API
 - [ ] Log Upload API
 
@@ -391,6 +391,7 @@ These features are not part of Demo V1 and must not delay Demo V1.
 - AI Recommendation
 - Remote Desktop
 - Multi-platform Agent
+
 
 
 
