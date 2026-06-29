@@ -19,6 +19,11 @@ public static class DeviceEndpoints
             .WithName("GetDevices")
             .WithOpenApi();
 
+        group.MapGet("/{deviceId:guid}", GetDeviceAsync)
+            .RequireAuthorization()
+            .WithName("GetDevice")
+            .WithOpenApi();
+
         group.MapPost("/pair", PairDeviceAsync)
             .RequireAuthorization()
             .WithName("PairDevice")
@@ -63,6 +68,54 @@ public static class DeviceEndpoints
         catch (Exception exception)
         {
             logger.LogError(exception, "Unexpected device list error for user {UserId}.", userId);
+
+            return Results.Json(
+                ApiResponse<object>.Fail("Something went wrong.", new[] { "SERVER001" }),
+                statusCode: StatusCodes.Status500InternalServerError);
+        }
+    }
+
+    private static async Task<IResult> GetDeviceAsync(
+        Guid deviceId,
+        ClaimsPrincipal currentUser,
+        ApplicationDbContext dbContext,
+        ILoggerFactory loggerFactory,
+        CancellationToken cancellationToken)
+    {
+        var logger = loggerFactory.CreateLogger("DeviceEndpoints");
+
+        if (!TryGetCurrentUserId(currentUser, out var userId))
+        {
+            return Results.Json(
+                ApiResponse<object>.Fail("Unauthorized.", new[] { "AUTH001" }),
+                statusCode: StatusCodes.Status401Unauthorized);
+        }
+
+        try
+        {
+            var device = await dbContext.Devices
+                .AsNoTracking()
+                .Where(item => item.Id == deviceId && item.UserId == userId)
+                .Select(item => new DeviceDetailResponse(
+                    item.Id,
+                    item.DeviceName,
+                    item.CurrentMode,
+                    item.IsOnline,
+                    item.LastSeen))
+                .FirstOrDefaultAsync(cancellationToken);
+
+            if (device is null)
+            {
+                return Results.Json(
+                    ApiResponse<object>.Fail("Device not found.", new[] { "DEVICE001" }),
+                    statusCode: StatusCodes.Status404NotFound);
+            }
+
+            return Results.Ok(ApiResponse<DeviceDetailResponse>.Ok("Device retrieved.", device));
+        }
+        catch (Exception exception)
+        {
+            logger.LogError(exception, "Unexpected device detail error for device {DeviceId} and user {UserId}.", deviceId, userId);
 
             return Results.Json(
                 ApiResponse<object>.Fail("Something went wrong.", new[] { "SERVER001" }),
