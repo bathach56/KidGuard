@@ -10,6 +10,8 @@ namespace KidGuard.Api.Endpoints;
 
 public static class DeviceEndpoints
 {
+    private static readonly string[] AllowedModes = ["fun", "study", "punishment"];
+
     public static RouteGroupBuilder MapDeviceEndpoints(this IEndpointRouteBuilder routes)
     {
         var group = routes.MapGroup("/devices").WithTags("Devices");
@@ -22,6 +24,11 @@ public static class DeviceEndpoints
         group.MapGet("/{deviceId:guid}", GetDeviceAsync)
             .RequireAuthorization()
             .WithName("GetDevice")
+            .WithOpenApi();
+
+        group.MapPut("/{deviceId:guid}/mode", UpdateDeviceModeAsync)
+            .RequireAuthorization()
+            .WithName("UpdateDeviceMode")
             .WithOpenApi();
 
         group.MapPost("/pair", PairDeviceAsync)
@@ -42,9 +49,7 @@ public static class DeviceEndpoints
 
         if (!TryGetCurrentUserId(currentUser, out var userId))
         {
-            return Results.Json(
-                ApiResponse<object>.Fail("Unauthorized.", new[] { "AUTH001" }),
-                statusCode: StatusCodes.Status401Unauthorized);
+            return Unauthorized();
         }
 
         try
@@ -69,9 +74,7 @@ public static class DeviceEndpoints
         {
             logger.LogError(exception, "Unexpected device list error for user {UserId}.", userId);
 
-            return Results.Json(
-                ApiResponse<object>.Fail("Something went wrong.", new[] { "SERVER001" }),
-                statusCode: StatusCodes.Status500InternalServerError);
+            return ServerError();
         }
     }
 
@@ -86,9 +89,7 @@ public static class DeviceEndpoints
 
         if (!TryGetCurrentUserId(currentUser, out var userId))
         {
-            return Results.Json(
-                ApiResponse<object>.Fail("Unauthorized.", new[] { "AUTH001" }),
-                statusCode: StatusCodes.Status401Unauthorized);
+            return Unauthorized();
         }
 
         try
@@ -106,9 +107,7 @@ public static class DeviceEndpoints
 
             if (device is null)
             {
-                return Results.Json(
-                    ApiResponse<object>.Fail("Device not found.", new[] { "DEVICE001" }),
-                    statusCode: StatusCodes.Status404NotFound);
+                return DeviceNotFound();
             }
 
             return Results.Ok(ApiResponse<DeviceDetailResponse>.Ok("Device retrieved.", device));
@@ -117,9 +116,65 @@ public static class DeviceEndpoints
         {
             logger.LogError(exception, "Unexpected device detail error for device {DeviceId} and user {UserId}.", deviceId, userId);
 
-            return Results.Json(
-                ApiResponse<object>.Fail("Something went wrong.", new[] { "SERVER001" }),
-                statusCode: StatusCodes.Status500InternalServerError);
+            return ServerError();
+        }
+    }
+
+    private static async Task<IResult> UpdateDeviceModeAsync(
+        Guid deviceId,
+        UpdateDeviceModeRequest request,
+        ClaimsPrincipal currentUser,
+        ApplicationDbContext dbContext,
+        ILoggerFactory loggerFactory,
+        CancellationToken cancellationToken)
+    {
+        var logger = loggerFactory.CreateLogger("DeviceEndpoints");
+
+        if (!TryGetCurrentUserId(currentUser, out var userId))
+        {
+            return Unauthorized();
+        }
+
+        if (string.IsNullOrWhiteSpace(request.Mode))
+        {
+            return Results.BadRequest(ApiResponse<object>.Fail(
+                "Invalid mode request.",
+                new[] { "Mode is required." }));
+        }
+
+        var normalizedMode = request.Mode.Trim().ToLowerInvariant();
+        if (!AllowedModes.Contains(normalizedMode))
+        {
+            return Results.BadRequest(ApiResponse<object>.Fail(
+                "Invalid mode.",
+                new[] { "MODE001" }));
+        }
+
+        try
+        {
+            var device = await dbContext.Devices
+                .FirstOrDefaultAsync(item => item.Id == deviceId && item.UserId == userId, cancellationToken);
+
+            if (device is null)
+            {
+                return DeviceNotFound();
+            }
+
+            var updatedAt = DateTime.UtcNow;
+            device.CurrentMode = normalizedMode;
+            device.UpdatedAt = updatedAt;
+
+            await dbContext.SaveChangesAsync(cancellationToken);
+
+            return Results.Ok(ApiResponse<UpdateDeviceModeResponse>.Ok(
+                "Mode updated.",
+                new UpdateDeviceModeResponse(device.CurrentMode, updatedAt)));
+        }
+        catch (Exception exception)
+        {
+            logger.LogError(exception, "Unexpected mode update error for device {DeviceId} and user {UserId}.", deviceId, userId);
+
+            return ServerError();
         }
     }
 
@@ -135,9 +190,7 @@ public static class DeviceEndpoints
 
         if (!TryGetCurrentUserId(currentUser, out var userId))
         {
-            return Results.Json(
-                ApiResponse<object>.Fail("Unauthorized.", new[] { "AUTH001" }),
-                statusCode: StatusCodes.Status401Unauthorized);
+            return Unauthorized();
         }
 
         if (string.IsNullOrWhiteSpace(request.PairCode))
@@ -191,9 +244,7 @@ public static class DeviceEndpoints
         {
             logger.LogError(exception, "Unexpected device pair error for user {UserId}.", userId);
 
-            return Results.Json(
-                ApiResponse<object>.Fail("Something went wrong.", new[] { "SERVER001" }),
-                statusCode: StatusCodes.Status500InternalServerError);
+            return ServerError();
         }
     }
 
@@ -223,5 +274,26 @@ public static class DeviceEndpoints
         }
 
         throw new InvalidOperationException("Could not generate a unique device token.");
+    }
+
+    private static IResult Unauthorized()
+    {
+        return Results.Json(
+            ApiResponse<object>.Fail("Unauthorized.", new[] { "AUTH001" }),
+            statusCode: StatusCodes.Status401Unauthorized);
+    }
+
+    private static IResult DeviceNotFound()
+    {
+        return Results.Json(
+            ApiResponse<object>.Fail("Device not found.", new[] { "DEVICE001" }),
+            statusCode: StatusCodes.Status404NotFound);
+    }
+
+    private static IResult ServerError()
+    {
+        return Results.Json(
+            ApiResponse<object>.Fail("Something went wrong.", new[] { "SERVER001" }),
+            statusCode: StatusCodes.Status500InternalServerError);
     }
 }

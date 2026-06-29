@@ -42,7 +42,7 @@ Backend
 - [x] Pair Code API
 - [x] Device Pair API
 - [x] Device List API
-- [ ] Mode Update API
+- [x] Mode Update API
 - [ ] Mode Sync API
 - [ ] Heartbeat API
 - [ ] Log Upload API
@@ -121,7 +121,7 @@ Backend + Mobile
 - [x] Create Pair API
   Priority: High
 
-- [ ] Create Mode API
+- [x] Create Mode API
   Priority: High
 
 - [ ] Create Heartbeat API
@@ -391,6 +391,7 @@ These features are not part of Demo V1 and must not delay Demo V1.
 - AI Recommendation
 - Remote Desktop
 - Multi-platform Agent
+
 
 
 

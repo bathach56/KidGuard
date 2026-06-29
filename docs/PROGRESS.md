@@ -191,6 +191,7 @@ In Progress
 - Device Pair API is implemented and returns Device Token once after pairing.
 - Device List API is implemented for parent-owned devices.
 - Device Detail API is implemented for parent-owned devices.
+- Mode Update API is implemented for parent-owned devices.
 
 Blocked
 
@@ -200,6 +201,7 @@ Next
 
 - Implement JWT authentication setup.
 - Implement Login API.
+
 
 
 
