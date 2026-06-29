@@ -8,11 +8,15 @@ using Polly.Extensions.Http;
 using Serilog;
 
 var builder = Host.CreateApplicationBuilder(args);
+var isCommandMode = AgentCommandRunner.IsCommandMode(args);
 
-builder.Services.AddWindowsService(options =>
+if (!isCommandMode)
 {
-    options.ServiceName = "KidGuard Agent";
-});
+    builder.Services.AddWindowsService(options =>
+    {
+        options.ServiceName = "KidGuardAgent";
+    });
+}
 
 builder.Services.AddSerilog((services, loggerConfiguration) =>
 {
@@ -24,23 +28,39 @@ builder.Services.AddSerilog((services, loggerConfiguration) =>
 
 builder.Services
     .AddOptions<AgentOptions>()
-    .Bind(builder.Configuration.GetSection(AgentOptions.SectionName))
-    .ValidateOnStart();
+    .Bind(builder.Configuration.GetSection(AgentOptions.SectionName));
 
-builder.Services.AddSingleton<IValidateOptions<AgentOptions>, AgentOptionsValidator>();
-builder.Services
-    .AddHttpClient<BackendApiClient>()
-    .AddPolicyHandler(GetHttpRetryPolicy());
-builder.Services.AddSingleton<LocalCacheService>();
 builder.Services.AddSingleton<DeviceCredentialStore>();
-builder.Services.AddSingleton<PairingService>();
-builder.Services.AddSingleton<ProcessRuleProvider>();
-builder.Services.AddSingleton<ProcessBlockerService>();
-builder.Services.AddSingleton<ProcessMonitorService>();
-builder.Services.AddHostedService<AgentWorker>();
+
+if (isCommandMode)
+{
+    builder.Services.AddSingleton<AgentCommandRunner>();
+}
+else
+{
+    builder.Services.AddSingleton<IValidateOptions<AgentOptions>, AgentOptionsValidator>();
+    builder.Services.AddOptions<AgentOptions>().ValidateOnStart();
+    builder.Services
+        .AddHttpClient<BackendApiClient>()
+        .AddPolicyHandler(GetHttpRetryPolicy());
+    builder.Services.AddSingleton<LocalCacheService>();
+    builder.Services.AddSingleton<PairingService>();
+    builder.Services.AddSingleton<ProcessRuleProvider>();
+    builder.Services.AddSingleton<ProcessBlockerService>();
+    builder.Services.AddSingleton<ProcessMonitorService>();
+    builder.Services.AddHostedService<AgentWorker>();
+}
 
 var host = builder.Build();
-host.Run();
+
+if (isCommandMode)
+{
+    var commandRunner = host.Services.GetRequiredService<AgentCommandRunner>();
+    Environment.ExitCode = await commandRunner.RunAsync(args, CancellationToken.None);
+    return;
+}
+
+await host.RunAsync();
 
 static IAsyncPolicy<HttpResponseMessage> GetHttpRetryPolicy()
 {
