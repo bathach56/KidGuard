@@ -2,6 +2,7 @@ using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using KidGuard.Agent.Configuration;
 using KidGuard.Agent.Models;
+using KidGuard.Agent.Services;
 using Microsoft.Extensions.Options;
 
 namespace KidGuard.Agent.Infrastructure;
@@ -9,15 +10,18 @@ namespace KidGuard.Agent.Infrastructure;
 public sealed class BackendApiClient
 {
     private readonly HttpClient _httpClient;
+    private readonly DeviceCredentialStore _deviceCredentialStore;
     private readonly IOptionsMonitor<AgentOptions> _options;
     private readonly ILogger<BackendApiClient> _logger;
 
     public BackendApiClient(
         HttpClient httpClient,
+        DeviceCredentialStore deviceCredentialStore,
         IOptionsMonitor<AgentOptions> options,
         ILogger<BackendApiClient> logger)
     {
         _httpClient = httpClient;
+        _deviceCredentialStore = deviceCredentialStore;
         _options = options;
         _logger = logger;
     }
@@ -61,7 +65,8 @@ public sealed class BackendApiClient
     public async Task<int?> SendHeartbeatAsync(CancellationToken cancellationToken)
     {
         var options = _options.CurrentValue;
-        if (!TryPrepareDeviceClient(options))
+        var credentials = await _deviceCredentialStore.GetCredentialsAsync(cancellationToken);
+        if (!TryPrepareDeviceClient(options, credentials, out var deviceId))
         {
             return null;
         }
@@ -71,7 +76,7 @@ public sealed class BackendApiClient
         try
         {
             var response = await _httpClient.PostAsJsonAsync(
-                $"devices/{options.DeviceId}/heartbeat",
+                $"devices/{deviceId}/heartbeat",
                 request,
                 BackendApiJsonContext.Default.HeartbeatRequest,
                 cancellationToken);
@@ -94,7 +99,8 @@ public sealed class BackendApiClient
     public async Task<AgentMode?> GetCurrentModeAsync(CancellationToken cancellationToken)
     {
         var options = _options.CurrentValue;
-        if (!TryPrepareDeviceClient(options))
+        var credentials = await _deviceCredentialStore.GetCredentialsAsync(cancellationToken);
+        if (!TryPrepareDeviceClient(options, credentials, out var deviceId))
         {
             return null;
         }
@@ -102,7 +108,7 @@ public sealed class BackendApiClient
         try
         {
             var response = await _httpClient.GetAsync(
-                $"devices/{options.DeviceId}/mode",
+                $"devices/{deviceId}/mode",
                 cancellationToken);
 
             var apiResponse = await response.Content.ReadFromJsonAsync(
@@ -126,7 +132,8 @@ public sealed class BackendApiClient
     public async Task<bool> UploadLogAsync(ActivityLogEntry logEntry, CancellationToken cancellationToken)
     {
         var options = _options.CurrentValue;
-        if (!TryPrepareDeviceClient(options))
+        var credentials = await _deviceCredentialStore.GetCredentialsAsync(cancellationToken);
+        if (!TryPrepareDeviceClient(options, credentials, out var deviceId))
         {
             return false;
         }
@@ -140,7 +147,7 @@ public sealed class BackendApiClient
         try
         {
             var response = await _httpClient.PostAsJsonAsync(
-                $"devices/{options.DeviceId}/logs",
+                $"devices/{deviceId}/logs",
                 request,
                 BackendApiJsonContext.Default.UploadLogRequest,
                 cancellationToken);
@@ -158,10 +165,14 @@ public sealed class BackendApiClient
         }
     }
 
-    private bool TryPrepareDeviceClient(AgentOptions options)
+    private bool TryPrepareDeviceClient(
+        AgentOptions options,
+        DeviceCredentials? credentials,
+        out string deviceId)
     {
-        return TryPrepareClient(options.ApiBaseUrl, options.DeviceToken)
-            && !string.IsNullOrWhiteSpace(options.DeviceId);
+        deviceId = credentials?.DeviceId ?? string.Empty;
+        return credentials is not null
+            && TryPrepareClient(options.ApiBaseUrl, credentials.DeviceToken);
     }
 
     private bool TryPrepareClient(string apiBaseUrl, string bearerToken)

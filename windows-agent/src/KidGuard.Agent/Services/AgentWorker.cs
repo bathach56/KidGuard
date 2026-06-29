@@ -7,6 +7,7 @@ namespace KidGuard.Agent.Services;
 public sealed class AgentWorker : BackgroundService
 {
     private readonly BackendApiClient _backendApiClient;
+    private readonly PairingService _pairingService;
     private readonly LocalCacheService _localCacheService;
     private readonly ProcessMonitorService _processMonitorService;
     private readonly IOptionsMonitor<AgentOptions> _options;
@@ -17,12 +18,14 @@ public sealed class AgentWorker : BackgroundService
 
     public AgentWorker(
         BackendApiClient backendApiClient,
+        PairingService pairingService,
         LocalCacheService localCacheService,
         ProcessMonitorService processMonitorService,
         IOptionsMonitor<AgentOptions> options,
         ILogger<AgentWorker> logger)
     {
         _backendApiClient = backendApiClient;
+        _pairingService = pairingService;
         _localCacheService = localCacheService;
         _processMonitorService = processMonitorService;
         _options = options;
@@ -57,6 +60,12 @@ public sealed class AgentWorker : BackgroundService
 
     private async Task RunDueWorkAsync(DateTimeOffset now, CancellationToken cancellationToken)
     {
+        if (!await _pairingService.IsPairedAsync(cancellationToken))
+        {
+            await RunUnpairedWorkAsync(now, cancellationToken);
+            return;
+        }
+
         if (now >= _nextHeartbeatAt)
         {
             await SendHeartbeatAsync(cancellationToken);
@@ -76,6 +85,17 @@ public sealed class AgentWorker : BackgroundService
         }
 
         await UploadPendingLogsAsync(cancellationToken);
+    }
+
+    private async Task RunUnpairedWorkAsync(DateTimeOffset now, CancellationToken cancellationToken)
+    {
+        await _pairingService.EnsurePairCodeAsync(cancellationToken);
+
+        if (now >= _nextProcessScanAt)
+        {
+            await _processMonitorService.ScanAsync(cancellationToken);
+            _nextProcessScanAt = now.AddSeconds(_options.CurrentValue.ProcessScanIntervalSeconds);
+        }
     }
 
     private async Task SendHeartbeatAsync(CancellationToken cancellationToken)

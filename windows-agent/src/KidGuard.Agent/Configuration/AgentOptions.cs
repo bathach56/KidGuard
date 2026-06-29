@@ -23,4 +23,6 @@ public sealed class AgentOptions
     public int ProcessScanIntervalSeconds { get; set; } = 3;
 
     public string LocalCacheFileName { get; set; } = "agent-cache.json";
+
+    public string DeviceCredentialFileName { get; set; } = "device-credentials.dat";
 }
