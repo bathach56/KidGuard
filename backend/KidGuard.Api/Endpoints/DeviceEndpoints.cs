@@ -25,38 +25,54 @@ public static class DeviceEndpoints
         group.MapGet("/", GetDevicesAsync)
             .RequireAuthorization()
             .WithName("GetDevices")
+            .WithSummary("Get parent devices")
+            .WithDescription("Returns all devices owned by the authenticated parent. Requires JWT.")
             .WithOpenApi();
 
         group.MapGet("/{deviceId:guid}", GetDeviceAsync)
             .RequireAuthorization()
             .WithName("GetDevice")
+            .WithSummary("Get device detail")
+            .WithDescription("Returns one device owned by the authenticated parent. Requires JWT.")
             .WithOpenApi();
 
         group.MapGet("/{deviceId:guid}/mode", GetDeviceModeAsync)
             .WithName("GetDeviceMode")
+            .WithSummary("Sync device mode")
+            .WithDescription("Windows Agent retrieves its current mode. Requires Device Token.")
             .WithOpenApi();
 
         group.MapPut("/{deviceId:guid}/mode", UpdateDeviceModeAsync)
             .RequireAuthorization()
             .WithName("UpdateDeviceMode")
+            .WithSummary("Update device mode")
+            .WithDescription("Parent changes a device mode to fun, study, or punishment. Requires JWT.")
             .WithOpenApi();
 
         group.MapPost("/{deviceId:guid}/heartbeat", ReceiveHeartbeatAsync)
             .WithName("ReceiveHeartbeat")
+            .WithSummary("Receive device heartbeat")
+            .WithDescription("Windows Agent reports online status and version. Requires Device Token.")
             .WithOpenApi();
 
         group.MapPost("/{deviceId:guid}/logs", UploadDeviceLogAsync)
             .WithName("UploadDeviceLog")
+            .WithSummary("Upload device log")
+            .WithDescription("Windows Agent uploads activity or blocking logs. Requires Device Token.")
             .WithOpenApi();
 
         group.MapGet("/{deviceId:guid}/logs", GetDeviceLogsAsync)
             .RequireAuthorization()
             .WithName("GetDeviceLogs")
+            .WithSummary("Get device logs")
+            .WithDescription("Returns paginated logs for a device owned by the authenticated parent. Requires JWT.")
             .WithOpenApi();
 
         group.MapPost("/pair", PairDeviceAsync)
             .RequireAuthorization()
             .WithName("PairDevice")
+            .WithSummary("Pair device")
+            .WithDescription("Parent pairs a pending Windows Agent by pair code and receives the Device Token once. Requires JWT.")
             .WithOpenApi();
 
         return group;
@@ -562,5 +578,6 @@ public static class DeviceEndpoints
             statusCode: StatusCodes.Status500InternalServerError);
     }
 }
+
 
 

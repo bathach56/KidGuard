@@ -196,6 +196,7 @@ In Progress
 - Heartbeat API is implemented for Windows Agent using Device Token.
 - Log Upload API is implemented for Windows Agent using Device Token.
 - Log View API is implemented for parent-owned devices.
+- Swagger documentation is polished with API title, endpoint summaries, and Bearer authorization metadata.
 
 Blocked
 
@@ -205,6 +206,7 @@ Next
 
 - Implement JWT authentication setup.
 - Implement Login API.
+
 
 
 

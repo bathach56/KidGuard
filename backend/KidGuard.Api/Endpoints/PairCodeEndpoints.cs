@@ -1,4 +1,4 @@
-using KidGuard.Api.Common;
+﻿using KidGuard.Api.Common;
 using KidGuard.Api.Contracts.PairCode;
 using KidGuard.Api.Data;
 using KidGuard.Api.Entities;
@@ -17,6 +17,8 @@ public static class PairCodeEndpoints
 
         group.MapPost("/", CreatePairCodeAsync)
             .WithName("CreatePairCode")
+            .WithSummary("Create pair code")
+            .WithDescription("Windows Agent creates a temporary pair code before pairing. Requires Setup Token.")
             .WithOpenApi();
 
         return group;
@@ -124,3 +126,5 @@ public static class PairCodeEndpoints
         throw new InvalidOperationException("Could not generate a unique pair code.");
     }
 }
+
+

@@ -7,6 +7,7 @@ using KidGuard.Api.Services.Pairing;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -45,7 +46,40 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddAuthorization();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "KidGuard API",
+        Version = "v1",
+        Description = "Parental Control System API for Parent Mobile and Windows Agent integration. Parent endpoints use JWT. Windows Agent endpoints use Device Token. Pair code creation uses Setup Token."
+    });
+
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT / DeviceToken / SetupToken",
+        In = ParameterLocation.Header,
+        Description = "Use `Bearer <token>`. Parent endpoints require JWT. Agent endpoints require Device Token. Pair code creation requires Setup Token."
+    });
+
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
+});
 
 var app = builder.Build();
 
@@ -77,5 +111,6 @@ app.MapGet("/health", () => Results.Ok(new
 .WithOpenApi();
 
 app.Run();
+
 
 

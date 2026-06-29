@@ -14,6 +14,8 @@ public static class AuthEndpoints
 
         group.MapPost("/login", LoginAsync)
             .WithName("Login")
+            .WithSummary("Parent login")
+            .WithDescription("Authenticates a parent account and returns a JWT access token.")
             .WithOpenApi();
 
         return group;
@@ -80,5 +82,7 @@ public static class AuthEndpoints
         }
     }
 }
+
+
 
 
