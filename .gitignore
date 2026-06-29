@@ -1,0 +1,29 @@
+﻿# .NET
+bin/
+obj/
+*.user
+*.suo
+*.rsuser
+.vs/
+
+# Build output
+[Bb]uild/
+[Dd]ebug/
+[Rr]elease/
+
+# Logs
+*.log
+
+# Environment and secrets
+.env
+appsettings.Local.json
+appsettings.Production.json
+
+# Flutter / Dart
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+build/
