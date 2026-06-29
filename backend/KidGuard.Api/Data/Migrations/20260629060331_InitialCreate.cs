@@ -54,7 +54,7 @@ namespace KidGuard.Api.Data.Migrations
                     deviceName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     computerName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     deviceToken = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    currentMode = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false, defaultValue: "fun"),
+                    currentMode = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false, defaultValue: "fun"),
                     isOnline = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
                     lastSeen = table.Column<DateTime>(type: "datetime2", nullable: true),
                     createdAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()"),
@@ -232,3 +232,4 @@ namespace KidGuard.Api.Data.Migrations
         }
     }
 }
+

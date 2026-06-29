@@ -390,3 +390,4 @@ namespace KidGuard.Api.Data.Migrations
         }
     }
 }
+

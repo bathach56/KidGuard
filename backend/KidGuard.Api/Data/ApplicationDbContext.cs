@@ -87,7 +87,7 @@ public class ApplicationDbContext : DbContext
 
             entity.Property(device => device.DeviceName).HasMaxLength(100).IsRequired();
             entity.Property(device => device.ComputerName).HasMaxLength(100).IsRequired();
-            entity.Property(device => device.CurrentMode).HasMaxLength(20).HasDefaultValue("fun").IsRequired();
+            entity.Property(device => device.CurrentMode).HasMaxLength(30).HasDefaultValue("fun").IsRequired();
             entity.Property(device => device.IsOnline).HasDefaultValue(false);
             entity.Property(device => device.CreatedAt).HasDefaultValueSql("GETUTCDATE()");
             entity.Property(device => device.UpdatedAt).HasDefaultValueSql("GETUTCDATE()");
@@ -166,5 +166,6 @@ public class ApplicationDbContext : DbContext
         });
     }
 }
+
 
 

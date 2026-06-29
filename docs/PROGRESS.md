@@ -187,6 +187,7 @@ In Progress
 
 - Backend foundation is ready for API implementation.
 - JWT authentication setup and Login API are implemented.
+- Pair Code API is implemented with Setup Token authentication.
 
 Blocked
 
@@ -196,4 +197,5 @@ Next
 
 - Implement JWT authentication setup.
 - Implement Login API.
+
 
