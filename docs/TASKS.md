@@ -44,7 +44,7 @@ Backend
 - [x] Device List API
 - [x] Mode Update API
 - [x] Mode Sync API
-- [ ] Heartbeat API
+- [x] Heartbeat API
 - [ ] Log Upload API
 
 Mobile
@@ -124,7 +124,7 @@ Backend + Mobile
 - [x] Create Mode API
   Priority: High
 
-- [ ] Create Heartbeat API
+- [x] Create Heartbeat API
   Priority: High
 
 - [ ] Create Logs API
@@ -391,6 +391,7 @@ These features are not part of Demo V1 and must not delay Demo V1.
 - AI Recommendation
 - Remote Desktop
 - Multi-platform Agent
+
 
 
 

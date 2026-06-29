@@ -193,6 +193,7 @@ In Progress
 - Device Detail API is implemented for parent-owned devices.
 - Mode Update API is implemented for parent-owned devices.
 - Mode Sync API is implemented for Windows Agent using Device Token.
+- Heartbeat API is implemented for Windows Agent using Device Token.
 
 Blocked
 
@@ -202,6 +203,7 @@ Next
 
 - Implement JWT authentication setup.
 - Implement Login API.
+
 
 
 

@@ -2,6 +2,7 @@
 using System.Security.Claims;
 using KidGuard.Api.Common;
 using KidGuard.Api.Contracts.Devices;
+using KidGuard.Api.Entities;
 using KidGuard.Api.Data;
 using KidGuard.Api.Services.Pairing;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +12,7 @@ namespace KidGuard.Api.Endpoints;
 public static class DeviceEndpoints
 {
     private const string BearerPrefix = "Bearer ";
+    private const int NextHeartbeatSeconds = 30;
     private static readonly string[] AllowedModes = ["fun", "study", "punishment"];
 
     public static RouteGroupBuilder MapDeviceEndpoints(this IEndpointRouteBuilder routes)
@@ -34,6 +36,10 @@ public static class DeviceEndpoints
         group.MapPut("/{deviceId:guid}/mode", UpdateDeviceModeAsync)
             .RequireAuthorization()
             .WithName("UpdateDeviceMode")
+            .WithOpenApi();
+
+        group.MapPost("/{deviceId:guid}/heartbeat", ReceiveHeartbeatAsync)
+            .WithName("ReceiveHeartbeat")
             .WithOpenApi();
 
         group.MapPost("/pair", PairDeviceAsync)
@@ -220,6 +226,66 @@ public static class DeviceEndpoints
         }
     }
 
+
+    private static async Task<IResult> ReceiveHeartbeatAsync(
+        Guid deviceId,
+        HeartbeatRequest request,
+        HttpContext httpContext,
+        ApplicationDbContext dbContext,
+        ILoggerFactory loggerFactory,
+        CancellationToken cancellationToken)
+    {
+        var logger = loggerFactory.CreateLogger("DeviceEndpoints");
+
+        if (!TryGetBearerToken(httpContext.Request.Headers.Authorization, out var deviceToken))
+        {
+            return Unauthorized();
+        }
+
+        if (string.IsNullOrWhiteSpace(request.Status) || string.IsNullOrWhiteSpace(request.AgentVersion))
+        {
+            return Results.BadRequest(ApiResponse<object>.Fail(
+                "Invalid heartbeat request.",
+                new[] { "Status and agent version are required." }));
+        }
+
+        try
+        {
+            var device = await dbContext.Devices
+                .FirstOrDefaultAsync(item => item.Id == deviceId && item.DeviceToken == deviceToken, cancellationToken);
+
+            if (device is null)
+            {
+                return DeviceNotFound();
+            }
+
+            var now = DateTime.UtcNow;
+            device.IsOnline = string.Equals(request.Status.Trim(), "online", StringComparison.OrdinalIgnoreCase);
+            device.LastSeen = now;
+            device.UpdatedAt = now;
+
+            dbContext.Heartbeats.Add(new Heartbeat
+            {
+                Id = Guid.NewGuid(),
+                DeviceId = device.Id,
+                Status = request.Status.Trim().ToLowerInvariant(),
+                AgentVersion = request.AgentVersion.Trim(),
+                CreatedAt = now
+            });
+
+            await dbContext.SaveChangesAsync(cancellationToken);
+
+            return Results.Ok(ApiResponse<HeartbeatResponse>.Ok(
+                "Heartbeat received.",
+                new HeartbeatResponse(NextHeartbeatSeconds)));
+        }
+        catch (Exception exception)
+        {
+            logger.LogError(exception, "Unexpected heartbeat error for device {DeviceId}.", deviceId);
+
+            return ServerError();
+        }
+    }
     private static async Task<IResult> PairDeviceAsync(
         PairDeviceRequest request,
         ClaimsPrincipal currentUser,
@@ -353,3 +419,5 @@ public static class DeviceEndpoints
             statusCode: StatusCodes.Status500InternalServerError);
     }
 }
+
+
