@@ -2,8 +2,8 @@
 using System.Security.Claims;
 using KidGuard.Api.Common;
 using KidGuard.Api.Contracts.Devices;
-using KidGuard.Api.Entities;
 using KidGuard.Api.Data;
+using KidGuard.Api.Entities;
 using KidGuard.Api.Services.Pairing;
 using Microsoft.EntityFrameworkCore;
 
@@ -40,6 +40,10 @@ public static class DeviceEndpoints
 
         group.MapPost("/{deviceId:guid}/heartbeat", ReceiveHeartbeatAsync)
             .WithName("ReceiveHeartbeat")
+            .WithOpenApi();
+
+        group.MapPost("/{deviceId:guid}/logs", UploadDeviceLogAsync)
+            .WithName("UploadDeviceLog")
             .WithOpenApi();
 
         group.MapPost("/pair", PairDeviceAsync)
@@ -226,7 +230,6 @@ public static class DeviceEndpoints
         }
     }
 
-
     private static async Task<IResult> ReceiveHeartbeatAsync(
         Guid deviceId,
         HeartbeatRequest request,
@@ -286,6 +289,73 @@ public static class DeviceEndpoints
             return ServerError();
         }
     }
+
+    private static async Task<IResult> UploadDeviceLogAsync(
+        Guid deviceId,
+        UploadDeviceLogRequest request,
+        HttpContext httpContext,
+        ApplicationDbContext dbContext,
+        ILoggerFactory loggerFactory,
+        CancellationToken cancellationToken)
+    {
+        var logger = loggerFactory.CreateLogger("DeviceEndpoints");
+
+        if (!TryGetBearerToken(httpContext.Request.Headers.Authorization, out var deviceToken))
+        {
+            return Unauthorized();
+        }
+
+        if (string.IsNullOrWhiteSpace(request.ProcessName)
+            || string.IsNullOrWhiteSpace(request.Action)
+            || string.IsNullOrWhiteSpace(request.Mode)
+            || string.IsNullOrWhiteSpace(request.Message))
+        {
+            return Results.BadRequest(ApiResponse<object>.Fail(
+                "Invalid log request.",
+                new[] { "Process name, action, mode, and message are required." }));
+        }
+
+        var normalizedMode = request.Mode.Trim().ToLowerInvariant();
+        if (!AllowedModes.Contains(normalizedMode))
+        {
+            return Results.BadRequest(ApiResponse<object>.Fail(
+                "Invalid mode.",
+                new[] { "MODE001" }));
+        }
+
+        try
+        {
+            var deviceExists = await dbContext.Devices
+                .AnyAsync(item => item.Id == deviceId && item.DeviceToken == deviceToken, cancellationToken);
+
+            if (!deviceExists)
+            {
+                return DeviceNotFound();
+            }
+
+            dbContext.DeviceLogs.Add(new DeviceLog
+            {
+                Id = Guid.NewGuid(),
+                DeviceId = deviceId,
+                ProcessName = request.ProcessName.Trim(),
+                Action = request.Action.Trim(),
+                Mode = normalizedMode,
+                Message = request.Message.Trim(),
+                CreatedAt = DateTime.UtcNow
+            });
+
+            await dbContext.SaveChangesAsync(cancellationToken);
+
+            return Results.Ok(ApiResponse<object>.Ok("Log uploaded.", new { }));
+        }
+        catch (Exception exception)
+        {
+            logger.LogError(exception, "Unexpected log upload error for device {DeviceId}.", deviceId);
+
+            return ServerError();
+        }
+    }
+
     private static async Task<IResult> PairDeviceAsync(
         PairDeviceRequest request,
         ClaimsPrincipal currentUser,
@@ -419,5 +489,3 @@ public static class DeviceEndpoints
             statusCode: StatusCodes.Status500InternalServerError);
     }
 }
-
-
