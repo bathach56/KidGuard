@@ -197,6 +197,8 @@ In Progress
 - Log Upload API is implemented for Windows Agent using Device Token.
 - Log View API is implemented for parent-owned devices.
 - Swagger documentation is polished with API title, endpoint summaries, and Bearer authorization metadata.
+- Full backend smoke test passed for health, login, pairing, device, mode, heartbeat, log, and Swagger endpoints.
+- Backend PR checklist was prepared in docs/BACKEND_PR_CHECKLIST.md.
 
 Blocked
 
@@ -204,8 +206,10 @@ Blocked
 
 Next
 
-- Implement JWT authentication setup.
-- Implement Login API.
+- Open a pull request from the backend feature branch for team review.
+- Start Mobile Flutter screens after backend PR is ready.
+
+
 
 
 
