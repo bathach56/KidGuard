@@ -13,6 +13,9 @@ public static class DeviceEndpoints
 {
     private const string BearerPrefix = "Bearer ";
     private const int NextHeartbeatSeconds = 30;
+    private const int DefaultPage = 1;
+    private const int DefaultPageSize = 20;
+    private const int MaxPageSize = 100;
     private static readonly string[] AllowedModes = ["fun", "study", "punishment"];
 
     public static RouteGroupBuilder MapDeviceEndpoints(this IEndpointRouteBuilder routes)
@@ -44,6 +47,11 @@ public static class DeviceEndpoints
 
         group.MapPost("/{deviceId:guid}/logs", UploadDeviceLogAsync)
             .WithName("UploadDeviceLog")
+            .WithOpenApi();
+
+        group.MapGet("/{deviceId:guid}/logs", GetDeviceLogsAsync)
+            .RequireAuthorization()
+            .WithName("GetDeviceLogs")
             .WithOpenApi();
 
         group.MapPost("/pair", PairDeviceAsync)
@@ -356,6 +364,71 @@ public static class DeviceEndpoints
         }
     }
 
+
+    private static async Task<IResult> GetDeviceLogsAsync(
+        Guid deviceId,
+        int? page,
+        int? pageSize,
+        ClaimsPrincipal currentUser,
+        ApplicationDbContext dbContext,
+        ILoggerFactory loggerFactory,
+        CancellationToken cancellationToken)
+    {
+        var logger = loggerFactory.CreateLogger("DeviceEndpoints");
+
+        if (!TryGetCurrentUserId(currentUser, out var userId))
+        {
+            return Unauthorized();
+        }
+
+        var pageNumber = page.GetValueOrDefault(DefaultPage);
+        var size = pageSize.GetValueOrDefault(DefaultPageSize);
+
+        if (pageNumber < 1 || size < 1 || size > MaxPageSize)
+        {
+            return Results.BadRequest(ApiResponse<object>.Fail(
+                "Invalid pagination request.",
+                new[] { "Page must be at least 1 and pageSize must be between 1 and 100." }));
+        }
+
+        try
+        {
+            var deviceExists = await dbContext.Devices
+                .AsNoTracking()
+                .AnyAsync(item => item.Id == deviceId && item.UserId == userId, cancellationToken);
+
+            if (!deviceExists)
+            {
+                return DeviceNotFound();
+            }
+
+            var query = dbContext.DeviceLogs
+                .AsNoTracking()
+                .Where(item => item.DeviceId == deviceId);
+
+            var total = await query.CountAsync(cancellationToken);
+            var logs = await query
+                .OrderByDescending(item => item.CreatedAt)
+                .Skip((pageNumber - 1) * size)
+                .Take(size)
+                .Select(item => new DeviceLogItemResponse(
+                    item.ProcessName,
+                    item.Action,
+                    item.Mode,
+                    item.CreatedAt))
+                .ToListAsync(cancellationToken);
+
+            return Results.Ok(ApiResponse<DeviceLogsResponse>.Ok(
+                "Logs retrieved.",
+                new DeviceLogsResponse(logs, total)));
+        }
+        catch (Exception exception)
+        {
+            logger.LogError(exception, "Unexpected log view error for device {DeviceId} and user {UserId}.", deviceId, userId);
+
+            return ServerError();
+        }
+    }
     private static async Task<IResult> PairDeviceAsync(
         PairDeviceRequest request,
         ClaimsPrincipal currentUser,
@@ -489,3 +562,5 @@ public static class DeviceEndpoints
             statusCode: StatusCodes.Status500InternalServerError);
     }
 }
+
+

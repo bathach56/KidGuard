@@ -195,6 +195,7 @@ In Progress
 - Mode Sync API is implemented for Windows Agent using Device Token.
 - Heartbeat API is implemented for Windows Agent using Device Token.
 - Log Upload API is implemented for Windows Agent using Device Token.
+- Log View API is implemented for parent-owned devices.
 
 Blocked
 
@@ -204,6 +205,7 @@ Next
 
 - Implement JWT authentication setup.
 - Implement Login API.
+
 
 
 
