@@ -1,4 +1,4 @@
-# PROGRESS.md
+﻿# PROGRESS.md
 
 # Daily Progress Log
 
@@ -43,7 +43,7 @@ Use this format for every working day.
 ```md
 ## YYYY-MM-DD
 
-### Phạm Bá Thạch
+### Pháº¡m BÃ¡ Tháº¡ch
 
 Done
 
@@ -63,7 +63,7 @@ Next
 
 ---
 
-### Trần Phúc Thịnh
+### Tráº§n PhÃºc Thá»‹nh
 
 Done
 
@@ -108,7 +108,7 @@ Planned work for the next session.
 
 ## 2026-06-28
 
-### Phạm Bá Thạch
+### Pháº¡m BÃ¡ Tháº¡ch
 
 Done
 
@@ -134,7 +134,7 @@ Next
 
 ---
 
-### Trần Phúc Thịnh
+### Tráº§n PhÃºc Thá»‹nh
 
 Done
 
@@ -186,6 +186,7 @@ Done
 In Progress
 
 - Backend foundation is ready for API implementation.
+- JWT authentication setup and Login API are implemented.
 
 Blocked
 
@@ -195,3 +196,4 @@ Next
 
 - Implement JWT authentication setup.
 - Implement Login API.
+
