@@ -38,10 +38,10 @@ The following tasks are required for Demo V1. Do these first.
 
 Backend
 
-- [ ] Login API
+- [x] Login API
 - [x] Pair Code API
 - [x] Device Pair API
-- [ ] Device List API
+- [x] Device List API
 - [ ] Mode Update API
 - [ ] Mode Sync API
 - [ ] Heartbeat API
@@ -115,7 +115,7 @@ Backend + Mobile
 - [x] Create Pair Code API
   Priority: High
 
-- [ ] Create Device API
+- [x] Create Device API
   Priority: High
 
 - [x] Create Pair API
@@ -391,6 +391,7 @@ These features are not part of Demo V1 and must not delay Demo V1.
 - AI Recommendation
 - Remote Desktop
 - Multi-platform Agent
+
 
 
 

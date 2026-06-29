@@ -189,6 +189,7 @@ In Progress
 - JWT authentication setup and Login API are implemented.
 - Pair Code API is implemented with Setup Token authentication.
 - Device Pair API is implemented and returns Device Token once after pairing.
+- Device List API is implemented for parent-owned devices.
 
 Blocked
 
@@ -198,6 +199,7 @@ Next
 
 - Implement JWT authentication setup.
 - Implement Login API.
+
 
 
 

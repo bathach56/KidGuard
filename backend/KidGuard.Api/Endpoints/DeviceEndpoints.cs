@@ -1,4 +1,4 @@
-using System.IdentityModel.Tokens.Jwt;
+﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using KidGuard.Api.Common;
 using KidGuard.Api.Contracts.Devices;
@@ -14,12 +14,60 @@ public static class DeviceEndpoints
     {
         var group = routes.MapGroup("/devices").WithTags("Devices");
 
+        group.MapGet("/", GetDevicesAsync)
+            .RequireAuthorization()
+            .WithName("GetDevices")
+            .WithOpenApi();
+
         group.MapPost("/pair", PairDeviceAsync)
             .RequireAuthorization()
             .WithName("PairDevice")
             .WithOpenApi();
 
         return group;
+    }
+
+    private static async Task<IResult> GetDevicesAsync(
+        ClaimsPrincipal currentUser,
+        ApplicationDbContext dbContext,
+        ILoggerFactory loggerFactory,
+        CancellationToken cancellationToken)
+    {
+        var logger = loggerFactory.CreateLogger("DeviceEndpoints");
+
+        if (!TryGetCurrentUserId(currentUser, out var userId))
+        {
+            return Results.Json(
+                ApiResponse<object>.Fail("Unauthorized.", new[] { "AUTH001" }),
+                statusCode: StatusCodes.Status401Unauthorized);
+        }
+
+        try
+        {
+            var devices = await dbContext.Devices
+                .AsNoTracking()
+                .Where(device => device.UserId == userId)
+                .OrderBy(device => device.DeviceName)
+                .Select(device => new DeviceListItemResponse(
+                    device.Id,
+                    device.DeviceName,
+                    device.CurrentMode,
+                    device.IsOnline,
+                    device.LastSeen))
+                .ToListAsync(cancellationToken);
+
+            return Results.Ok(ApiResponse<DeviceListResponse>.Ok(
+                "Devices retrieved.",
+                new DeviceListResponse(devices)));
+        }
+        catch (Exception exception)
+        {
+            logger.LogError(exception, "Unexpected device list error for user {UserId}.", userId);
+
+            return Results.Json(
+                ApiResponse<object>.Fail("Something went wrong.", new[] { "SERVER001" }),
+                statusCode: StatusCodes.Status500InternalServerError);
+        }
     }
 
     private static async Task<IResult> PairDeviceAsync(
