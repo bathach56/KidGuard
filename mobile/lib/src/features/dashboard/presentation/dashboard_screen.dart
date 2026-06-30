@@ -1,6 +1,7 @@
 ﻿import 'package:flutter/material.dart';
 
 import '../../devices/presentation/device_list_screen.dart';
+import '../../logs/presentation/log_list_screen.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
@@ -72,7 +73,13 @@ class DashboardScreen extends StatelessWidget {
               icon: Icons.history_outlined,
               title: 'View Logs',
               subtitle: 'Review recent child device activity.',
-              onTap: () {},
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (_) => const LogListScreen(),
+                  ),
+                );
+              },
             ),
           ],
         ),

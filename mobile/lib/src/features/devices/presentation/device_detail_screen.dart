@@ -1,5 +1,6 @@
 ﻿import 'package:flutter/material.dart';
 
+import '../../logs/presentation/log_list_screen.dart';
 import 'device_list_screen.dart';
 
 class DeviceDetailScreen extends StatefulWidget {
@@ -122,9 +123,21 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
             const SizedBox(height: 16),
             _InfoSection(
               title: 'Recent Activity',
-              children: const [
-                _InfoRow(label: 'Last Log', value: 'No activity synced yet'),
-                _InfoRow(label: 'Blocked Apps', value: '0 today'),
+              children: [
+                const _InfoRow(label: 'Last Log', value: 'No activity synced yet'),
+                const _InfoRow(label: 'Blocked Apps', value: '0 today'),
+                const SizedBox(height: 12),
+                OutlinedButton.icon(
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute<void>(
+                        builder: (_) => LogListScreen(device: device),
+                      ),
+                    );
+                  },
+                  icon: const Icon(Icons.history_outlined),
+                  label: const Text('View Logs'),
+                ),
               ],
             ),
           ],

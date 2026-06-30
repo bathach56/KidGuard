@@ -128,5 +128,42 @@ void main() {
       findsOneWidget,
     );
   });
+  testWidgets('opens log list from dashboard', (WidgetTester tester) async {
+    await tester.pumpWidget(const KidGuardApp());
+
+    await login(tester);
+    await tester.tap(find.text('View Logs'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Logs'), findsOneWidget);
+    expect(find.text('Activity Logs'), findsOneWidget);
+    expect(find.text('steam.exe'), findsOneWidget);
+    expect(find.text('blocked'), findsAtLeastNWidgets(1));
+    expect(find.text('chrome.exe'), findsOneWidget);
+  });
+
+  testWidgets('opens device logs from device detail', (WidgetTester tester) async {
+    await tester.pumpWidget(const KidGuardApp());
+
+    await login(tester);
+    await tester.tap(find.text('View Devices'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Study Room PC'));
+    await tester.pumpAndSettle();
+    await tester.drag(find.byType(ListView).last, const Offset(0, -500));
+    await tester.pumpAndSettle();
+    final deviceLogButton = find.widgetWithText(OutlinedButton, 'View Logs');
+    await tester.tap(deviceLogButton);
+    await tester.pumpAndSettle();
+
+    expect(find.text('Logs'), findsOneWidget);
+    expect(find.text('Recent activity for Study Room PC.'), findsOneWidget);
+    expect(find.text('discord.exe'), findsOneWidget);
+    expect(find.text('punishment'), findsOneWidget);
+  });
 }
+
+
+
+
 

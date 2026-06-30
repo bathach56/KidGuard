@@ -383,3 +383,31 @@ Next
 
 - Create Basic Log View.
 - Create API Integration.
+
+---
+
+## 2026-06-30
+
+### Tran Phuc Thinh
+
+Done
+
+- Created Basic Log View screen with sample process activity logs.
+- Connected Dashboard View Logs action to Log View.
+- Connected Device Detail Recent Activity action to device-specific Log View.
+- Added widget test coverage for log navigation from Dashboard and Device Detail.
+- Verified Flutter analyze, widget test, and Windows build.
+
+In Progress
+
+- Preparing Mobile API Integration.
+
+Blocked
+
+- Backend PR creation is still blocked because GitHub App cannot create PR and GitHub CLI is not installed.
+- Android toolchain is missing cmdline-tools and license acceptance, but Windows and Web Flutter targets work.
+
+Next
+
+- Create API Integration.
+- Wire Login Screen to Backend Login API.
