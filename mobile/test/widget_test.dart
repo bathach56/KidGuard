@@ -6,6 +6,7 @@ import 'package:kidguard_mobile/src/features/auth/domain/auth_repository.dart';
 import 'package:kidguard_mobile/src/features/auth/domain/auth_session.dart';
 import 'package:kidguard_mobile/src/features/devices/domain/device_repository.dart';
 import 'package:kidguard_mobile/src/features/devices/domain/device_summary.dart';
+import 'package:kidguard_mobile/src/features/devices/domain/paired_device.dart';
 import 'package:kidguard_mobile/src/features/logs/domain/device_log_entry.dart';
 
 void main() {
@@ -99,6 +100,41 @@ void main() {
     expect(find.text('View Devices'), findsOneWidget);
     expect(find.text('Pair Device'), findsOneWidget);
     expect(find.text('View Logs'), findsOneWidget);
+  });
+  testWidgets('pairs device from dashboard', (WidgetTester tester) async {
+    await tester.pumpWidget(app());
+
+    await login(tester);
+    await tester.tap(find.text('Pair Device'));
+    await tester.pumpAndSettle();
+    await tester.enterText(
+      find.widgetWithText(TextFormField, 'Pair Code'),
+      'abcd1234',
+    );
+    await tester.tap(find.widgetWithText(FilledButton, 'Pair Device'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Device paired'), findsOneWidget);
+    expect(find.text('New Windows PC'), findsOneWidget);
+    expect(find.text('device-token-for-agent'), findsOneWidget);
+  });
+
+  testWidgets('shows pair device error state', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      app(deviceRepository: const _FakeDeviceRepository(shouldFailPair: true)),
+    );
+
+    await login(tester);
+    await tester.tap(find.text('Pair Device'));
+    await tester.pumpAndSettle();
+    await tester.enterText(
+      find.widgetWithText(TextFormField, 'Pair Code'),
+      'abcd1234',
+    );
+    await tester.tap(find.widgetWithText(FilledButton, 'Pair Device'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Invalid pair code.'), findsOneWidget);
   });
 
   testWidgets('opens device list from dashboard', (WidgetTester tester) async {
@@ -305,12 +341,14 @@ class _FakeDeviceRepository implements DeviceRepository {
     this.shouldFailDetail = false,
     this.shouldFailModeUpdate = false,
     this.shouldFailLogs = false,
+    this.shouldFailPair = false,
   });
 
   final bool shouldFail;
   final bool shouldFailDetail;
   final bool shouldFailModeUpdate;
   final bool shouldFailLogs;
+  final bool shouldFailPair;
 
   static const devices = [
     DeviceSummary(
@@ -330,6 +368,23 @@ class _FakeDeviceRepository implements DeviceRepository {
       lastSeen: 'Last seen 2 hours ago',
     ),
   ];
+
+  @override
+  Future<PairedDevice> pairDevice({
+    required String accessToken,
+    required String pairCode,
+  }) async {
+    if (shouldFailPair) {
+      throw const ApiException('Invalid pair code.');
+    }
+
+    return const PairedDevice(
+      deviceId: '33333333-3333-3333-3333-333333333333',
+      name: 'New Windows PC',
+      mode: 'fun',
+      deviceToken: 'device-token-for-agent',
+    );
+  }
 
   @override
   Future<List<DeviceSummary>> getDevices({required String accessToken}) async {

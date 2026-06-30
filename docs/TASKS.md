@@ -188,11 +188,14 @@ Windows Agent
 
 ## Windows Agent Tasks
 
-- [x] Create Solution`r`n  Priority: High
+- [x] Create Solution
+  Priority: High
 
-- [x] Create Worker Service`r`n  Priority: High
+- [x] Create Worker Service
+  Priority: High
 
-- [x] Configure Windows Service hosting`r`n  Priority: High
+- [x] Configure Windows Service hosting
+  Priority: High
 
 - [ ] Implement Device Registration / Pair Code request
   Priority: High
@@ -254,7 +257,7 @@ Both
 - [ ] Mobile Login -> Backend
 - [ ] Backend -> Database
 - [ ] Agent -> Pair Code -> Backend
-- [ ] Mobile -> Pair Device -> Backend
+- [x] Mobile -> Pair Device -> Backend
 - [ ] Agent -> Heartbeat -> Backend
 - [ ] Agent -> Receive Mode -> Apply Mode
 - [ ] Agent -> Upload Logs -> Backend
@@ -388,6 +391,7 @@ These features are not part of Demo V1 and must not delay Demo V1.
 - AI Recommendation
 - Remote Desktop
 - Multi-platform Agent
+
 
 
 

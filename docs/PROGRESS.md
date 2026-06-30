@@ -586,3 +586,31 @@ Next
 - Add secure device token storage strategy.
 - Test pair code request against Backend API.
 - Test heartbeat and mode synchronization against Backend API.
+
+---
+
+## 2026-06-30
+
+### Tran Phuc Thinh
+
+Done
+
+- Added Mobile Pair Device screen for entering Windows Agent pair codes.
+- Wired Mobile Pair Device to backend POST /devices/pair contract.
+- Added PairedDevice model to display one-time Device Token for agent credential setup.
+- Connected Dashboard Pair Device action to the new pairing flow.
+- Added widget test coverage for pair success and pair error states.
+- Verified Flutter analyze, widget test, and Windows build.
+
+In Progress
+
+- Continuing full integration work on test/integration-all-projects.
+
+Blocked
+
+- Full end-to-end testing still requires running Backend, Mobile, and Windows Agent together with local configuration.
+
+Next
+
+- Run backend/mobile/agent smoke test together.
+- Verify agent pair code, heartbeat, mode sync, process block, and log upload against the integration branch.

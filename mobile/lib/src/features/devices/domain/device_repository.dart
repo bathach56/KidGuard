@@ -1,7 +1,13 @@
 import '../../logs/domain/device_log_entry.dart';
 import 'device_summary.dart';
+import 'paired_device.dart';
 
 abstract class DeviceRepository {
+  Future<PairedDevice> pairDevice({
+    required String accessToken,
+    required String pairCode,
+  });
+
   Future<List<DeviceSummary>> getDevices({required String accessToken});
 
   Future<DeviceSummary> getDevice({

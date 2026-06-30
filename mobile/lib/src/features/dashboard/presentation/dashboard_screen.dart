@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../devices/domain/device_repository.dart';
 import '../../devices/presentation/device_list_screen.dart';
+import '../../devices/presentation/pair_device_screen.dart';
 import '../../logs/presentation/log_list_screen.dart';
 
 class DashboardScreen extends StatelessWidget {
@@ -77,7 +78,16 @@ class DashboardScreen extends StatelessWidget {
               icon: Icons.link_outlined,
               title: 'Pair Device',
               subtitle: 'Connect a Windows computer by pair code.',
-              onTap: () {},
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (_) => PairDeviceScreen(
+                      accessToken: accessToken,
+                      deviceRepository: deviceRepository,
+                    ),
+                  ),
+                );
+              },
             ),
             const SizedBox(height: 8),
             _ActionTile(
