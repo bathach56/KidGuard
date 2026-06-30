@@ -1,28 +1,44 @@
 import 'package:flutter/material.dart';
 
+import '../../devices/domain/device_repository.dart';
 import '../../devices/domain/device_summary.dart';
+import '../domain/device_log_entry.dart';
 
-class LogListScreen extends StatelessWidget {
-  const LogListScreen({super.key, this.device});
+class LogListScreen extends StatefulWidget {
+  const LogListScreen({
+    super.key,
+    this.device,
+    this.accessToken,
+    this.deviceRepository,
+  });
 
   final DeviceSummary? device;
+  final String? accessToken;
+  final DeviceRepository? deviceRepository;
 
-  static const _logs = [
-    _LogEntry(
+  @override
+  State<LogListScreen> createState() => _LogListScreenState();
+}
+
+class _LogListScreenState extends State<LogListScreen> {
+  late Future<List<DeviceLogEntry>>? _logsFuture;
+
+  static const _sampleLogs = [
+    DeviceLogEntry(
       processName: 'steam.exe',
       action: 'blocked',
       mode: 'study',
       message: 'Blocked distracting application during study mode.',
       createdAt: '10:24',
     ),
-    _LogEntry(
+    DeviceLogEntry(
       processName: 'chrome.exe',
       action: 'opened',
       mode: 'study',
       message: 'Allowed browser activity.',
       createdAt: '10:18',
     ),
-    _LogEntry(
+    DeviceLogEntry(
       processName: 'discord.exe',
       action: 'blocked',
       mode: 'punishment',
@@ -31,47 +47,117 @@ class LogListScreen extends StatelessWidget {
     ),
   ];
 
+  bool get _usesBackend =>
+      widget.device != null &&
+      widget.accessToken != null &&
+      widget.deviceRepository != null;
+
+  @override
+  void initState() {
+    super.initState();
+    _logsFuture = _usesBackend ? _loadLogs() : null;
+  }
+
+  Future<List<DeviceLogEntry>> _loadLogs() {
+    return widget.deviceRepository!.getDeviceLogs(
+      accessToken: widget.accessToken!,
+      deviceId: widget.device!.deviceId,
+    );
+  }
+
+  void _retry() {
+    setState(() {
+      _logsFuture = _loadLogs();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    final subtitle = device == null
+    final subtitle = widget.device == null
         ? 'Review recent child device activity.'
-        : 'Recent activity for ${device!.name}.';
+        : 'Recent activity for ${widget.device!.name}.';
 
     return Scaffold(
       appBar: AppBar(title: const Text('Logs')),
       body: SafeArea(
-        child: ListView.separated(
-          padding: const EdgeInsets.all(20),
-          itemCount: _logs.length + 1,
-          separatorBuilder: (_, index) =>
-              SizedBox(height: index == 0 ? 16 : 10),
-          itemBuilder: (context, index) {
-            if (index == 0) {
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Activity Logs',
-                    style: textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    subtitle,
-                    style: textTheme.bodyMedium?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    ),
-                  ),
-                ],
-              );
-            }
+        child: _usesBackend
+            ? FutureBuilder<List<DeviceLogEntry>>(
+                future: _logsFuture,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState != ConnectionState.done) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
 
-            return _LogTile(log: _logs[index - 1]);
-          },
-        ),
+                  if (snapshot.hasError) {
+                    return _LogListMessage(
+                      icon: Icons.cloud_off_outlined,
+                      title: 'Unable to load logs',
+                      message: 'Check the backend connection and try again.',
+                      action: OutlinedButton.icon(
+                        onPressed: _retry,
+                        icon: const Icon(Icons.refresh),
+                        label: const Text('Retry'),
+                      ),
+                    );
+                  }
+
+                  final logs = snapshot.data ?? const <DeviceLogEntry>[];
+                  if (logs.isEmpty) {
+                    return const _LogListMessage(
+                      icon: Icons.history_outlined,
+                      title: 'No logs yet',
+                      message:
+                          'Activity logs will appear after the agent syncs.',
+                    );
+                  }
+
+                  return _LogListContent(subtitle: subtitle, logs: logs);
+                },
+              )
+            : _LogListContent(subtitle: subtitle, logs: _sampleLogs),
       ),
+    );
+  }
+}
+
+class _LogListContent extends StatelessWidget {
+  const _LogListContent({required this.subtitle, required this.logs});
+
+  final String subtitle;
+  final List<DeviceLogEntry> logs;
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+
+    return ListView.separated(
+      padding: const EdgeInsets.all(20),
+      itemCount: logs.length + 1,
+      separatorBuilder: (_, index) => SizedBox(height: index == 0 ? 16 : 10),
+      itemBuilder: (context, index) {
+        if (index == 0) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Activity Logs',
+                style: textTheme.headlineSmall?.copyWith(
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                subtitle,
+                style: textTheme.bodyMedium?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+              ),
+            ],
+          );
+        }
+
+        return _LogTile(log: logs[index - 1]);
+      },
     );
   }
 }
@@ -79,7 +165,7 @@ class LogListScreen extends StatelessWidget {
 class _LogTile extends StatelessWidget {
   const _LogTile({required this.log});
 
-  final _LogEntry log;
+  final DeviceLogEntry log;
 
   @override
   Widget build(BuildContext context) {
@@ -134,18 +220,45 @@ class _LogTile extends StatelessWidget {
   }
 }
 
-class _LogEntry {
-  const _LogEntry({
-    required this.processName,
-    required this.action,
-    required this.mode,
+class _LogListMessage extends StatelessWidget {
+  const _LogListMessage({
+    required this.icon,
+    required this.title,
     required this.message,
-    required this.createdAt,
+    this.action,
   });
 
-  final String processName;
-  final String action;
-  final String mode;
+  final IconData icon;
+  final String title;
   final String message;
-  final String createdAt;
+  final Widget? action;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 48, color: colorScheme.primary),
+            const SizedBox(height: 16),
+            Text(
+              title,
+              textAlign: TextAlign.center,
+              style: textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(message, textAlign: TextAlign.center),
+            if (action != null) ...[const SizedBox(height: 16), action!],
+          ],
+        ),
+      ),
+    );
+  }
 }

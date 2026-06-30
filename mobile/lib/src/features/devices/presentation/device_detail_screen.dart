@@ -134,6 +134,8 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
               isRefreshing: snapshot.connectionState != ConnectionState.done,
               isUpdatingMode: _isUpdatingMode,
               modeErrorMessage: _modeErrorMessage,
+              accessToken: widget.accessToken,
+              deviceRepository: widget.deviceRepository,
               onModeChanged: _updateMode,
             );
           },
@@ -150,6 +152,8 @@ class _DeviceDetailContent extends StatelessWidget {
     required this.isRefreshing,
     required this.isUpdatingMode,
     required this.modeErrorMessage,
+    required this.accessToken,
+    required this.deviceRepository,
     required this.onModeChanged,
   });
 
@@ -158,6 +162,8 @@ class _DeviceDetailContent extends StatelessWidget {
   final bool isRefreshing;
   final bool isUpdatingMode;
   final String? modeErrorMessage;
+  final String accessToken;
+  final DeviceRepository deviceRepository;
   final ValueChanged<String> onModeChanged;
 
   static const _modes = ['fun', 'study', 'punishment'];
@@ -274,7 +280,11 @@ class _DeviceDetailContent extends StatelessWidget {
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute<void>(
-                    builder: (_) => LogListScreen(device: device),
+                    builder: (_) => LogListScreen(
+                      device: device,
+                      accessToken: accessToken,
+                      deviceRepository: deviceRepository,
+                    ),
                   ),
                 );
               },

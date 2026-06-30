@@ -1,4 +1,5 @@
 import '../../../core/api/api_client.dart';
+import '../../logs/domain/device_log_entry.dart';
 import '../domain/device_repository.dart';
 import '../domain/device_summary.dart';
 
@@ -59,6 +60,37 @@ class ApiDeviceRepository implements DeviceRepository {
         }
 
         return json['mode']?.toString() ?? mode;
+      },
+    );
+
+    return response.data;
+  }
+
+  @override
+  Future<List<DeviceLogEntry>> getDeviceLogs({
+    required String accessToken,
+    required String deviceId,
+    int page = 1,
+    int pageSize = 20,
+  }) async {
+    final response = await _apiClient.get<List<DeviceLogEntry>>(
+      '/devices/$deviceId/logs',
+      bearerToken: accessToken,
+      queryParameters: {
+        'page': page.toString(),
+        'pageSize': pageSize.toString(),
+      },
+      parseData: (json) {
+        if (json is! Map<String, dynamic>) {
+          throw const FormatException('Invalid log list response.');
+        }
+
+        final items = json['items'];
+        if (items is! List) {
+          return const <DeviceLogEntry>[];
+        }
+
+        return items.map(DeviceLogEntry.fromJson).toList();
       },
     );
 

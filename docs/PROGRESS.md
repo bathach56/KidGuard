@@ -530,3 +530,31 @@ Next
 
 - Wire Log View to Backend GET /devices/{deviceId}/logs.
 - Run a local backend/mobile integration smoke test.
+
+---
+
+## 2026-06-30
+
+### Tran Phuc Thinh
+
+Done
+
+- Wired Mobile Log View to DeviceRepository and backend GET /devices/{deviceId}/logs contract.
+- Added DeviceLogEntry domain model and API response parsing for log items.
+- Added loading, empty, and error states for device-specific Log View.
+- Added widget test coverage for device log success and error states using a fake repository.
+- Verified Flutter analyze, widget test, and Windows build.
+
+In Progress
+
+- Preparing local backend/mobile integration smoke test.
+
+Blocked
+
+- Backend PR creation is still blocked because GitHub App cannot create PR and GitHub CLI is not installed.
+- Android toolchain is missing cmdline-tools and license acceptance, but Windows and Web Flutter targets work.
+
+Next
+
+- Run a local backend/mobile integration smoke test.
+- Prepare Mobile PR checklist.

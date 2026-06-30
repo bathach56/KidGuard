@@ -6,6 +6,7 @@ import 'package:kidguard_mobile/src/features/auth/domain/auth_repository.dart';
 import 'package:kidguard_mobile/src/features/auth/domain/auth_session.dart';
 import 'package:kidguard_mobile/src/features/devices/domain/device_repository.dart';
 import 'package:kidguard_mobile/src/features/devices/domain/device_summary.dart';
+import 'package:kidguard_mobile/src/features/logs/domain/device_log_entry.dart';
 
 void main() {
   Future<void> login(WidgetTester tester) async {
@@ -238,6 +239,25 @@ void main() {
     expect(find.text('chrome.exe'), findsOneWidget);
   });
 
+  testWidgets('shows device log error state', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      app(deviceRepository: const _FakeDeviceRepository(shouldFailLogs: true)),
+    );
+
+    await login(tester);
+    await tester.tap(find.text('View Devices'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Study Room PC'));
+    await tester.pumpAndSettle();
+    await tester.drag(find.byType(ListView).last, const Offset(0, -500));
+    await tester.pumpAndSettle();
+    await tester.tap(find.widgetWithText(OutlinedButton, 'View Logs'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Unable to load logs'), findsOneWidget);
+    expect(find.text('Retry'), findsOneWidget);
+  });
+
   testWidgets('opens device logs from device detail', (
     WidgetTester tester,
   ) async {
@@ -284,11 +304,13 @@ class _FakeDeviceRepository implements DeviceRepository {
     this.shouldFail = false,
     this.shouldFailDetail = false,
     this.shouldFailModeUpdate = false,
+    this.shouldFailLogs = false,
   });
 
   final bool shouldFail;
   final bool shouldFailDetail;
   final bool shouldFailModeUpdate;
+  final bool shouldFailLogs;
 
   static const devices = [
     DeviceSummary(
@@ -328,6 +350,35 @@ class _FakeDeviceRepository implements DeviceRepository {
     }
 
     return devices.firstWhere((device) => device.deviceId == deviceId);
+  }
+
+  @override
+  Future<List<DeviceLogEntry>> getDeviceLogs({
+    required String accessToken,
+    required String deviceId,
+    int page = 1,
+    int pageSize = 20,
+  }) async {
+    if (shouldFailLogs) {
+      throw const ApiException('Unable to load logs.');
+    }
+
+    return const [
+      DeviceLogEntry(
+        processName: 'steam.exe',
+        action: 'blocked',
+        mode: 'study',
+        message: 'Blocked distracting application during study mode.',
+        createdAt: '10:24',
+      ),
+      DeviceLogEntry(
+        processName: 'discord.exe',
+        action: 'blocked',
+        mode: 'punishment',
+        message: 'Blocked chat application during strict mode.',
+        createdAt: '09:42',
+      ),
+    ];
   }
 
   @override

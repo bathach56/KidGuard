@@ -1,3 +1,4 @@
+import '../../logs/domain/device_log_entry.dart';
 import 'device_summary.dart';
 
 abstract class DeviceRepository {
@@ -12,5 +13,12 @@ abstract class DeviceRepository {
     required String accessToken,
     required String deviceId,
     required String mode,
+  });
+
+  Future<List<DeviceLogEntry>> getDeviceLogs({
+    required String accessToken,
+    required String deviceId,
+    int page = 1,
+    int pageSize = 20,
   });
 }
