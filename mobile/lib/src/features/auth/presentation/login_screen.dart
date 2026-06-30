@@ -1,5 +1,7 @@
 ﻿import 'package:flutter/material.dart';
 
+import '../../dashboard/presentation/dashboard_screen.dart';
+
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -26,6 +28,9 @@ class _LoginScreenState extends State<LoginScreen> {
     }
 
     FocusScope.of(context).unfocus();
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute<void>(builder: (_) => const DashboardScreen()),
+    );
   }
 
   @override

@@ -274,3 +274,30 @@ Next
 
 - Create Mobile Dashboard.
 - Create Device List screen.
+
+---
+
+## 2026-06-30
+
+### Tran Phuc Thinh
+
+Done
+
+- Created Mobile Dashboard screen with parent overview summary and quick actions.
+- Connected valid local login form submission to Dashboard navigation.
+- Added widget test coverage for Dashboard navigation and visible actions.
+- Verified Flutter analyze, widget test, and Windows build.
+
+In Progress
+
+- Preparing Device List screen.
+
+Blocked
+
+- Backend PR creation is still blocked because GitHub App cannot create PR and GitHub CLI is not installed.
+- Android toolchain is missing cmdline-tools and license acceptance, but Windows and Web Flutter targets work.
+
+Next
+
+- Create Device List screen.
+- Create Device Detail screen.

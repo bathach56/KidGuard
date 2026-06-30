@@ -42,4 +42,26 @@ void main() {
 
     expect(passwordEditableText().obscureText, isFalse);
   });
+
+  testWidgets('opens dashboard after valid local login', (WidgetTester tester) async {
+    await tester.pumpWidget(const KidGuardApp());
+
+    await tester.enterText(
+      find.widgetWithText(TextFormField, 'Email'),
+      'parent@gmail.com',
+    );
+    await tester.enterText(
+      find.widgetWithText(TextFormField, 'Password'),
+      '12345678',
+    );
+    await tester.tap(find.widgetWithText(FilledButton, 'Login'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Dashboard'), findsOneWidget);
+    expect(find.text('Parent Overview'), findsOneWidget);
+    expect(find.text('Quick Actions'), findsOneWidget);
+    expect(find.text('View Devices'), findsOneWidget);
+    expect(find.text('Pair Device'), findsOneWidget);
+    expect(find.text('View Logs'), findsOneWidget);
+  });
 }
