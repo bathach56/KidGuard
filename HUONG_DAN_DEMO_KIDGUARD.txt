@@ -1,0 +1,201 @@
+﻿HUONG DAN CHAY DEMO KIDGUARD
+============================
+
+Thu muc project:
+C:\Users\phucthinhtran\Desktop\KidGuard
+
+Nhanh demo:
+test/integration-all-projects
+
+Luu y:
+- Khong tat terminal Backend khi dang demo.
+- Nen chay Windows Agent bang PowerShell Run as Administrator de block duoc notepad.exe.
+- Neu lenh flutter khong nhan, dung duong dan day du trong buoc Mobile.
+
+--------------------------------------------------
+BUOC 1: CHUYEN DUNG NHANH
+--------------------------------------------------
+
+Mo terminal trong VS Code va chay:
+
+cd "C:\Users\phucthinhtran\Desktop\KidGuard"
+git switch test/integration-all-projects
+
+Neu may khong nhan git, dung:
+
+cd "C:\Users\phucthinhtran\Desktop\KidGuard"
+& "C:\Users\phucthinhtran\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\git\cmd\git.exe" switch test/integration-all-projects
+
+--------------------------------------------------
+BUOC 2: TERMINAL 1 - CHAY BACKEND
+--------------------------------------------------
+
+cd "C:\Users\phucthinhtran\Desktop\KidGuard"
+
+$env:Jwt__Secret="integration-test-secret-32-characters-long"
+$env:SetupToken__Token="demo-setup-token"
+$env:ASPNETCORE_ENVIRONMENT="Development"
+
+dotnet run --project backend\KidGuard.Api\KidGuard.Api.csproj --urls http://127.0.0.1:5123
+
+Neu thay dong nay la Backend da chay thanh cong:
+Now listening on: http://127.0.0.1:5123
+
+Neu co warning nay thi bo qua duoc:
+Failed to determine the https port for redirect.
+
+De test nhanh Backend, mo terminal khac va chay:
+
+curl http://127.0.0.1:5123/health
+
+--------------------------------------------------
+BUOC 3: TERMINAL 2 - CHAY WINDOWS AGENT
+--------------------------------------------------
+
+Nen mo PowerShell bang Run as Administrator.
+
+cd "C:\Users\phucthinhtran\Desktop\KidGuard"
+
+$env:Agent__ApiBaseUrl="http://127.0.0.1:5123/"
+$env:Agent__SetupToken="demo-setup-token"
+$env:DOTNET_ENVIRONMENT="Development"
+
+dotnet run --project windows-agent\src\KidGuard.Agent\KidGuard.Agent.csproj
+
+Agent se in ra pair code dang nhu:
+Pair code: ABCD1234
+
+Hay copy pair code nay de nhap vao Mobile.
+
+--------------------------------------------------
+BUOC 4: TERMINAL 3 - CHAY MOBILE APP
+--------------------------------------------------
+
+cd "C:\Users\phucthinhtran\Desktop\KidGuard\mobile"
+
+Neu may nhan lenh flutter:
+
+flutter run -d windows --dart-define=KIDGUARD_API_BASE_URL=http://127.0.0.1:5123
+
+Neu bi loi "flutter is not recognized", dung lenh nay:
+
+& "C:\Users\phucthinhtran\development\flutter\bin\flutter.bat" run -d windows --dart-define=KIDGUARD_API_BASE_URL=http://127.0.0.1:5123
+
+Neu Flutter bao thieu git, chay ban nay:
+
+$env:Path="C:\Users\phucthinhtran\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\git\cmd;C:\Users\phucthinhtran\development\flutter\bin;$env:Path"
+flutter run -d windows --dart-define=KIDGUARD_API_BASE_URL=http://127.0.0.1:5123
+
+--------------------------------------------------
+BUOC 5: DANG NHAP MOBILE
+--------------------------------------------------
+
+Tai man hinh Login:
+
+Email:
+parent@gmail.com
+
+Password:
+12345678
+
+Bam Login.
+
+--------------------------------------------------
+BUOC 6: PAIR DEVICE
+--------------------------------------------------
+
+Trong Mobile:
+
+1. Bam Pair Device.
+2. Nhap pair code lay tu terminal Windows Agent.
+3. Bam Pair Device.
+4. Sau khi thanh cong, Mobile se hien:
+   - Device ID
+   - Device Token
+
+Copy 2 gia tri nay de luu vao Agent.
+
+--------------------------------------------------
+BUOC 7: LUU DEVICE TOKEN CHO AGENT
+--------------------------------------------------
+
+Dung Agent dang chay bang Ctrl + C.
+
+Sau do chay lenh sau, thay <deviceId> va <deviceToken> bang gia tri Mobile vua hien:
+
+cd "C:\Users\phucthinhtran\Desktop\KidGuard"
+
+dotnet run --project windows-agent\src\KidGuard.Agent\KidGuard.Agent.csproj -- --save-credentials <deviceId> <deviceToken>
+
+Vi du:
+
+dotnet run --project windows-agent\src\KidGuard.Agent\KidGuard.Agent.csproj -- --save-credentials 00000000-0000-0000-0000-000000000000 abcdef-token
+
+Sau khi luu xong, chay lai Agent:
+
+$env:Agent__ApiBaseUrl="http://127.0.0.1:5123/"
+$env:Agent__SetupToken="demo-setup-token"
+$env:DOTNET_ENVIRONMENT="Development"
+
+dotnet run --project windows-agent\src\KidGuard.Agent\KidGuard.Agent.csproj
+
+--------------------------------------------------
+BUOC 8: DEMO DOI MODE VA BLOCK NOTEPAD
+--------------------------------------------------
+
+Trong Mobile:
+
+1. Bam View Devices.
+2. Chon device vua pair.
+3. Doi mode sang study.
+
+Tren Windows:
+
+1. Mo notepad.exe.
+2. Neu Agent dang chay Admin va mode la study, Agent se block notepad.exe.
+3. Agent se tao log va upload len Backend.
+
+Trong Mobile:
+
+1. Vao View Logs hoac View Logs trong Device Detail.
+2. Kiem tra log blocked.
+
+--------------------------------------------------
+LUONG DEMO THANH CONG
+--------------------------------------------------
+
+- Backend chay o http://127.0.0.1:5123
+- Agent tao pair code.
+- Mobile dang nhap duoc.
+- Mobile pair device duoc.
+- Agent luu Device Token.
+- Agent gui heartbeat.
+- Mobile doi mode duoc.
+- Agent sync mode.
+- Agent block notepad.exe khi mode study.
+- Mobile xem duoc log.
+
+--------------------------------------------------
+LOI THUONG GAP
+--------------------------------------------------
+
+1. flutter is not recognized
+Dung duong dan day du:
+& "C:\Users\phucthinhtran\development\flutter\bin\flutter.bat" run -d windows --dart-define=KIDGUARD_API_BASE_URL=http://127.0.0.1:5123
+
+2. Backend warning HTTPS port
+Co the bo qua khi demo local HTTP.
+
+3. Mobile khong ket noi Backend
+Kiem tra Backend con dang chay va Mobile dung:
+--dart-define=KIDGUARD_API_BASE_URL=http://127.0.0.1:5123
+
+4. Agent khong block notepad
+Kiem tra:
+- Agent chay bang Administrator.
+- Device da pair va da save credentials.
+- Mobile da doi mode sang study.
+- Backend van dang chay.
+
+5. Pair code khong dung
+Tao lai pair code bang cach chay lai Agent khi chua save credentials, roi copy code moi.
