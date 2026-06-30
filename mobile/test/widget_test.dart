@@ -3,6 +3,19 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:kidguard_mobile/src/app.dart';
 
 void main() {
+  Future<void> login(WidgetTester tester) async {
+    await tester.enterText(
+      find.widgetWithText(TextFormField, 'Email'),
+      'parent@gmail.com',
+    );
+    await tester.enterText(
+      find.widgetWithText(TextFormField, 'Password'),
+      '12345678',
+    );
+    await tester.tap(find.widgetWithText(FilledButton, 'Login'));
+    await tester.pumpAndSettle();
+  }
+
   testWidgets('shows parent login screen', (WidgetTester tester) async {
     await tester.pumpWidget(const KidGuardApp());
 
@@ -46,16 +59,7 @@ void main() {
   testWidgets('opens dashboard after valid local login', (WidgetTester tester) async {
     await tester.pumpWidget(const KidGuardApp());
 
-    await tester.enterText(
-      find.widgetWithText(TextFormField, 'Email'),
-      'parent@gmail.com',
-    );
-    await tester.enterText(
-      find.widgetWithText(TextFormField, 'Password'),
-      '12345678',
-    );
-    await tester.tap(find.widgetWithText(FilledButton, 'Login'));
-    await tester.pumpAndSettle();
+    await login(tester);
 
     expect(find.text('Dashboard'), findsOneWidget);
     expect(find.text('Parent Overview'), findsOneWidget);
@@ -63,5 +67,22 @@ void main() {
     expect(find.text('View Devices'), findsOneWidget);
     expect(find.text('Pair Device'), findsOneWidget);
     expect(find.text('View Logs'), findsOneWidget);
+  });
+
+  testWidgets('opens device list from dashboard', (WidgetTester tester) async {
+    await tester.pumpWidget(const KidGuardApp());
+
+    await login(tester);
+    await tester.tap(find.text('View Devices'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Devices'), findsOneWidget);
+    expect(find.text('Paired Devices'), findsOneWidget);
+    expect(find.text('Study Room PC'), findsOneWidget);
+    expect(find.text('Gaming Laptop'), findsOneWidget);
+    expect(find.text('online'), findsOneWidget);
+    expect(find.text('offline'), findsOneWidget);
+    expect(find.text('study'), findsAtLeastNWidgets(1));
+    expect(find.text('fun'), findsOneWidget);
   });
 }

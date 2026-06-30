@@ -1,5 +1,7 @@
 ﻿import 'package:flutter/material.dart';
 
+import '../../devices/presentation/device_list_screen.dart';
+
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
 
@@ -50,7 +52,13 @@ class DashboardScreen extends StatelessWidget {
               icon: Icons.devices_outlined,
               title: 'View Devices',
               subtitle: 'Open the parent device list.',
-              onTap: () {},
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (_) => const DeviceListScreen(),
+                  ),
+                );
+              },
             ),
             const SizedBox(height: 8),
             _ActionTile(
@@ -93,12 +101,12 @@ class _SummaryGrid extends StatelessWidget {
             _SummaryTile(
               icon: Icons.computer_outlined,
               label: 'Devices',
-              value: '0',
+              value: '2',
             ),
             _SummaryTile(
               icon: Icons.wifi_tethering_outlined,
               label: 'Online',
-              value: '0',
+              value: '1',
             ),
             _SummaryTile(
               icon: Icons.shield_outlined,

@@ -146,7 +146,7 @@ Backend + Mobile
 - [x] Create Dashboard
   Priority: Medium
 
-- [ ] Create Device List
+- [x] Create Device List
   Priority: High
 
 - [ ] Create Device Detail
@@ -391,6 +391,7 @@ These features are not part of Demo V1 and must not delay Demo V1.
 - AI Recommendation
 - Remote Desktop
 - Multi-platform Agent
+
 
 
 

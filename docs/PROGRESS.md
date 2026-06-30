@@ -301,3 +301,30 @@ Next
 
 - Create Device List screen.
 - Create Device Detail screen.
+
+---
+
+## 2026-06-30
+
+### Tran Phuc Thinh
+
+Done
+
+- Created Mobile Device List screen with paired device cards, status chips, and mode labels.
+- Connected Dashboard View Devices action to Device List navigation.
+- Added widget test coverage for Device List navigation and sample device rendering.
+- Verified Flutter analyze, widget test, and Windows build.
+
+In Progress
+
+- Preparing Device Detail screen.
+
+Blocked
+
+- Backend PR creation is still blocked because GitHub App cannot create PR and GitHub CLI is not installed.
+- Android toolchain is missing cmdline-tools and license acceptance, but Windows and Web Flutter targets work.
+
+Next
+
+- Create Device Detail screen.
+- Create Mode Switch.
