@@ -500,3 +500,33 @@ Next
 
 - Wire Mode Switch to Backend PUT /devices/{deviceId}/mode.
 - Wire Log View to Backend GET /devices/{deviceId}/logs.
+
+---
+
+## 2026-06-30
+
+### Tran Phuc Thinh
+
+Done
+
+- Wired Mobile Mode Switch to DeviceRepository and backend PUT /devices/{deviceId}/mode contract.
+- Added PUT support to ApiClient.
+- Added updateDeviceMode to DeviceRepository and ApiDeviceRepository.
+- Updated Device Detail to call backend when selecting fun, study, or punishment.
+- Added mode update loading and error handling with rollback to previous mode on failure.
+- Added widget test coverage for successful mode switching and mode update error handling.
+- Verified Flutter analyze, widget test, and Windows build.
+
+In Progress
+
+- Preparing Log View backend wiring.
+
+Blocked
+
+- Backend PR creation is still blocked because GitHub App cannot create PR and GitHub CLI is not installed.
+- Android toolchain is missing cmdline-tools and license acceptance, but Windows and Web Flutter targets work.
+
+Next
+
+- Wire Log View to Backend GET /devices/{deviceId}/logs.
+- Run a local backend/mobile integration smoke test.

@@ -196,6 +196,34 @@ void main() {
     );
   });
 
+  testWidgets('shows mode update error', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      app(
+        deviceRepository: const _FakeDeviceRepository(
+          shouldFailModeUpdate: true,
+        ),
+      ),
+    );
+
+    await login(tester);
+    await tester.tap(find.text('View Devices'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Study Room PC'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('punishment'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Unable to update mode.'), findsOneWidget);
+    final currentModeRow = find.ancestor(
+      of: find.text('Current Mode'),
+      matching: find.byType(Row),
+    );
+    expect(
+      find.descendant(of: currentModeRow, matching: find.text('study')),
+      findsOneWidget,
+    );
+  });
+
   testWidgets('opens log list from dashboard', (WidgetTester tester) async {
     await tester.pumpWidget(app());
 
@@ -255,10 +283,12 @@ class _FakeDeviceRepository implements DeviceRepository {
   const _FakeDeviceRepository({
     this.shouldFail = false,
     this.shouldFailDetail = false,
+    this.shouldFailModeUpdate = false,
   });
 
   final bool shouldFail;
   final bool shouldFailDetail;
+  final bool shouldFailModeUpdate;
 
   static const devices = [
     DeviceSummary(
@@ -298,5 +328,18 @@ class _FakeDeviceRepository implements DeviceRepository {
     }
 
     return devices.firstWhere((device) => device.deviceId == deviceId);
+  }
+
+  @override
+  Future<String> updateDeviceMode({
+    required String accessToken,
+    required String deviceId,
+    required String mode,
+  }) async {
+    if (shouldFailModeUpdate) {
+      throw const ApiException('Unable to update mode.');
+    }
+
+    return mode;
   }
 }

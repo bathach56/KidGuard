@@ -7,4 +7,10 @@ abstract class DeviceRepository {
     required String accessToken,
     required String deviceId,
   });
+
+  Future<String> updateDeviceMode({
+    required String accessToken,
+    required String deviceId,
+    required String mode,
+  });
 }

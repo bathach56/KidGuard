@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/api/api_exception.dart';
 import '../../logs/presentation/log_list_screen.dart';
 import '../domain/device_repository.dart';
 import '../domain/device_summary.dart';
@@ -25,6 +26,8 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
   late Future<DeviceSummary> _deviceFuture;
   late String _selectedMode;
   bool _hasSyncedLoadedMode = false;
+  bool _isUpdatingMode = false;
+  String? _modeErrorMessage;
 
   static const _modes = ['fun', 'study', 'punishment'];
 
@@ -40,6 +43,57 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
       accessToken: widget.accessToken,
       deviceId: widget.initialDevice.deviceId,
     );
+  }
+
+  Future<void> _updateMode(String mode) async {
+    if (_isUpdatingMode || mode == _selectedMode || !_modes.contains(mode)) {
+      return;
+    }
+
+    final previousMode = _selectedMode;
+    setState(() {
+      _selectedMode = mode;
+      _isUpdatingMode = true;
+      _modeErrorMessage = null;
+    });
+
+    try {
+      final updatedMode = await widget.deviceRepository.updateDeviceMode(
+        accessToken: widget.accessToken,
+        deviceId: widget.initialDevice.deviceId,
+        mode: mode,
+      );
+
+      if (!mounted) {
+        return;
+      }
+
+      setState(() {
+        _selectedMode = _modes.contains(updatedMode) ? updatedMode : mode;
+      });
+    } on ApiException catch (exception) {
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _selectedMode = previousMode;
+        _modeErrorMessage = exception.message;
+      });
+    } catch (_) {
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _selectedMode = previousMode;
+        _modeErrorMessage = 'Unable to update mode.';
+      });
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isUpdatingMode = false;
+        });
+      }
+    }
   }
 
   void _retry() {
@@ -78,11 +132,9 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
               device: device,
               selectedMode: _selectedMode,
               isRefreshing: snapshot.connectionState != ConnectionState.done,
-              onModeChanged: (mode) {
-                setState(() {
-                  _selectedMode = mode;
-                });
-              },
+              isUpdatingMode: _isUpdatingMode,
+              modeErrorMessage: _modeErrorMessage,
+              onModeChanged: _updateMode,
             );
           },
         ),
@@ -96,12 +148,16 @@ class _DeviceDetailContent extends StatelessWidget {
     required this.device,
     required this.selectedMode,
     required this.isRefreshing,
+    required this.isUpdatingMode,
+    required this.modeErrorMessage,
     required this.onModeChanged,
   });
 
   final DeviceSummary device;
   final String selectedMode;
   final bool isRefreshing;
+  final bool isUpdatingMode;
+  final String? modeErrorMessage;
   final ValueChanged<String> onModeChanged;
 
   static const _modes = ['fun', 'study', 'punishment'];
@@ -114,8 +170,8 @@ class _DeviceDetailContent extends StatelessWidget {
     return ListView(
       padding: const EdgeInsets.all(20),
       children: [
-        if (isRefreshing) const LinearProgressIndicator(),
-        if (isRefreshing) const SizedBox(height: 16),
+        if (isRefreshing || isUpdatingMode) const LinearProgressIndicator(),
+        if (isRefreshing || isUpdatingMode) const SizedBox(height: 16),
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -186,15 +242,25 @@ class _DeviceDetailContent extends StatelessWidget {
                         value: mode,
                         label: Text(mode),
                         icon: const Icon(Icons.shield_outlined),
+                        enabled: !isUpdatingMode,
                       ),
                     )
                     .toList(),
                 selected: {selectedMode},
-                onSelectionChanged: (selection) {
-                  onModeChanged(selection.first);
-                },
+                onSelectionChanged: isUpdatingMode
+                    ? null
+                    : (selection) {
+                        onModeChanged(selection.first);
+                      },
               ),
             ),
+            if (modeErrorMessage != null) ...[
+              const SizedBox(height: 12),
+              Text(
+                modeErrorMessage!,
+                style: textTheme.bodyMedium?.copyWith(color: colorScheme.error),
+              ),
+            ],
           ],
         ),
         const SizedBox(height: 16),

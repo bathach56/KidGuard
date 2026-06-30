@@ -42,6 +42,21 @@ class ApiClient {
     return _decodeResponse(response, parseData);
   }
 
+  Future<ApiResponse<T>> put<T>(
+    String path, {
+    Map<String, Object?>? body,
+    String? bearerToken,
+    required T Function(Object? json) parseData,
+  }) async {
+    final response = await _httpClient.put(
+      config.endpoint(path),
+      headers: _headers(bearerToken),
+      body: jsonEncode(body ?? const <String, Object?>{}),
+    );
+
+    return _decodeResponse(response, parseData);
+  }
+
   Map<String, String> _headers(String? bearerToken) {
     return {
       'Content-Type': 'application/json',

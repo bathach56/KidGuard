@@ -42,4 +42,26 @@ class ApiDeviceRepository implements DeviceRepository {
 
     return response.data;
   }
+
+  @override
+  Future<String> updateDeviceMode({
+    required String accessToken,
+    required String deviceId,
+    required String mode,
+  }) async {
+    final response = await _apiClient.put<String>(
+      '/devices/$deviceId/mode',
+      bearerToken: accessToken,
+      body: {'mode': mode},
+      parseData: (json) {
+        if (json is! Map<String, dynamic>) {
+          throw const FormatException('Invalid mode update response.');
+        }
+
+        return json['mode']?.toString() ?? mode;
+      },
+    );
+
+    return response.data;
+  }
 }
