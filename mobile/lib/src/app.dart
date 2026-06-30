@@ -1,9 +1,22 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 
+import 'core/api/api_client.dart';
+import 'core/api/api_config.dart';
+import 'features/auth/data/api_auth_repository.dart';
+import 'features/auth/domain/auth_repository.dart';
 import 'features/auth/presentation/login_screen.dart';
 
 class KidGuardApp extends StatelessWidget {
-  const KidGuardApp({super.key});
+  KidGuardApp({super.key, AuthRepository? authRepository})
+    : authRepository =
+          authRepository ??
+          ApiAuthRepository(
+            ApiClient(
+              config: const ApiConfig(baseUrl: ApiConfig.defaultBaseUrl),
+            ),
+          );
+
+  final AuthRepository authRepository;
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +37,7 @@ class KidGuardApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      home: const LoginScreen(),
+      home: LoginScreen(authRepository: authRepository),
     );
   }
 }

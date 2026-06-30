@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 
 import '../../logs/presentation/log_list_screen.dart';
 import 'device_list_screen.dart';
@@ -30,9 +30,7 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
     final device = widget.device;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Device Detail'),
-      ),
+      appBar: AppBar(title: const Text('Device Detail')),
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.all(20),
@@ -124,7 +122,10 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
             _InfoSection(
               title: 'Recent Activity',
               children: [
-                const _InfoRow(label: 'Last Log', value: 'No activity synced yet'),
+                const _InfoRow(
+                  label: 'Last Log',
+                  value: 'No activity synced yet',
+                ),
                 const _InfoRow(label: 'Blocked Apps', value: '0 today'),
                 const SizedBox(height: 12),
                 OutlinedButton.icon(
@@ -207,12 +208,7 @@ class _InfoRow extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 16),
-          Expanded(
-            child: Text(
-              value,
-              textAlign: TextAlign.end,
-            ),
-          ),
+          Expanded(child: Text(value, textAlign: TextAlign.end)),
         ],
       ),
     );

@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 
 import 'device_detail_screen.dart';
 
@@ -27,14 +27,13 @@ class DeviceListScreen extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Devices'),
-      ),
+      appBar: AppBar(title: const Text('Devices')),
       body: SafeArea(
         child: ListView.separated(
           padding: const EdgeInsets.all(20),
           itemCount: _devices.length + 1,
-          separatorBuilder: (_, index) => SizedBox(height: index == 0 ? 16 : 10),
+          separatorBuilder: (_, index) =>
+              SizedBox(height: index == 0 ? 16 : 10),
           itemBuilder: (context, index) {
             if (index == 0) {
               return Column(
@@ -107,14 +106,8 @@ class _DeviceTile extends StatelessWidget {
                       ? Icons.wifi_tethering_outlined
                       : Icons.wifi_off_outlined,
                 ),
-                const StatusChip(
-                  label: 'mode',
-                  icon: Icons.shield_outlined,
-                ),
-                StatusChip(
-                  label: device.mode,
-                  icon: Icons.tune_outlined,
-                ),
+                const StatusChip(label: 'mode', icon: Icons.shield_outlined),
+                StatusChip(label: device.mode, icon: Icons.tune_outlined),
               ],
             ),
             const SizedBox(height: 8),

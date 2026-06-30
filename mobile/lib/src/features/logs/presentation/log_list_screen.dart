@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 
 import '../../devices/presentation/device_list_screen.dart';
 
@@ -39,14 +39,13 @@ class LogListScreen extends StatelessWidget {
         : 'Recent activity for ${device!.name}.';
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Logs'),
-      ),
+      appBar: AppBar(title: const Text('Logs')),
       body: SafeArea(
         child: ListView.separated(
           padding: const EdgeInsets.all(20),
           itemCount: _logs.length + 1,
-          separatorBuilder: (_, index) => SizedBox(height: index == 0 ? 16 : 10),
+          separatorBuilder: (_, index) =>
+              SizedBox(height: index == 0 ? 16 : 10),
           itemBuilder: (context, index) {
             if (index == 0) {
               return Column(

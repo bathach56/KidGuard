@@ -1,9 +1,13 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 
+import '../../../core/api/api_exception.dart';
 import '../../dashboard/presentation/dashboard_screen.dart';
+import '../domain/auth_repository.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+  const LoginScreen({super.key, required this.authRepository});
+
+  final AuthRepository authRepository;
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -14,6 +18,8 @@ class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _isPasswordVisible = false;
+  bool _isSubmitting = false;
+  String? _errorMessage;
 
   @override
   void dispose() {
@@ -22,15 +28,51 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
-  void _submit() {
-    if (!_formKey.currentState!.validate()) {
+  Future<void> _submit() async {
+    if (!_formKey.currentState!.validate() || _isSubmitting) {
       return;
     }
 
     FocusScope.of(context).unfocus();
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute<void>(builder: (_) => const DashboardScreen()),
-    );
+    setState(() {
+      _isSubmitting = true;
+      _errorMessage = null;
+    });
+
+    try {
+      await widget.authRepository.login(
+        email: _emailController.text.trim(),
+        password: _passwordController.text,
+      );
+
+      if (!mounted) {
+        return;
+      }
+
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute<void>(builder: (_) => const DashboardScreen()),
+      );
+    } on ApiException catch (exception) {
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _errorMessage = exception.message;
+      });
+    } catch (_) {
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _errorMessage = 'Unable to connect to KidGuard API.';
+      });
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isSubmitting = false;
+        });
+      }
+    }
   }
 
   @override
@@ -39,9 +81,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('KidGuard'),
-      ),
+      appBar: AppBar(title: const Text('KidGuard')),
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -70,6 +110,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     const SizedBox(height: 32),
                     TextFormField(
                       controller: _emailController,
+                      enabled: !_isSubmitting,
                       keyboardType: TextInputType.emailAddress,
                       textInputAction: TextInputAction.next,
                       autofillHints: const [AutofillHints.email],
@@ -91,6 +132,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     const SizedBox(height: 16),
                     TextFormField(
                       controller: _passwordController,
+                      enabled: !_isSubmitting,
                       obscureText: !_isPasswordVisible,
                       textInputAction: TextInputAction.done,
                       autofillHints: const [AutofillHints.password],
@@ -107,11 +149,13 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ? Icons.visibility_off_outlined
                                 : Icons.visibility_outlined,
                           ),
-                          onPressed: () {
-                            setState(() {
-                              _isPasswordVisible = !_isPasswordVisible;
-                            });
-                          },
+                          onPressed: _isSubmitting
+                              ? null
+                              : () {
+                                  setState(() {
+                                    _isPasswordVisible = !_isPasswordVisible;
+                                  });
+                                },
                         ),
                       ),
                       validator: (value) {
@@ -124,13 +168,29 @@ class _LoginScreenState extends State<LoginScreen> {
                         return null;
                       },
                     ),
+                    if (_errorMessage != null) ...[
+                      const SizedBox(height: 16),
+                      Text(
+                        _errorMessage!,
+                        style: textTheme.bodyMedium?.copyWith(
+                          color: colorScheme.error,
+                        ),
+                      ),
+                    ],
                     const SizedBox(height: 24),
                     SizedBox(
                       height: 48,
                       child: FilledButton.icon(
-                        onPressed: _submit,
-                        icon: const Icon(Icons.login),
-                        label: const Text('Login'),
+                        onPressed: _isSubmitting ? null : _submit,
+                        icon: _isSubmitting
+                            ? const SizedBox.square(
+                                dimension: 18,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
+                              )
+                            : const Icon(Icons.login),
+                        label: Text(_isSubmitting ? 'Logging in' : 'Login'),
                       ),
                     ),
                   ],

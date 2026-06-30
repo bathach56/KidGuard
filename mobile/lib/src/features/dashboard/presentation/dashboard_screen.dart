@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 
 import '../../devices/presentation/device_list_screen.dart';
 import '../../logs/presentation/log_list_screen.dart';
