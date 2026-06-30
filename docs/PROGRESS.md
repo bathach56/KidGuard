@@ -247,3 +247,30 @@ Next
 
 - Create Mobile Login Screen.
 - Configure mobile API base URL without hardcoded production secrets.
+
+---
+
+## 2026-06-30
+
+### Tran Phuc Thinh
+
+Done
+
+- Created Mobile Login Screen with email and password fields.
+- Added password visibility toggle and local form validation.
+- Added widget tests for login screen rendering, validation, and password visibility toggle.
+- Verified Flutter analyze, widget test, and Windows build.
+
+In Progress
+
+- Preparing Mobile Dashboard.
+
+Blocked
+
+- Backend PR creation is still blocked because GitHub App cannot create PR and GitHub CLI is not installed.
+- Android toolchain is missing cmdline-tools and license acceptance, but Windows and Web Flutter targets work.
+
+Next
+
+- Create Mobile Dashboard.
+- Create Device List screen.

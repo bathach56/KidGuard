@@ -1,12 +1,45 @@
-﻿import 'package:flutter_test/flutter_test.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:kidguard_mobile/src/app.dart';
 
 void main() {
-  testWidgets('shows KidGuard startup page', (WidgetTester tester) async {
+  testWidgets('shows parent login screen', (WidgetTester tester) async {
     await tester.pumpWidget(const KidGuardApp());
 
     expect(find.text('KidGuard'), findsOneWidget);
-    expect(find.text('KidGuard Parent'), findsOneWidget);
-    expect(find.text('Mobile project is ready.'), findsOneWidget);
+    expect(find.text('Parent Login'), findsOneWidget);
+    expect(find.byType(TextFormField), findsNWidgets(2));
+    expect(find.widgetWithText(FilledButton, 'Login'), findsOneWidget);
+  });
+
+  testWidgets('validates login form fields', (WidgetTester tester) async {
+    await tester.pumpWidget(const KidGuardApp());
+
+    await tester.tap(find.widgetWithText(FilledButton, 'Login'));
+    await tester.pump();
+
+    expect(find.text('Email is required.'), findsOneWidget);
+    expect(find.text('Password is required.'), findsOneWidget);
+  });
+
+  testWidgets('toggles password visibility', (WidgetTester tester) async {
+    await tester.pumpWidget(const KidGuardApp());
+
+    EditableText passwordEditableText() {
+      final passwordField = find.widgetWithText(TextFormField, 'Password');
+      return tester.widget<EditableText>(
+        find.descendant(
+          of: passwordField,
+          matching: find.byType(EditableText),
+        ),
+      );
+    }
+
+    expect(passwordEditableText().obscureText, isTrue);
+
+    await tester.tap(find.byIcon(Icons.visibility_outlined));
+    await tester.pump();
+
+    expect(passwordEditableText().obscureText, isFalse);
   });
 }
