@@ -85,4 +85,22 @@ void main() {
     expect(find.text('study'), findsAtLeastNWidgets(1));
     expect(find.text('fun'), findsOneWidget);
   });
+  testWidgets('opens device detail from device list', (WidgetTester tester) async {
+    await tester.pumpWidget(const KidGuardApp());
+
+    await login(tester);
+    await tester.tap(find.text('View Devices'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Study Room PC'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Device Detail'), findsOneWidget);
+    expect(find.text('Study Room PC'), findsOneWidget);
+    expect(find.text('STUDY-PC'), findsOneWidget);
+    expect(find.text('Protection Status'), findsOneWidget);
+    expect(find.text('Current Mode'), findsOneWidget);
+    expect(find.text('Recent Activity'), findsOneWidget);
+    expect(find.text('Agent Version'), findsOneWidget);
+  });
 }
+

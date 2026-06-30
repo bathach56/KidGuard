@@ -1,17 +1,19 @@
 ﻿import 'package:flutter/material.dart';
 
+import 'device_detail_screen.dart';
+
 class DeviceListScreen extends StatelessWidget {
   const DeviceListScreen({super.key});
 
   static const _devices = [
-    _DeviceListItem(
+    DeviceSummary(
       name: 'Study Room PC',
       computerName: 'STUDY-PC',
       mode: 'study',
       isOnline: true,
       lastSeen: 'Online now',
     ),
-    _DeviceListItem(
+    DeviceSummary(
       name: 'Gaming Laptop',
       computerName: 'GAME-LAPTOP',
       mode: 'fun',
@@ -66,7 +68,7 @@ class DeviceListScreen extends StatelessWidget {
 class _DeviceTile extends StatelessWidget {
   const _DeviceTile({required this.device});
 
-  final _DeviceListItem device;
+  final DeviceSummary device;
 
   @override
   Widget build(BuildContext context) {
@@ -99,15 +101,19 @@ class _DeviceTile extends StatelessWidget {
               spacing: 8,
               runSpacing: 8,
               children: [
-                _StatusChip(
+                StatusChip(
                   label: device.isOnline ? 'online' : 'offline',
                   icon: device.isOnline
                       ? Icons.wifi_tethering_outlined
                       : Icons.wifi_off_outlined,
                 ),
-                _StatusChip(
-                  label: device.mode,
+                const StatusChip(
+                  label: 'mode',
                   icon: Icons.shield_outlined,
+                ),
+                StatusChip(
+                  label: device.mode,
+                  icon: Icons.tune_outlined,
                 ),
               ],
             ),
@@ -117,13 +123,19 @@ class _DeviceTile extends StatelessWidget {
         ),
       ),
       trailing: const Icon(Icons.chevron_right),
-      onTap: () {},
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute<void>(
+            builder: (_) => DeviceDetailScreen(device: device),
+          ),
+        );
+      },
     );
   }
 }
 
-class _StatusChip extends StatelessWidget {
-  const _StatusChip({required this.label, required this.icon});
+class StatusChip extends StatelessWidget {
+  const StatusChip({super.key, required this.label, required this.icon});
 
   final String label;
   final IconData icon;
@@ -139,8 +151,8 @@ class _StatusChip extends StatelessWidget {
   }
 }
 
-class _DeviceListItem {
-  const _DeviceListItem({
+class DeviceSummary {
+  const DeviceSummary({
     required this.name,
     required this.computerName,
     required this.mode,
