@@ -11,6 +11,8 @@ Luu y:
 - Khong tat terminal Backend khi dang demo.
 - Nen chay Windows Agent bang PowerShell Run as Administrator de block duoc notepad.exe.
 - Neu lenh flutter khong nhan, dung duong dan day du trong buoc Mobile.
+- Backend Development se tu tao tai khoan demo neu database chua co:
+  parent@gmail.com / 12345678
 
 --------------------------------------------------
 BUOC 1: CHUYEN DUNG NHANH

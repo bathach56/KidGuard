@@ -35,4 +35,7 @@ public sealed record UploadLogRequest(
 [JsonSerializable(typeof(CreatePairCodeRequest))]
 [JsonSerializable(typeof(HeartbeatRequest))]
 [JsonSerializable(typeof(UploadLogRequest))]
+[JsonSourceGenerationOptions(
+    PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase,
+    PropertyNameCaseInsensitive = true)]
 internal sealed partial class BackendApiJsonContext : JsonSerializerContext;

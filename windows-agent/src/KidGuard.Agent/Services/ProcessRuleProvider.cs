@@ -16,13 +16,17 @@ public sealed class ProcessRuleProvider
     {
         "chrome.exe",
         "browser.exe",
+        "coc_coc.exe",
+        "msedge.exe",
         "explorer.exe"
     };
 
     private static readonly HashSet<string> ProtectedSystemProcesses = new(StringComparer.OrdinalIgnoreCase)
     {
         "System",
+        "system.exe",
         "Idle",
+        "idle.exe",
         "wininit.exe",
         "winlogon.exe",
         "csrss.exe",
@@ -31,12 +35,21 @@ public sealed class ProcessRuleProvider
         "lsass.exe",
         "explorer.exe",
         "svchost.exe",
-        "dwm.exe"
+        "dwm.exe",
+        "fontdrvhost.exe",
+        "registry.exe",
+        "memory compression.exe",
+        "securityhealthservice.exe",
+        "kidguard.agent.exe",
+        "dotnet.exe"
     };
 
     public bool ShouldBlock(string processName, AgentMode mode)
     {
-        if (string.IsNullOrWhiteSpace(processName) || ProtectedSystemProcesses.Contains(processName))
+        var normalizedProcessName = NormalizeProcessName(processName);
+
+        if (string.IsNullOrWhiteSpace(normalizedProcessName)
+            || ProtectedSystemProcesses.Contains(normalizedProcessName))
         {
             return false;
         }
@@ -44,9 +57,17 @@ public sealed class ProcessRuleProvider
         return mode switch
         {
             AgentMode.Fun => false,
-            AgentMode.Study => StudyBlockedProcesses.Contains(processName),
-            AgentMode.Punishment => !PunishmentAllowedProcesses.Contains(processName),
+            AgentMode.Study => StudyBlockedProcesses.Contains(normalizedProcessName),
+            AgentMode.Punishment => !PunishmentAllowedProcesses.Contains(normalizedProcessName),
             _ => false
         };
+    }
+
+    private static string NormalizeProcessName(string processName)
+    {
+        var normalizedProcessName = processName.Trim();
+        return normalizedProcessName.EndsWith(".exe", StringComparison.OrdinalIgnoreCase)
+            ? normalizedProcessName
+            : $"{normalizedProcessName}.exe";
     }
 }

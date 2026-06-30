@@ -641,3 +641,55 @@ Next
 - Run actual Windows Agent process against local Backend.
 - Run Mobile Windows app against local Backend using KIDGUARD_API_BASE_URL.
 - Pair Agent through Mobile and verify process blocking/log upload visually.
+
+---
+
+## 2026-06-30
+
+### Pham Ba Thach
+
+Done
+
+- Completed Windows Agent Demo V1 implementation tasks in TASKS.md.
+- Confirmed pair-code creation, protected credential storage, heartbeat, mode sync, local cache, process monitor, process blocker, local pending logs, log upload, retry, and offline protection are implemented.
+- Updated Agent API JSON serialization to use camelCase according to API_SPEC.md.
+- Hardened process blocking so the Agent avoids protected system processes and does not terminate itself during strict modes.
+- Verified Windows Agent solution builds successfully with 0 warnings and 0 errors.
+
+In Progress
+
+- Preparing manual full demo with Backend, Mobile, and Windows Agent running together.
+
+Blocked
+
+- Full visual demo still requires local runtime configuration and manual execution with Administrator permission.
+
+Next
+
+- Run actual Windows Agent against local Backend.
+- Pair through Mobile, save Device Token, change mode to study, block notepad.exe, and confirm uploaded logs in Mobile.
+
+---
+
+## 2026-06-30
+
+### Pham Ba Thach
+
+Done
+
+- Added Development demo parent seeding for Backend so local login works with the documented demo account.
+- Updated demo guide and database documentation for the local demo account.
+- Verified Backend API smoke test passed for login, pair code, device pairing, heartbeat, mode sync, mode update, log upload, and log view.
+- Verified Backend build, Windows Agent build, Flutter analyze, Flutter widget tests, and Flutter Windows build.
+
+In Progress
+
+- Preparing manual visual demo with actual Mobile app and Windows Agent process.
+
+Blocked
+
+- Actual process blocking still needs manual Windows Agent execution with Administrator permission.
+
+Next
+
+- Run Mobile and Agent against local Backend and verify notepad.exe blocking visually.

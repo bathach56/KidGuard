@@ -1,5 +1,6 @@
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using System.Text.Json;
 using KidGuard.Agent.Configuration;
 using KidGuard.Agent.Models;
 using KidGuard.Agent.Services;
@@ -55,7 +56,7 @@ public sealed class BackendApiClient
                 ? apiResponse.Data
                 : null;
         }
-        catch (Exception exception) when (exception is HttpRequestException or TaskCanceledException)
+        catch (Exception exception) when (exception is HttpRequestException or TaskCanceledException or JsonException)
         {
             _logger.LogWarning(exception, "Failed to create pair code.");
             return null;
@@ -89,7 +90,7 @@ public sealed class BackendApiClient
                 ? apiResponse.Data?.NextHeartbeat
                 : null;
         }
-        catch (Exception exception) when (exception is HttpRequestException or TaskCanceledException)
+        catch (Exception exception) when (exception is HttpRequestException or TaskCanceledException or JsonException)
         {
             _logger.LogWarning(exception, "Failed to send heartbeat.");
             return null;
@@ -122,7 +123,7 @@ public sealed class BackendApiClient
 
             return ParseMode(apiResponse.Data.Mode);
         }
-        catch (Exception exception) when (exception is HttpRequestException or TaskCanceledException)
+        catch (Exception exception) when (exception is HttpRequestException or TaskCanceledException or JsonException)
         {
             _logger.LogWarning(exception, "Failed to synchronize mode.");
             return null;
@@ -158,7 +159,7 @@ public sealed class BackendApiClient
 
             return response.IsSuccessStatusCode && apiResponse?.Success == true;
         }
-        catch (Exception exception) when (exception is HttpRequestException or TaskCanceledException)
+        catch (Exception exception) when (exception is HttpRequestException or TaskCanceledException or JsonException)
         {
             _logger.LogWarning(exception, "Failed to upload activity log.");
             return false;

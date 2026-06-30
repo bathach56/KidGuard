@@ -283,14 +283,14 @@ Protection must never stop only because the server is unavailable.
 
 Agent work is complete for Demo V1 when:
 
-- [ ] Agent can request pair code.
-- [ ] Agent can store Device Token.
-- [ ] Agent sends heartbeat every 30 seconds.
-- [ ] Agent syncs current mode.
-- [ ] Agent caches last known mode.
-- [ ] Agent blocks demo process.
-- [ ] Agent avoids protected system processes.
-- [ ] Agent writes local logs.
-- [ ] Agent uploads logs.
-- [ ] Agent continues protection offline.
-- [ ] Agent uploads cached logs after reconnect.
+- [x] Agent can request pair code.
+- [x] Agent can store Device Token.
+- [x] Agent sends heartbeat every 30 seconds.
+- [x] Agent syncs current mode.
+- [x] Agent caches last known mode.
+- [x] Agent blocks demo process.
+- [x] Agent avoids protected system processes.
+- [x] Agent writes local logs.
+- [x] Agent uploads logs.
+- [x] Agent continues protection offline.
+- [x] Agent uploads cached logs after reconnect.

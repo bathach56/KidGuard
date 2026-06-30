@@ -38,9 +38,9 @@ public sealed class AgentCommandRunner
         var deviceId = args[1];
         var deviceToken = args[2];
 
-        if (string.IsNullOrWhiteSpace(deviceId) || string.IsNullOrWhiteSpace(deviceToken))
+        if (!Guid.TryParse(deviceId, out _) || string.IsNullOrWhiteSpace(deviceToken))
         {
-            _logger.LogError("DeviceId and DeviceToken are required.");
+            _logger.LogError("DeviceId must be a valid GUID and DeviceToken is required.");
             return 1;
         }
 

@@ -58,15 +58,15 @@ Mobile
 Windows Agent
 
 - [x] Create Windows Agent project
-- [ ] Create pair code request
-- [ ] Store Device Token securely
-- [ ] Send heartbeat
-- [ ] Sync current mode
-- [ ] Cache last known mode
-- [ ] Monitor processes
-- [ ] Block demo process
-- [ ] Upload logs
-- [ ] Continue protection while offline
+- [x] Create pair code request
+- [x] Store Device Token securely
+- [x] Send heartbeat
+- [x] Sync current mode
+- [x] Cache last known mode
+- [x] Monitor processes
+- [x] Block demo process
+- [x] Upload logs
+- [x] Continue protection while offline
 
 Anything outside this list must not delay Demo V1.
 
@@ -197,40 +197,40 @@ Windows Agent
 - [x] Configure Windows Service hosting
   Priority: High
 
-- [ ] Implement Device Registration / Pair Code request
+- [x] Implement Device Registration / Pair Code request
   Priority: High
 
-- [ ] Store Device Token securely
+- [x] Store Device Token securely
   Priority: High
 
-- [ ] Implement Heartbeat Service
+- [x] Implement Heartbeat Service
   Priority: High
 
-- [ ] Implement Mode Synchronization
+- [x] Implement Mode Synchronization
   Priority: High
 
-- [ ] Implement Local Cache
+- [x] Implement Local Cache
   Priority: High
 
-- [ ] Implement Retry Mechanism
+- [x] Implement Retry Mechanism
   Priority: Medium
 
-- [ ] Implement Process Monitor
+- [x] Implement Process Monitor
   Priority: High
 
-- [ ] Implement Process Blocker
+- [x] Implement Process Blocker
   Priority: High
 
-- [ ] Add protected system process list
+- [x] Add protected system process list
   Priority: High
 
-- [ ] Implement Local Logging
+- [x] Implement Local Logging
   Priority: Medium
 
-- [ ] Implement Log Upload
+- [x] Implement Log Upload
   Priority: High
 
-- [ ] Implement Offline Protection
+- [x] Implement Offline Protection
   Priority: High
 
 ---

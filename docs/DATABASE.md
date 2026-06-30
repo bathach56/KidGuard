@@ -427,6 +427,20 @@ punishment
 
 No additional modes.
 
+Development demo data
+
+When Backend runs in Development, it creates the local demo parent account if it does not already exist.
+
+Email
+
+parent@gmail.com
+
+Password
+
+12345678
+
+The password is stored as a BCrypt hash, never as plain text.
+
 ---
 
 # 16. Database Owner

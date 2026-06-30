@@ -15,7 +15,7 @@ public sealed class ProcessBlockerService
     {
         try
         {
-            if (process.HasExited)
+            if (process.HasExited || process.Id == Environment.ProcessId)
             {
                 return false;
             }

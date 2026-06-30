@@ -87,6 +87,7 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    await DemoDataSeeder.SeedAsync(app.Services);
 }
 
 app.UseHttpsRedirection();
