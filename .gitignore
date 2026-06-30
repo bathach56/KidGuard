@@ -5,6 +5,7 @@ obj/
 *.suo
 *.rsuser
 .vs/
+.vscode/
 
 # Build output
 [Bb]uild/
