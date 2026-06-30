@@ -49,15 +49,15 @@ Backend
 
 Mobile
 
-- [ ] Login Screen
-- [ ] Device List
-- [ ] Device Detail
-- [ ] Mode Switch
-- [ ] Basic Log View
+- [x] Login Screen
+- [x] Device List
+- [x] Device Detail
+- [x] Mode Switch
+- [x] Basic Log View
 
 Windows Agent
 
-- [ ] Create Windows Agent project
+- [x] Create Windows Agent project
 - [ ] Create pair code request
 - [ ] Store Device Token securely
 - [ ] Send heartbeat
@@ -188,14 +188,11 @@ Windows Agent
 
 ## Windows Agent Tasks
 
-- [ ] Create Solution
-  Priority: High
+- [x] Create Solution`r`n  Priority: High
 
-- [ ] Create Worker Service
-  Priority: High
+- [x] Create Worker Service`r`n  Priority: High
 
-- [ ] Configure Windows Service hosting
-  Priority: High
+- [x] Configure Windows Service hosting`r`n  Priority: High
 
 - [ ] Implement Device Registration / Pair Code request
   Priority: High
@@ -391,6 +388,7 @@ These features are not part of Demo V1 and must not delay Demo V1.
 - AI Recommendation
 - Remote Desktop
 - Multi-platform Agent
+
 
 
 

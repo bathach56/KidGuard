@@ -67,6 +67,16 @@ Demo V1 Note
 
 If automatic token delivery is not ready, the team may manually copy the Device Token into local secure configuration during early development. This shortcut is only allowed for local testing and must not be used as the final production flow.
 
+Local Demo Credential Command
+
+During Demo V1 local testing, after the parent pairs a device and receives the Device Token, the Agent can save credentials into protected local storage with:
+
+```text
+KidGuard.Agent --save-credentials <deviceId> <deviceToken>
+```
+
+This command stores the credentials using Windows protected storage. Do not commit Device Token values into configuration files.
+
 ---
 
 ## HeartbeatService

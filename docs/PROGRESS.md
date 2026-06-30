@@ -221,3 +221,31 @@ Next
 
 
 
+
+---
+
+## 2026-06-30
+
+### Pham Ba Thach
+
+Done
+
+- Created Windows Agent solution under windows-agent.
+- Created .NET Worker Service project KidGuard.Agent.
+- Configured Windows Service hosting support.
+- Added initial agent services for API communication, local cache, process monitoring, and process blocking.
+- Verified Windows Agent solution builds successfully with 0 warnings and 0 errors.
+
+In Progress
+
+- Preparing pair code, heartbeat, mode synchronization, log upload, and offline protection for backend integration.
+
+Blocked
+
+- Waiting for full backend/agent integration testing.
+
+Next
+
+- Add secure device token storage strategy.
+- Test pair code request against Backend API.
+- Test heartbeat and mode synchronization against Backend API.
