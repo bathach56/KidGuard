@@ -4,6 +4,8 @@ import 'package:kidguard_mobile/src/app.dart';
 import 'package:kidguard_mobile/src/core/api/api_exception.dart';
 import 'package:kidguard_mobile/src/features/auth/domain/auth_repository.dart';
 import 'package:kidguard_mobile/src/features/auth/domain/auth_session.dart';
+import 'package:kidguard_mobile/src/features/devices/domain/device_repository.dart';
+import 'package:kidguard_mobile/src/features/devices/domain/device_summary.dart';
 
 void main() {
   Future<void> login(WidgetTester tester) async {
@@ -19,8 +21,14 @@ void main() {
     await tester.pumpAndSettle();
   }
 
-  Widget app({AuthRepository? authRepository}) {
-    return KidGuardApp(authRepository: authRepository ?? _FakeAuthRepository());
+  Widget app({
+    AuthRepository? authRepository,
+    DeviceRepository? deviceRepository,
+  }) {
+    return KidGuardApp(
+      authRepository: authRepository ?? const _FakeAuthRepository(),
+      deviceRepository: deviceRepository ?? const _FakeDeviceRepository(),
+    );
   }
 
   testWidgets('shows parent login screen', (WidgetTester tester) async {
@@ -44,7 +52,7 @@ void main() {
 
   testWidgets('shows login API error', (WidgetTester tester) async {
     await tester.pumpWidget(
-      app(authRepository: _FakeAuthRepository(shouldFail: true)),
+      app(authRepository: const _FakeAuthRepository(shouldFail: true)),
     );
 
     await tester.enterText(
@@ -107,6 +115,19 @@ void main() {
     expect(find.text('offline'), findsOneWidget);
     expect(find.text('study'), findsAtLeastNWidgets(1));
     expect(find.text('fun'), findsOneWidget);
+  });
+
+  testWidgets('shows device list error state', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      app(deviceRepository: const _FakeDeviceRepository(shouldFail: true)),
+    );
+
+    await login(tester);
+    await tester.tap(find.text('View Devices'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Unable to load devices'), findsOneWidget);
+    expect(find.text('Retry'), findsOneWidget);
   });
 
   testWidgets('opens device detail from device list', (
@@ -210,5 +231,37 @@ class _FakeAuthRepository implements AuthRepository {
     }
 
     return const AuthSession(accessToken: 'test-token', expiresIn: 3600);
+  }
+}
+
+class _FakeDeviceRepository implements DeviceRepository {
+  const _FakeDeviceRepository({this.shouldFail = false});
+
+  final bool shouldFail;
+
+  @override
+  Future<List<DeviceSummary>> getDevices({required String accessToken}) async {
+    if (shouldFail) {
+      throw const ApiException('Unable to load devices.');
+    }
+
+    return const [
+      DeviceSummary(
+        deviceId: '11111111-1111-1111-1111-111111111111',
+        name: 'Study Room PC',
+        computerName: 'STUDY-PC',
+        mode: 'study',
+        isOnline: true,
+        lastSeen: 'Online now',
+      ),
+      DeviceSummary(
+        deviceId: '22222222-2222-2222-2222-222222222222',
+        name: 'Gaming Laptop',
+        computerName: 'GAME-LAPTOP',
+        mode: 'fun',
+        isOnline: false,
+        lastSeen: 'Last seen 2 hours ago',
+      ),
+    ];
   }
 }

@@ -1,26 +1,41 @@
 import 'package:flutter/material.dart';
 
+import '../domain/device_repository.dart';
+import '../domain/device_summary.dart';
 import 'device_detail_screen.dart';
 
-class DeviceListScreen extends StatelessWidget {
-  const DeviceListScreen({super.key});
+class DeviceListScreen extends StatefulWidget {
+  const DeviceListScreen({
+    super.key,
+    required this.accessToken,
+    required this.deviceRepository,
+  });
 
-  static const _devices = [
-    DeviceSummary(
-      name: 'Study Room PC',
-      computerName: 'STUDY-PC',
-      mode: 'study',
-      isOnline: true,
-      lastSeen: 'Online now',
-    ),
-    DeviceSummary(
-      name: 'Gaming Laptop',
-      computerName: 'GAME-LAPTOP',
-      mode: 'fun',
-      isOnline: false,
-      lastSeen: 'Last seen 2 hours ago',
-    ),
-  ];
+  final String accessToken;
+  final DeviceRepository deviceRepository;
+
+  @override
+  State<DeviceListScreen> createState() => _DeviceListScreenState();
+}
+
+class _DeviceListScreenState extends State<DeviceListScreen> {
+  late Future<List<DeviceSummary>> _devicesFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _devicesFuture = _loadDevices();
+  }
+
+  Future<List<DeviceSummary>> _loadDevices() {
+    return widget.deviceRepository.getDevices(accessToken: widget.accessToken);
+  }
+
+  void _retry() {
+    setState(() {
+      _devicesFuture = _loadDevices();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,34 +44,65 @@ class DeviceListScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('Devices')),
       body: SafeArea(
-        child: ListView.separated(
-          padding: const EdgeInsets.all(20),
-          itemCount: _devices.length + 1,
-          separatorBuilder: (_, index) =>
-              SizedBox(height: index == 0 ? 16 : 10),
-          itemBuilder: (context, index) {
-            if (index == 0) {
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Paired Devices',
-                    style: textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    'Select a computer to view status and protection mode.',
-                    style: textTheme.bodyMedium?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    ),
-                  ),
-                ],
+        child: FutureBuilder<List<DeviceSummary>>(
+          future: _devicesFuture,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState != ConnectionState.done) {
+              return const Center(child: CircularProgressIndicator());
+            }
+
+            if (snapshot.hasError) {
+              return _DeviceListMessage(
+                icon: Icons.cloud_off_outlined,
+                title: 'Unable to load devices',
+                message: 'Check the backend connection and try again.',
+                action: OutlinedButton.icon(
+                  onPressed: _retry,
+                  icon: const Icon(Icons.refresh),
+                  label: const Text('Retry'),
+                ),
               );
             }
 
-            return _DeviceTile(device: _devices[index - 1]);
+            final devices = snapshot.data ?? const <DeviceSummary>[];
+            if (devices.isEmpty) {
+              return const _DeviceListMessage(
+                icon: Icons.devices_other_outlined,
+                title: 'No paired devices',
+                message: 'Pair a Windows computer to start monitoring.',
+              );
+            }
+
+            return ListView.separated(
+              padding: const EdgeInsets.all(20),
+              itemCount: devices.length + 1,
+              separatorBuilder: (_, index) =>
+                  SizedBox(height: index == 0 ? 16 : 10),
+              itemBuilder: (context, index) {
+                if (index == 0) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Paired Devices',
+                        style: textTheme.headlineSmall?.copyWith(
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        'Select a computer to view status and protection mode.',
+                        style: textTheme.bodyMedium?.copyWith(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ],
+                  );
+                }
+
+                return _DeviceTile(device: devices[index - 1]);
+              },
+            );
           },
         ),
       ),
@@ -127,6 +173,49 @@ class _DeviceTile extends StatelessWidget {
   }
 }
 
+class _DeviceListMessage extends StatelessWidget {
+  const _DeviceListMessage({
+    required this.icon,
+    required this.title,
+    required this.message,
+    this.action,
+  });
+
+  final IconData icon;
+  final String title;
+  final String message;
+  final Widget? action;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 48, color: colorScheme.primary),
+            const SizedBox(height: 16),
+            Text(
+              title,
+              textAlign: TextAlign.center,
+              style: textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(message, textAlign: TextAlign.center),
+            if (action != null) ...[const SizedBox(height: 16), action!],
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class StatusChip extends StatelessWidget {
   const StatusChip({super.key, required this.label, required this.icon});
 
@@ -142,20 +231,4 @@ class StatusChip extends StatelessWidget {
       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
     );
   }
-}
-
-class DeviceSummary {
-  const DeviceSummary({
-    required this.name,
-    required this.computerName,
-    required this.mode,
-    required this.isOnline,
-    required this.lastSeen,
-  });
-
-  final String name;
-  final String computerName;
-  final String mode;
-  final bool isOnline;
-  final String lastSeen;
 }

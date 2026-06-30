@@ -5,18 +5,31 @@ import 'core/api/api_config.dart';
 import 'features/auth/data/api_auth_repository.dart';
 import 'features/auth/domain/auth_repository.dart';
 import 'features/auth/presentation/login_screen.dart';
+import 'features/devices/data/api_device_repository.dart';
+import 'features/devices/domain/device_repository.dart';
 
 class KidGuardApp extends StatelessWidget {
-  KidGuardApp({super.key, AuthRepository? authRepository})
-    : authRepository =
-          authRepository ??
-          ApiAuthRepository(
-            ApiClient(
-              config: const ApiConfig(baseUrl: ApiConfig.defaultBaseUrl),
-            ),
-          );
+  KidGuardApp({
+    super.key,
+    AuthRepository? authRepository,
+    DeviceRepository? deviceRepository,
+  }) : authRepository =
+           authRepository ??
+           ApiAuthRepository(
+             ApiClient(
+               config: const ApiConfig(baseUrl: ApiConfig.defaultBaseUrl),
+             ),
+           ),
+       deviceRepository =
+           deviceRepository ??
+           ApiDeviceRepository(
+             ApiClient(
+               config: const ApiConfig(baseUrl: ApiConfig.defaultBaseUrl),
+             ),
+           );
 
   final AuthRepository authRepository;
+  final DeviceRepository deviceRepository;
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +50,10 @@ class KidGuardApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      home: LoginScreen(authRepository: authRepository),
+      home: LoginScreen(
+        authRepository: authRepository,
+        deviceRepository: deviceRepository,
+      ),
     );
   }
 }

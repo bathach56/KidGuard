@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../devices/presentation/device_list_screen.dart';
+import '../../devices/domain/device_summary.dart';
 
 class LogListScreen extends StatelessWidget {
   const LogListScreen({super.key, this.device});

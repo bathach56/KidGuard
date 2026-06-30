@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../logs/presentation/log_list_screen.dart';
+import '../domain/device_summary.dart';
 import 'device_list_screen.dart';
 
 class DeviceDetailScreen extends StatefulWidget {

@@ -1,10 +1,18 @@
 import 'package:flutter/material.dart';
 
+import '../../devices/domain/device_repository.dart';
 import '../../devices/presentation/device_list_screen.dart';
 import '../../logs/presentation/log_list_screen.dart';
 
 class DashboardScreen extends StatelessWidget {
-  const DashboardScreen({super.key});
+  const DashboardScreen({
+    super.key,
+    required this.accessToken,
+    required this.deviceRepository,
+  });
+
+  final String accessToken;
+  final DeviceRepository deviceRepository;
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +64,10 @@ class DashboardScreen extends StatelessWidget {
               onTap: () {
                 Navigator.of(context).push(
                   MaterialPageRoute<void>(
-                    builder: (_) => const DeviceListScreen(),
+                    builder: (_) => DeviceListScreen(
+                      accessToken: accessToken,
+                      deviceRepository: deviceRepository,
+                    ),
                   ),
                 );
               },
@@ -108,12 +119,12 @@ class _SummaryGrid extends StatelessWidget {
             _SummaryTile(
               icon: Icons.computer_outlined,
               label: 'Devices',
-              value: '2',
+              value: '--',
             ),
             _SummaryTile(
               icon: Icons.wifi_tethering_outlined,
               label: 'Online',
-              value: '1',
+              value: '--',
             ),
             _SummaryTile(
               icon: Icons.shield_outlined,

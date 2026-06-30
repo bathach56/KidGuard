@@ -2,12 +2,18 @@ import 'package:flutter/material.dart';
 
 import '../../../core/api/api_exception.dart';
 import '../../dashboard/presentation/dashboard_screen.dart';
+import '../../devices/domain/device_repository.dart';
 import '../domain/auth_repository.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key, required this.authRepository});
+  const LoginScreen({
+    super.key,
+    required this.authRepository,
+    required this.deviceRepository,
+  });
 
   final AuthRepository authRepository;
+  final DeviceRepository deviceRepository;
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -40,7 +46,7 @@ class _LoginScreenState extends State<LoginScreen> {
     });
 
     try {
-      await widget.authRepository.login(
+      final session = await widget.authRepository.login(
         email: _emailController.text.trim(),
         password: _passwordController.text,
       );
@@ -50,7 +56,12 @@ class _LoginScreenState extends State<LoginScreen> {
       }
 
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute<void>(builder: (_) => const DashboardScreen()),
+        MaterialPageRoute<void>(
+          builder: (_) => DashboardScreen(
+            accessToken: session.accessToken,
+            deviceRepository: widget.deviceRepository,
+          ),
+        ),
       );
     } on ApiException catch (exception) {
       if (!mounted) {
