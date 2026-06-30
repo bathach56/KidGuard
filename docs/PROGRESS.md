@@ -614,3 +614,30 @@ Next
 
 - Run backend/mobile/agent smoke test together.
 - Verify agent pair code, heartbeat, mode sync, process block, and log upload against the integration branch.
+
+---
+
+## 2026-06-30
+
+### Integration Branch
+
+Done
+
+- Verified Backend API integration smoke test on test/integration-all-projects.
+- Confirmed health, login, pair code, device pair, heartbeat, mode sync, log upload, and log view endpoints work together locally.
+- Added docs/INTEGRATION_TESTING.md with local smoke test steps and latest result.
+- Verified Backend build, Windows Agent build, Flutter analyze, Flutter widget tests, and Flutter Windows build.
+
+In Progress
+
+- Preparing manual full demo with actual Mobile app and Windows Agent process running against the same Backend instance.
+
+Blocked
+
+- Full demo still requires local runtime configuration for API URL, Setup Token, and saved Device Token.
+
+Next
+
+- Run actual Windows Agent process against local Backend.
+- Run Mobile Windows app against local Backend using KIDGUARD_API_BASE_URL.
+- Pair Agent through Mobile and verify process blocking/log upload visually.
