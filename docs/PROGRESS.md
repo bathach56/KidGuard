@@ -470,3 +470,33 @@ Next
 - Wire Device Detail to Backend GET /devices/{deviceId}.
 - Wire Mode Switch to Backend PUT /devices/{deviceId}/mode.
 - Wire Log View to Backend GET /devices/{deviceId}/logs.
+
+---
+
+## 2026-06-30
+
+### Tran Phuc Thinh
+
+Done
+
+- Wired Mobile Device Detail to DeviceRepository and backend GET /devices/{deviceId} contract.
+- Added getDevice to DeviceRepository and ApiDeviceRepository.
+- Passed login access token and DeviceRepository from Device List into Device Detail.
+- Added loading and error handling for Device Detail.
+- Added widget test coverage for Device Detail success and error states using a fake repository.
+- Fixed local mode selection so backend detail refresh does not overwrite a user-selected local mode after initial load.
+- Verified Flutter analyze, widget test, and Windows build.
+
+In Progress
+
+- Preparing Mode Switch backend wiring.
+
+Blocked
+
+- Backend PR creation is still blocked because GitHub App cannot create PR and GitHub CLI is not installed.
+- Android toolchain is missing cmdline-tools and license acceptance, but Windows and Web Flutter targets work.
+
+Next
+
+- Wire Mode Switch to Backend PUT /devices/{deviceId}/mode.
+- Wire Log View to Backend GET /devices/{deviceId}/logs.

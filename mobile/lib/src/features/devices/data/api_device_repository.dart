@@ -28,4 +28,18 @@ class ApiDeviceRepository implements DeviceRepository {
 
     return response.data;
   }
+
+  @override
+  Future<DeviceSummary> getDevice({
+    required String accessToken,
+    required String deviceId,
+  }) async {
+    final response = await _apiClient.get<DeviceSummary>(
+      '/devices/$deviceId',
+      bearerToken: accessToken,
+      parseData: DeviceSummary.fromJson,
+    );
+
+    return response.data;
+  }
 }

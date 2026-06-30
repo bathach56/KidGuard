@@ -100,7 +100,11 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
                   );
                 }
 
-                return _DeviceTile(device: devices[index - 1]);
+                return _DeviceTile(
+                  device: devices[index - 1],
+                  accessToken: widget.accessToken,
+                  deviceRepository: widget.deviceRepository,
+                );
               },
             );
           },
@@ -111,9 +115,15 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
 }
 
 class _DeviceTile extends StatelessWidget {
-  const _DeviceTile({required this.device});
+  const _DeviceTile({
+    required this.device,
+    required this.accessToken,
+    required this.deviceRepository,
+  });
 
   final DeviceSummary device;
+  final String accessToken;
+  final DeviceRepository deviceRepository;
 
   @override
   Widget build(BuildContext context) {
@@ -165,7 +175,11 @@ class _DeviceTile extends StatelessWidget {
       onTap: () {
         Navigator.of(context).push(
           MaterialPageRoute<void>(
-            builder: (_) => DeviceDetailScreen(device: device),
+            builder: (_) => DeviceDetailScreen(
+              initialDevice: device,
+              accessToken: accessToken,
+              deviceRepository: deviceRepository,
+            ),
           ),
         );
       },

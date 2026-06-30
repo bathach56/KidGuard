@@ -150,6 +150,23 @@ void main() {
     expect(find.text('Agent Version'), findsOneWidget);
   });
 
+  testWidgets('shows device detail error state', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      app(
+        deviceRepository: const _FakeDeviceRepository(shouldFailDetail: true),
+      ),
+    );
+
+    await login(tester);
+    await tester.tap(find.text('View Devices'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Study Room PC'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Unable to load device'), findsOneWidget);
+    expect(find.text('Retry'), findsOneWidget);
+  });
+
   testWidgets('changes selected mode on device detail', (
     WidgetTester tester,
   ) async {
@@ -235,9 +252,32 @@ class _FakeAuthRepository implements AuthRepository {
 }
 
 class _FakeDeviceRepository implements DeviceRepository {
-  const _FakeDeviceRepository({this.shouldFail = false});
+  const _FakeDeviceRepository({
+    this.shouldFail = false,
+    this.shouldFailDetail = false,
+  });
 
   final bool shouldFail;
+  final bool shouldFailDetail;
+
+  static const devices = [
+    DeviceSummary(
+      deviceId: '11111111-1111-1111-1111-111111111111',
+      name: 'Study Room PC',
+      computerName: 'STUDY-PC',
+      mode: 'study',
+      isOnline: true,
+      lastSeen: 'Online now',
+    ),
+    DeviceSummary(
+      deviceId: '22222222-2222-2222-2222-222222222222',
+      name: 'Gaming Laptop',
+      computerName: 'GAME-LAPTOP',
+      mode: 'fun',
+      isOnline: false,
+      lastSeen: 'Last seen 2 hours ago',
+    ),
+  ];
 
   @override
   Future<List<DeviceSummary>> getDevices({required String accessToken}) async {
@@ -245,23 +285,18 @@ class _FakeDeviceRepository implements DeviceRepository {
       throw const ApiException('Unable to load devices.');
     }
 
-    return const [
-      DeviceSummary(
-        deviceId: '11111111-1111-1111-1111-111111111111',
-        name: 'Study Room PC',
-        computerName: 'STUDY-PC',
-        mode: 'study',
-        isOnline: true,
-        lastSeen: 'Online now',
-      ),
-      DeviceSummary(
-        deviceId: '22222222-2222-2222-2222-222222222222',
-        name: 'Gaming Laptop',
-        computerName: 'GAME-LAPTOP',
-        mode: 'fun',
-        isOnline: false,
-        lastSeen: 'Last seen 2 hours ago',
-      ),
-    ];
+    return devices;
+  }
+
+  @override
+  Future<DeviceSummary> getDevice({
+    required String accessToken,
+    required String deviceId,
+  }) async {
+    if (shouldFailDetail) {
+      throw const ApiException('Unable to load device.');
+    }
+
+    return devices.firstWhere((device) => device.deviceId == deviceId);
   }
 }
