@@ -221,3 +221,29 @@ Next
 
 
 
+
+---
+
+## 2026-06-30
+
+### Tran Phuc Thinh
+
+Done
+
+- Created Flutter mobile project in mobile.
+- Added KidGuard startup app shell.
+- Verified Flutter analyze, widget test, and Windows build.
+
+In Progress
+
+- Preparing Mobile Login Screen.
+
+Blocked
+
+- Backend PR creation is blocked because GitHub App cannot create PR and GitHub CLI is not installed.
+- Android toolchain is missing cmdline-tools and license acceptance, but Windows and Web Flutter targets work.
+
+Next
+
+- Create Mobile Login Screen.
+- Configure mobile API base URL without hardcoded production secrets.
