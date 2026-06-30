@@ -226,6 +226,343 @@ Next
 
 ## 2026-06-30
 
+### Tran Phuc Thinh
+
+Done
+
+- Created Flutter mobile project in mobile.
+- Added KidGuard startup app shell.
+- Verified Flutter analyze, widget test, and Windows build.
+
+In Progress
+
+- Preparing Mobile Login Screen.
+
+Blocked
+
+- Backend PR creation is blocked because GitHub App cannot create PR and GitHub CLI is not installed.
+- Android toolchain is missing cmdline-tools and license acceptance, but Windows and Web Flutter targets work.
+
+Next
+
+- Create Mobile Login Screen.
+- Configure mobile API base URL without hardcoded production secrets.
+
+---
+
+## 2026-06-30
+
+### Tran Phuc Thinh
+
+Done
+
+- Created Mobile Login Screen with email and password fields.
+- Added password visibility toggle and local form validation.
+- Added widget tests for login screen rendering, validation, and password visibility toggle.
+- Verified Flutter analyze, widget test, and Windows build.
+
+In Progress
+
+- Preparing Mobile Dashboard.
+
+Blocked
+
+- Backend PR creation is still blocked because GitHub App cannot create PR and GitHub CLI is not installed.
+- Android toolchain is missing cmdline-tools and license acceptance, but Windows and Web Flutter targets work.
+
+Next
+
+- Create Mobile Dashboard.
+- Create Device List screen.
+
+---
+
+## 2026-06-30
+
+### Tran Phuc Thinh
+
+Done
+
+- Created Mobile Dashboard screen with parent overview summary and quick actions.
+- Connected valid local login form submission to Dashboard navigation.
+- Added widget test coverage for Dashboard navigation and visible actions.
+- Verified Flutter analyze, widget test, and Windows build.
+
+In Progress
+
+- Preparing Device List screen.
+
+Blocked
+
+- Backend PR creation is still blocked because GitHub App cannot create PR and GitHub CLI is not installed.
+- Android toolchain is missing cmdline-tools and license acceptance, but Windows and Web Flutter targets work.
+
+Next
+
+- Create Device List screen.
+- Create Device Detail screen.
+
+---
+
+## 2026-06-30
+
+### Tran Phuc Thinh
+
+Done
+
+- Created Mobile Device List screen with paired device cards, status chips, and mode labels.
+- Connected Dashboard View Devices action to Device List navigation.
+- Added widget test coverage for Device List navigation and sample device rendering.
+- Verified Flutter analyze, widget test, and Windows build.
+
+In Progress
+
+- Preparing Device Detail screen.
+
+Blocked
+
+- Backend PR creation is still blocked because GitHub App cannot create PR and GitHub CLI is not installed.
+- Android toolchain is missing cmdline-tools and license acceptance, but Windows and Web Flutter targets work.
+
+Next
+
+- Create Device Detail screen.
+- Create Mode Switch.
+
+---
+
+## 2026-06-30
+
+### Tran Phuc Thinh
+
+Done
+
+- Created Mobile Device Detail screen with device status, current mode, connection state, agent version, and recent activity summary.
+- Connected Device List items to Device Detail navigation.
+- Added widget test coverage for Device Detail navigation and visible status sections.
+- Verified Flutter analyze, widget test, and Windows build.
+
+In Progress
+
+- Preparing Mode Switch screen/control.
+
+Blocked
+
+- Backend PR creation is still blocked because GitHub App cannot create PR and GitHub CLI is not installed.
+- Android toolchain is missing cmdline-tools and license acceptance, but Windows and Web Flutter targets work.
+
+Next
+
+- Create Mode Switch.
+- Create Basic Log View.
+
+---
+
+## 2026-06-30
+
+### Tran Phuc Thinh
+
+Done
+
+- Created local Mode Switch control on Device Detail screen.
+- Supported only the approved modes: fun, study, punishment.
+- Updated current mode display when a mode is selected locally.
+- Added widget test coverage for mode switching behavior.
+- Verified Flutter analyze, widget test, and Windows build.
+
+In Progress
+
+- Preparing Basic Log View.
+
+Blocked
+
+- Backend PR creation is still blocked because GitHub App cannot create PR and GitHub CLI is not installed.
+- Android toolchain is missing cmdline-tools and license acceptance, but Windows and Web Flutter targets work.
+
+Next
+
+- Create Basic Log View.
+- Create API Integration.
+
+---
+
+## 2026-06-30
+
+### Tran Phuc Thinh
+
+Done
+
+- Created Basic Log View screen with sample process activity logs.
+- Connected Dashboard View Logs action to Log View.
+- Connected Device Detail Recent Activity action to device-specific Log View.
+- Added widget test coverage for log navigation from Dashboard and Device Detail.
+- Verified Flutter analyze, widget test, and Windows build.
+
+In Progress
+
+- Preparing Mobile API Integration.
+
+Blocked
+
+- Backend PR creation is still blocked because GitHub App cannot create PR and GitHub CLI is not installed.
+- Android toolchain is missing cmdline-tools and license acceptance, but Windows and Web Flutter targets work.
+
+Next
+
+- Create API Integration.
+- Wire Login Screen to Backend Login API.
+
+---
+
+## 2026-06-30
+
+### Tran Phuc Thinh
+
+Done
+
+- Created Mobile API Integration foundation with API config, API client, response wrapper, and API exception handling.
+- Added AuthRepository and API-backed login implementation for POST /auth/login.
+- Wired Login Screen to call the auth repository with loading and error states.
+- Kept API base URL configurable with KIDGUARD_API_BASE_URL instead of hardcoding production values.
+- Added widget test coverage for login API error handling using a fake repository.
+- Verified Flutter analyze, widget test, and Windows build.
+
+In Progress
+
+- Preparing real screen data wiring for devices, mode updates, and logs.
+
+Blocked
+
+- Backend PR creation is still blocked because GitHub App cannot create PR and GitHub CLI is not installed.
+- Android toolchain is missing cmdline-tools and license acceptance, but Windows and Web Flutter targets work.
+
+Next
+
+- Wire Device List to Backend GET /devices.
+- Wire Device Detail, Mode Switch, and Log View to backend endpoints.
+
+---
+
+## 2026-06-30
+
+### Tran Phuc Thinh
+
+Done
+
+- Wired Mobile Device List to DeviceRepository and backend GET /devices contract.
+- Added ApiDeviceRepository and DeviceSummary domain model for device list responses.
+- Passed login access token from Login Screen to Dashboard and Device List.
+- Added loading, empty, and error states for Device List.
+- Added widget test coverage for Device List success and error states using a fake repository.
+- Verified Flutter analyze, widget test, and Windows build.
+
+In Progress
+
+- Preparing Device Detail, Mode Switch, and Log View backend wiring.
+
+Blocked
+
+- Backend PR creation is still blocked because GitHub App cannot create PR and GitHub CLI is not installed.
+- Android toolchain is missing cmdline-tools and license acceptance, but Windows and Web Flutter targets work.
+
+Next
+
+- Wire Device Detail to Backend GET /devices/{deviceId}.
+- Wire Mode Switch to Backend PUT /devices/{deviceId}/mode.
+- Wire Log View to Backend GET /devices/{deviceId}/logs.
+
+---
+
+## 2026-06-30
+
+### Tran Phuc Thinh
+
+Done
+
+- Wired Mobile Device Detail to DeviceRepository and backend GET /devices/{deviceId} contract.
+- Added getDevice to DeviceRepository and ApiDeviceRepository.
+- Passed login access token and DeviceRepository from Device List into Device Detail.
+- Added loading and error handling for Device Detail.
+- Added widget test coverage for Device Detail success and error states using a fake repository.
+- Fixed local mode selection so backend detail refresh does not overwrite a user-selected local mode after initial load.
+- Verified Flutter analyze, widget test, and Windows build.
+
+In Progress
+
+- Preparing Mode Switch backend wiring.
+
+Blocked
+
+- Backend PR creation is still blocked because GitHub App cannot create PR and GitHub CLI is not installed.
+- Android toolchain is missing cmdline-tools and license acceptance, but Windows and Web Flutter targets work.
+
+Next
+
+- Wire Mode Switch to Backend PUT /devices/{deviceId}/mode.
+- Wire Log View to Backend GET /devices/{deviceId}/logs.
+
+---
+
+## 2026-06-30
+
+### Tran Phuc Thinh
+
+Done
+
+- Wired Mobile Mode Switch to DeviceRepository and backend PUT /devices/{deviceId}/mode contract.
+- Added PUT support to ApiClient.
+- Added updateDeviceMode to DeviceRepository and ApiDeviceRepository.
+- Updated Device Detail to call backend when selecting fun, study, or punishment.
+- Added mode update loading and error handling with rollback to previous mode on failure.
+- Added widget test coverage for successful mode switching and mode update error handling.
+- Verified Flutter analyze, widget test, and Windows build.
+
+In Progress
+
+- Preparing Log View backend wiring.
+
+Blocked
+
+- Backend PR creation is still blocked because GitHub App cannot create PR and GitHub CLI is not installed.
+- Android toolchain is missing cmdline-tools and license acceptance, but Windows and Web Flutter targets work.
+
+Next
+
+- Wire Log View to Backend GET /devices/{deviceId}/logs.
+- Run a local backend/mobile integration smoke test.
+
+---
+
+## 2026-06-30
+
+### Tran Phuc Thinh
+
+Done
+
+- Wired Mobile Log View to DeviceRepository and backend GET /devices/{deviceId}/logs contract.
+- Added DeviceLogEntry domain model and API response parsing for log items.
+- Added loading, empty, and error states for device-specific Log View.
+- Added widget test coverage for device log success and error states using a fake repository.
+- Verified Flutter analyze, widget test, and Windows build.
+
+In Progress
+
+- Preparing local backend/mobile integration smoke test.
+
+Blocked
+
+- Backend PR creation is still blocked because GitHub App cannot create PR and GitHub CLI is not installed.
+- Android toolchain is missing cmdline-tools and license acceptance, but Windows and Web Flutter targets work.
+
+Next
+
+- Run a local backend/mobile integration smoke test.
+- Prepare Mobile PR checklist.
+
+---
+
+## 2026-06-30
+
 ### Pham Ba Thach
 
 Done
