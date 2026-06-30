@@ -152,7 +152,7 @@ Backend + Mobile
 - [x] Create Device Detail
   Priority: High
 
-- [ ] Create Mode Switch
+- [x] Create Mode Switch
   Priority: High
 
 - [ ] Create API Integration
@@ -391,6 +391,7 @@ These features are not part of Demo V1 and must not delay Demo V1.
 - AI Recommendation
 - Remote Desktop
 - Multi-platform Agent
+
 
 
 

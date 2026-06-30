@@ -355,3 +355,31 @@ Next
 
 - Create Mode Switch.
 - Create Basic Log View.
+
+---
+
+## 2026-06-30
+
+### Tran Phuc Thinh
+
+Done
+
+- Created local Mode Switch control on Device Detail screen.
+- Supported only the approved modes: fun, study, punishment.
+- Updated current mode display when a mode is selected locally.
+- Added widget test coverage for mode switching behavior.
+- Verified Flutter analyze, widget test, and Windows build.
+
+In Progress
+
+- Preparing Basic Log View.
+
+Blocked
+
+- Backend PR creation is still blocked because GitHub App cannot create PR and GitHub CLI is not installed.
+- Android toolchain is missing cmdline-tools and license acceptance, but Windows and Web Flutter targets work.
+
+Next
+
+- Create Basic Log View.
+- Create API Integration.

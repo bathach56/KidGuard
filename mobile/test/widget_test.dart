@@ -102,5 +102,31 @@ void main() {
     expect(find.text('Recent Activity'), findsOneWidget);
     expect(find.text('Agent Version'), findsOneWidget);
   });
+  testWidgets('changes selected mode on device detail', (WidgetTester tester) async {
+    await tester.pumpWidget(const KidGuardApp());
+
+    await login(tester);
+    await tester.tap(find.text('View Devices'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Study Room PC'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Mode Control'), findsOneWidget);
+    expect(find.text('fun'), findsAtLeastNWidgets(1));
+    expect(find.text('study'), findsAtLeastNWidgets(1));
+    expect(find.text('punishment'), findsOneWidget);
+
+    await tester.tap(find.text('punishment'));
+    await tester.pumpAndSettle();
+
+    final currentModeRow = find.ancestor(
+      of: find.text('Current Mode'),
+      matching: find.byType(Row),
+    );
+    expect(
+      find.descendant(of: currentModeRow, matching: find.text('punishment')),
+      findsOneWidget,
+    );
+  });
 }
 

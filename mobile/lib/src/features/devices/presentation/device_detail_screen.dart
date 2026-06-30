@@ -2,15 +2,31 @@
 
 import 'device_list_screen.dart';
 
-class DeviceDetailScreen extends StatelessWidget {
+class DeviceDetailScreen extends StatefulWidget {
   const DeviceDetailScreen({super.key, required this.device});
 
   final DeviceSummary device;
 
   @override
+  State<DeviceDetailScreen> createState() => _DeviceDetailScreenState();
+}
+
+class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
+  late String _selectedMode;
+
+  static const _modes = ['fun', 'study', 'punishment'];
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedMode = widget.device.mode;
+  }
+
+  @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
+    final device = widget.device;
 
     return Scaffold(
       appBar: AppBar(
@@ -58,7 +74,7 @@ class DeviceDetailScreen extends StatelessWidget {
                                 : Icons.wifi_off_outlined,
                           ),
                           StatusChip(
-                            label: device.mode,
+                            label: _selectedMode,
                             icon: Icons.shield_outlined,
                           ),
                         ],
@@ -72,9 +88,35 @@ class DeviceDetailScreen extends StatelessWidget {
             _InfoSection(
               title: 'Protection Status',
               children: [
-                _InfoRow(label: 'Current Mode', value: device.mode),
+                _InfoRow(label: 'Current Mode', value: _selectedMode),
                 _InfoRow(label: 'Connection', value: device.lastSeen),
                 const _InfoRow(label: 'Agent Version', value: '0.0.1-demo'),
+              ],
+            ),
+            const SizedBox(height: 16),
+            _InfoSection(
+              title: 'Mode Control',
+              children: [
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: SegmentedButton<String>(
+                    segments: _modes
+                        .map(
+                          (mode) => ButtonSegment<String>(
+                            value: mode,
+                            label: Text(mode),
+                            icon: const Icon(Icons.shield_outlined),
+                          ),
+                        )
+                        .toList(),
+                    selected: {_selectedMode},
+                    onSelectionChanged: (selection) {
+                      setState(() {
+                        _selectedMode = selection.first;
+                      });
+                    },
+                  ),
+                ),
               ],
             ),
             const SizedBox(height: 16),
