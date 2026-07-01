@@ -201,6 +201,12 @@
                             Margin="0,0,12,0">
                         <StackPanel>
                             <TextBlock Text="Connection Code" FontSize="18" FontWeight="SemiBold" />
+                            <TextBlock Text="API base URL" Margin="0,18,0,0" />
+                            <TextBox x:Name="ChildApiBaseUrlTextBox" />
+                            <TextBlock Text="Setup token" />
+                            <PasswordBox x:Name="ChildSetupTokenPasswordBox" />
+                            <TextBlock Text="Device name" />
+                            <TextBox x:Name="ChildDeviceNameTextBox" />
                             <Border Background="#EFF6FF"
                                     BorderBrush="#BFDBFE"
                                     BorderThickness="1"
@@ -214,10 +220,16 @@
                                            TextAlignment="Center"
                                            Foreground="#1D4ED8" />
                             </Border>
-                            <Button Content="Create Code"
+                            <Button x:Name="CreateCodeButton"
+                                    Content="Create Code"
                                     Width="132"
                                     HorizontalAlignment="Left"
-                                    Style="{StaticResource PrimaryButtonStyle}" />
+                                    Style="{StaticResource PrimaryButtonStyle}"
+                                    Click="CreateCodeButton_Click" />
+                            <TextBlock x:Name="ChildCodeStatusTextBlock"
+                                       Text="Create a code before pairing."
+                                       Margin="0,16,0,0"
+                                       Foreground="{StaticResource MutedTextBrush}" />
                         </StackPanel>
                     </Border>
 

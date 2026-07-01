@@ -244,9 +244,9 @@ Restrictions
   Priority: Medium
   Details: Show waiting, approved, rejected, or expired state.
 
-- [ ] Add Child code display screen
+- [x] Add Child code display screen
   Priority: High
-  Details: Child sees code, optional password/PIN, and expiration.
+  Details: Child can create and display a temporary code through the existing POST /pair-code endpoint while waiting for the Version 1.0.1 child connection API.
 
 - [ ] Add Child pending request polling
   Priority: High

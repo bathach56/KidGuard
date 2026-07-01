@@ -842,3 +842,29 @@ Next
 
 - Add Parent Register UI behavior after Backend Register API is available.
 - Wire Child code display and pending request polling after pairing APIs are available.
+
+---
+
+## 2026-07-01
+
+### Pham Ba Thach
+
+Done
+
+- Wired Child Mode Create Code action to the existing Backend POST /pair-code endpoint.
+- Added Setup Token input using KIDGUARD_SETUP_TOKEN or Agent__SetupToken.
+- Added device name input and code creation status messages.
+- Verified windows-agent solution builds with 0 warnings and 0 errors.
+
+In Progress
+
+- Preparing the remaining pairing UI for Version 1.0.1.
+
+Blocked
+
+- Pending request polling, approve, reject, and parent pairing status still require the Version 1.0.1 pairing APIs.
+
+Next
+
+- Wire pending request polling after Backend exposes the child pending request API.
+- Wire approve/reject after Backend exposes the child approval APIs.
