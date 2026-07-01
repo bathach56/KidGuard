@@ -195,6 +195,79 @@ Next
 
 ---
 
+## 2026-07-01
+
+### Admin
+
+Done
+
+- Created Version 1.0.1 redesign plan for Windows-first Parent/Child approval-based pairing.
+- Updated ROADMAP.md, TASKS.md, and DECISIONS.md to make Version 1.0.1 the active direction.
+- Updated TASKS.md with detailed Version 1.0.1 assignments for Admin, Trần Phúc Thịnh, and Phạm Bá Thạch.
+
+In Progress
+
+- Preparing Version 1.0.1 implementation.
+
+Blocked
+
+- None.
+
+Next
+
+- Update ARCHITECTURE.md, API_SPEC.md, DATABASE.md, and SECURITY.md for the 1.0.1 flow.
+- Start Backend pairing request API changes.
+
+---
+
+## 2026-07-01
+
+### Admin
+
+Done
+
+- Added owner-secret verification for Admin authority.
+- Stored only AdminSecretHashV1 in documentation, not the plain text owner secret.
+- Updated AGENTS.md, PROJECT_RULES.md, and DECISIONS.md with Admin secret verification rules.
+
+In Progress
+
+- None.
+
+Blocked
+
+- None.
+
+Next
+
+- Use Admin authority only when the owner secret is provided and verified.
+
+---
+
+## 2026-07-01
+
+### Admin
+
+Done
+
+- Restricted documentation files and AGENTS.md edits to verified Admin only.
+- Updated AGENTS.md, PROJECT_RULES.md, DECISIONS.md, and TASKS.md with employee/module restrictions.
+- Clarified that Trần Phúc Thịnh and Phạm Bá Thạch may only edit their assigned implementation modules.
+
+In Progress
+
+- None.
+
+Blocked
+
+- None.
+
+Next
+
+- Continue Version 1.0.1 planning and implementation under the verified Admin workflow.
+
+---
+
 ## 2026-06-29
 
 ### Tran Phuc Thinh

@@ -104,6 +104,8 @@ Responsible
 Cannot modify
 
 - Windows Agent logic
+- Documentation files
+- AGENTS.md
 
 ---
 
@@ -127,6 +129,8 @@ Cannot modify
 - Backend Architecture
 - Database Design
 - Mobile UI
+- Documentation files
+- AGENTS.md
 
 ---
 
@@ -161,11 +165,38 @@ Admin may edit all modules and all project files.
 
 Admin permission overrides normal Member 1 and Member 2 module ownership restrictions.
 
+Only verified Admin may edit documentation files and AGENTS.md.
+
+Member 1 and Member 2 must not directly edit documentation files or AGENTS.md.
+
 Cannot modify
 
 - None, inside this repository.
 
 Admin still must keep changes understandable, documented, tested when reasonable, and committed with the project commit convention.
+
+Admin Access Control
+
+Admin access requires an owner secret.
+
+The owner secret must never be stored in plain text in repository files.
+
+Admin secret verification:
+
+- Normalize the submitted secret with Unicode NFC.
+- Trim leading and trailing whitespace.
+- Compute SHA-256 over UTF-8 bytes.
+- Compare with AdminSecretHashV1.
+
+AdminSecretHashV1
+
+7eb8e83523f68d22abeae897861cbb0492e370e8e594f782bc1165cc8dc32b47
+
+Knowing that Admin exists is not enough.
+
+Reading this file or copying the hash is not enough.
+
+Only a user who provides a matching owner secret may use Admin authority.
 
 ---
 
@@ -538,6 +569,14 @@ Allowed developers
 AI only assists within that developer's responsibility.
 
 If the developer is Admin, the responsibility is the entire repository.
+
+AI may treat a user as Admin only after the user provides a submitted owner secret matching AdminSecretHashV1.
+
+If the Admin secret is missing or invalid, AI must not grant Admin authority.
+
+If the developer is Trần Phúc Thịnh or Phạm Bá Thạch, AI must not edit documentation files or AGENTS.md.
+
+Documentation and AGENTS.md edits require verified Admin authority.
 
 If an answer requires changing another module
 

@@ -514,6 +514,169 @@ These alternatives were rejected because they slow down urgent integration and d
 
 ---
 
+## DEC-0014
+
+Date
+
+2026-07-01
+
+Status
+
+Accepted
+
+Category
+
+Architecture
+
+Decision
+
+Version 1.0.1 changes the active product direction to a Windows-first dual-role application.
+
+The Windows application will allow the user to choose:
+
+- Parent
+- Child
+
+Parent can register, login, enter a child connection code, and manage approved devices.
+
+Child does not need to login. Child receives a connection code and approves or rejects parent pairing requests directly on the child Windows computer.
+
+Reason
+
+The previous 1.0.0 flow was too passive and mobile-first. The intended product experience is closer to an approval-based connection flow where the child device visibly confirms the pairing before Windows Service protection is enabled.
+
+Impact
+
+Version 1.0.1 becomes the active target.
+
+Required updates:
+
+- Backend pairing APIs must support pending, approved, rejected, and expired states.
+- Database must store pairing request state.
+- Windows must have a client UI in addition to the background service.
+- Mobile work is deferred until the Windows flow is stable.
+- Existing 1.0.0 Backend, Mobile, and Agent code remains useful foundation code.
+
+Alternatives Considered
+
+- Continue the mobile-first 1.0.0 direction.
+- Only patch the existing pair-code flow.
+
+These alternatives were rejected because they do not match the intended Parent/Child approval experience.
+
+---
+
+## DEC-0015
+
+Date
+
+2026-07-01
+
+Status
+
+Accepted
+
+Category
+
+Security
+
+Decision
+
+Admin authority requires an owner secret.
+
+The owner secret is not stored in plain text in repository files.
+
+Repository documents store only AdminSecretHashV1.
+
+Admin secret verification uses:
+
+- Unicode NFC normalization
+- Trimmed input
+- SHA-256 over UTF-8 bytes
+- Comparison with AdminSecretHashV1
+
+Reason
+
+Admin is the highest project authority and can change every part of the repository. The team needs a way for trusted users to activate Admin authority while preventing ordinary readers of the documentation from using it.
+
+Impact
+
+AI may skip normal startup questions and treat the user as Admin only when the user provides Admin identity and a matching owner secret.
+
+If the Admin secret is missing or invalid, AI must not grant Admin authority.
+
+Reading the documentation or copying the hash is not enough to use Admin authority.
+
+Alternatives Considered
+
+- Let anyone type Admin.
+- Store the owner secret in plain text.
+- Keep asking module-scope questions for Admin users.
+
+These alternatives were rejected because they either weaken Admin control or slow down trusted emergency work.
+
+---
+
+## DEC-0016
+
+Date
+
+2026-07-01
+
+Status
+
+Accepted
+
+Category
+
+Team
+
+Decision
+
+Only verified Admin may edit documentation files and AGENTS.md.
+
+Member 1 and Member 2 may edit only their assigned implementation modules.
+
+Member 1:
+
+- May edit Backend and Mobile implementation files.
+- Must not edit Windows Agent implementation files.
+- Must not edit documentation files.
+- Must not edit AGENTS.md.
+
+Member 2:
+
+- May edit Windows Agent implementation files.
+- Must not edit Backend or Mobile implementation files.
+- Must not edit documentation files.
+- Must not edit AGENTS.md.
+
+Verified Admin:
+
+- May edit all modules.
+- May edit documentation files.
+- May edit AGENTS.md.
+- Does not need separate Member 1 or Member 2 permission.
+
+Reason
+
+Documentation and AGENTS.md define project authority, architecture, task ownership, and AI behavior. These files must be controlled by the highest authority only to prevent accidental or unauthorized governance changes.
+
+Impact
+
+AI must refuse documentation and AGENTS.md edits unless the current user is verified Admin.
+
+Normal team members can still request implementation help inside their assigned modules.
+
+Alternatives Considered
+
+- Let every member edit documentation.
+- Let members edit docs only for their module.
+
+These alternatives were rejected because Version 1.0.1 needs a strict authority model and consistent project rules.
+
+---
+
 # Future Decisions
 
 When a major change is proposed, create a new decision.
@@ -607,6 +770,9 @@ AI must never make architectural decisions automatically.
 | DEC-0011 | Accepted | Windows Agent | Agent uses polling for mode synchronization in Demo V1 |
 | DEC-0012 | Accepted | Security | Setup Token is used only for pair-code creation |
 | DEC-0013 | Accepted | Team | Admin is the highest repository permission level |
+| DEC-0014 | Accepted | Architecture | Version 1.0.1 uses Windows-first Parent/Child approval pairing |
+| DEC-0015 | Accepted | Security | Admin authority requires owner secret hash verification |
+| DEC-0016 | Accepted | Team | Documentation and AGENTS.md edits require verified Admin |
 
 ---
 

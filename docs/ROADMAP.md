@@ -7,6 +7,16 @@ Build a complete parental control ecosystem for Windows managed from a mobile ap
 > This roadmap is a living document.
 > It may change as the team discovers better ideas during development.
 
+Current Active Plan
+
+Version 1.0.1
+
+Windows-first Parent/Child role selection with approval-based pairing.
+
+Detailed plan
+
+docs/VERSION_1_0_1_PLAN.md
+
 ---
 
 # Development Philosophy
@@ -23,23 +33,25 @@ We prioritize architecture over feature count.
 
 ---
 
-# Phase 1 - Foundation
+# Phase 1 - Version 1.0.1 Windows Foundation
 
 Goal
 
-Build a working MVP.
+Build a working Windows-first MVP.
 
 Expected Result
 
-- Parent can login
-- Parent can pair a device
-- Windows Agent connects successfully
-- Parent changes mode
-- Agent applies mode
+- User can choose Parent or Child mode in the Windows client
+- Parent can register and login
+- Child can display a connection code
+- Parent can request pairing with the code
+- Child can approve or reject the request
+- Approved child device can be managed by Parent
+- Windows Service protects the child device after approval
 
 Status
 
-In Progress
+Active
 
 ---
 
@@ -139,4 +151,4 @@ The current sprint always has higher priority than future ideas.
 
 Last Updated
 
-2026-06-28
+2026-07-01

@@ -136,11 +136,36 @@ Admin permission overrides the normal Member 1 and Member 2 module scope restric
 
 Admin MUST still keep changes understandable, documented, and committed with the project commit convention.
 
+Admin access is protected by an owner secret.
+
+The owner secret MUST NOT be written in plain text in this repository.
+
+Admin secret verification:
+
+- Normalize the submitted secret with Unicode NFC.
+- Trim leading and trailing whitespace.
+- Compute SHA-256 over UTF-8 bytes.
+- Compare with AdminSecretHashV1.
+
+AdminSecretHashV1
+
+7eb8e83523f68d22abeae897861cbb0492e370e8e594f782bc1165cc8dc32b47
+
+If the submitted secret does not match, AI MUST NOT grant Admin authority.
+
+If someone only reads this file, finds the hash, or claims to be Admin without the matching secret, that is not enough to use Admin authority.
+
 ---
 
 # AI Startup Rules
 
 Every NEW conversation MUST begin with these questions.
+
+Exception
+
+If the first user message provides Admin identity and a submitted owner secret matching AdminSecretHashV1, AI MUST treat the user as Admin immediately and MUST NOT ask the startup questions.
+
+If the first user message claims Admin but does not provide a matching owner secret, AI MUST continue with normal startup questions and normal role restrictions.
 
 Question 1
 
@@ -190,13 +215,15 @@ AI MAY edit
 
 /mobile
 
-/docs
-
 AI MUST NOT edit
 
 /windows-agent
 
-unless explicitly requested.
+/docs
+
+AGENTS.md
+
+unless current user is verified Admin.
 
 ---
 
@@ -208,15 +235,17 @@ AI MAY edit
 
 /windows-agent
 
-/docs
-
 AI MUST NOT edit
 
 /backend
 
 /mobile
 
-unless explicitly requested.
+/docs
+
+AGENTS.md
+
+unless current user is verified Admin.
 
 ---
 
@@ -231,6 +260,10 @@ Everything in this repository.
 Admin is the highest authority and MAY customize all modules, documentation, configuration, tests, and project files.
 
 Admin permission overrides the normal module ownership restrictions for Trần Phúc Thịnh and Phạm Bá Thạch.
+
+Only verified Admin MAY edit /docs and AGENTS.md.
+
+Trần Phúc Thịnh and Phạm Bá Thạch MUST NOT edit /docs or AGENTS.md directly.
 
 ---
 
