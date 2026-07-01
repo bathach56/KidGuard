@@ -212,21 +212,21 @@ Restrictions
 
 ### Thạch - Windows Client
 
-- [ ] Decide Windows client technology
+- [x] Decide Windows client technology
   Priority: High
-  Details: Choose WinUI, WPF, Avalonia, or another Windows desktop UI approach that fits the team.
+  Details: Chosen WPF for the Windows-first demo because it works with the existing .NET Windows stack without extra UI dependencies.
 
-- [ ] Create Windows client project
+- [x] Create Windows client project
   Priority: High
-  Details: Add a UI app separate from the Windows Service.
+  Details: Added KidGuard.Client as a WPF UI app separate from the Windows Service.
 
-- [ ] Add role selection screen
+- [x] Add role selection screen
   Priority: High
-  Details: User chooses Parent or Child when opening KidGuard.
+  Details: User can choose Parent or Child when opening KidGuard.
 
-- [ ] Add Parent login screen
+- [x] Add Parent login screen
   Priority: High
-  Details: Parent logs in with Backend JWT.
+  Details: Parent login screen calls Backend POST /auth/login and stores the returned JWT in memory for the current client session.
 
 - [ ] Add Parent register screen
   Priority: High

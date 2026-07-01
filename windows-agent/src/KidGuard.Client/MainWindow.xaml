@@ -111,19 +111,30 @@
                             Margin="0,0,12,0">
                         <StackPanel>
                             <TextBlock Text="Account" FontSize="18" FontWeight="SemiBold" />
+                            <TextBlock Text="API base URL" Margin="0,18,0,0" />
+                            <TextBox x:Name="ApiBaseUrlTextBox" />
                             <TextBlock Text="Email" Margin="0,18,0,0" />
                             <TextBox x:Name="ParentEmailTextBox" />
                             <TextBlock Text="Password" />
                             <PasswordBox x:Name="ParentPasswordBox" />
                             <StackPanel Orientation="Horizontal">
-                                <Button Content="Login"
+                                <Button x:Name="ParentLoginButton"
+                                        Content="Login"
                                         Width="112"
-                                        Style="{StaticResource PrimaryButtonStyle}" />
-                                <Button Content="Register"
+                                        Style="{StaticResource PrimaryButtonStyle}"
+                                        Click="ParentLoginButton_Click" />
+                                <Button x:Name="ParentRegisterButton"
+                                        Content="Register"
                                         Width="112"
                                         Margin="10,0,0,0"
-                                        Style="{StaticResource SecondaryButtonStyle}" />
+                                        Style="{StaticResource SecondaryButtonStyle}"
+                                        IsEnabled="False"
+                                        ToolTip="Waiting for the Version 1.0.1 Parent Register API." />
                             </StackPanel>
+                            <TextBlock x:Name="ParentLoginStatusTextBlock"
+                                       Text="Set KIDGUARD_API_BASE_URL before login."
+                                       Margin="0,16,0,0"
+                                       Foreground="{StaticResource MutedTextBrush}" />
                         </StackPanel>
                     </Border>
 

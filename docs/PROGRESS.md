@@ -814,3 +814,31 @@ Blocked
 Next
 
 - Run Mobile and Agent against local Backend and verify notepad.exe blocking visually.
+
+---
+
+## 2026-07-01
+
+### Pham Ba Thach
+
+Done
+
+- Chose WPF for the Windows Client technology.
+- Created the KidGuard.Client WPF project separate from the Windows Service.
+- Added Parent/Child role selection UI.
+- Added Parent Login UI wired to Backend POST /auth/login.
+- Added configurable API base URL input using KIDGUARD_API_BASE_URL.
+- Verified windows-agent solution builds with 0 warnings and 0 errors.
+
+In Progress
+
+- Preparing Windows Client screens for Version 1.0.1 pairing APIs.
+
+Blocked
+
+- Parent Register, child connection code, pairing request, approve, reject, and status flows depend on Backend 1.0.1 API contracts and implementation.
+
+Next
+
+- Add Parent Register UI behavior after Backend Register API is available.
+- Wire Child code display and pending request polling after pairing APIs are available.
