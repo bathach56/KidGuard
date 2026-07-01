@@ -919,3 +919,29 @@ Blocked
 Next
 
 - Add mode/log dashboard actions once the expected Windows Parent Client flow is confirmed.
+
+---
+
+## 2026-07-01
+
+### Pham Ba Thach
+
+Done
+
+- Added Parent pairing status view for the Windows Client.
+- Added visible pairing states for not started, waiting, paired, and failed.
+- Added paired device summary after successful Demo V1 bridge pairing.
+- Added Copy Token action for the one-time Device Token.
+- Verified windows-agent solution builds with 0 warnings and 0 errors.
+
+In Progress
+
+- Preparing the pairing status view to be replaced with Version 1.0.1 pending, approved, rejected, and expired states.
+
+Blocked
+
+- Final status values still depend on Backend pairing status APIs.
+
+Next
+
+- Replace Demo V1 bridge states with Version 1.0.1 pairing status API results after Backend is ready.

@@ -95,7 +95,7 @@ public partial class MainWindow : Window
         }
 
         SetPairRequestLoadingState(isLoading: true);
-        SetPairingStatus("Pairing device...", isError: false);
+        UpdatePairingState("Waiting", "Pairing device...", PairingStateKind.Waiting);
 
         try
         {
@@ -105,24 +105,24 @@ public partial class MainWindow : Window
                 pairCode,
                 CancellationToken.None);
 
-            DeviceTokenTextBox.Text = pairedDevice.DeviceToken;
-            DeviceTokenTextBox.Visibility = Visibility.Visible;
-            SetPairingStatus(
-                $"Device paired: {pairedDevice.DeviceName} ({pairedDevice.DeviceId}). Current mode: {pairedDevice.Mode}. Device token is shown once for the Demo V1 bridge.",
-                isError: false);
+            ShowPairedDevice(pairedDevice);
+            UpdatePairingState(
+                "Paired",
+                "Device paired. Copy the one-time Device Token for the Demo V1 bridge.",
+                PairingStateKind.Success);
             await LoadDevicesAsync(baseUri, authSession.AccessToken);
         }
         catch (HttpRequestException exception)
         {
-            SetPairingStatus($"Cannot connect to Backend: {exception.Message}", isError: true);
+            UpdatePairingState("Failed", $"Cannot connect to Backend: {exception.Message}", PairingStateKind.Error);
         }
         catch (InvalidOperationException exception)
         {
-            SetPairingStatus(exception.Message, isError: true);
+            UpdatePairingState("Failed", exception.Message, PairingStateKind.Error);
         }
         catch (TaskCanceledException)
         {
-            SetPairingStatus("Pairing request timed out or was canceled.", isError: true);
+            UpdatePairingState("Failed", "Pairing request timed out or was canceled.", PairingStateKind.Error);
         }
         finally
         {
@@ -179,6 +179,18 @@ public partial class MainWindow : Window
         }
 
         await LoadDevicesAsync(baseUri, authSession!.AccessToken);
+    }
+
+    private void CopyDeviceTokenButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (string.IsNullOrWhiteSpace(DeviceTokenTextBox.Text))
+        {
+            UpdatePairingState("Paired", "No Device Token is available to copy.", PairingStateKind.Error);
+            return;
+        }
+
+        Clipboard.SetText(DeviceTokenTextBox.Text);
+        UpdatePairingState("Paired", "Device Token copied to clipboard.", PairingStateKind.Success);
     }
 
     private void ShowPanel(UIElement activePanel)
@@ -389,6 +401,51 @@ public partial class MainWindow : Window
             : System.Windows.Media.Brushes.ForestGreen;
     }
 
+    private void UpdatePairingState(string state, string message, PairingStateKind stateKind)
+    {
+        PairingStateTextBlock.Text = state;
+        PairingStatusTextBlock.Text = message;
+
+        switch (stateKind)
+        {
+            case PairingStateKind.Waiting:
+                PairingStateBadge.Background = System.Windows.Media.Brushes.LightGoldenrodYellow;
+                PairingStateBadge.BorderBrush = System.Windows.Media.Brushes.Goldenrod;
+                PairingStateTextBlock.Foreground = System.Windows.Media.Brushes.DarkGoldenrod;
+                PairingStatusTextBlock.Foreground = System.Windows.Media.Brushes.DarkGoldenrod;
+                break;
+            case PairingStateKind.Success:
+                PairingStateBadge.Background = System.Windows.Media.Brushes.Honeydew;
+                PairingStateBadge.BorderBrush = System.Windows.Media.Brushes.DarkSeaGreen;
+                PairingStateTextBlock.Foreground = System.Windows.Media.Brushes.ForestGreen;
+                PairingStatusTextBlock.Foreground = System.Windows.Media.Brushes.ForestGreen;
+                break;
+            case PairingStateKind.Error:
+                PairingStateBadge.Background = System.Windows.Media.Brushes.MistyRose;
+                PairingStateBadge.BorderBrush = System.Windows.Media.Brushes.IndianRed;
+                PairingStateTextBlock.Foreground = System.Windows.Media.Brushes.Firebrick;
+                PairingStatusTextBlock.Foreground = System.Windows.Media.Brushes.Firebrick;
+                break;
+            default:
+                PairingStateBadge.Background = System.Windows.Media.Brushes.AliceBlue;
+                PairingStateBadge.BorderBrush = System.Windows.Media.Brushes.LightSteelBlue;
+                PairingStateTextBlock.Foreground = System.Windows.Media.Brushes.SteelBlue;
+                PairingStatusTextBlock.Foreground = System.Windows.Media.Brushes.DimGray;
+                break;
+        }
+    }
+
+    private void ShowPairedDevice(PairedDevice device)
+    {
+        PairedDeviceNameTextBlock.Text = device.DeviceName;
+        PairedDeviceIdTextBlock.Text = $"Device ID: {device.DeviceId}";
+        PairedDeviceModeTextBlock.Text = $"Mode: {device.Mode}";
+        PairedDevicePanel.Visibility = Visibility.Visible;
+        DeviceTokenTextBox.Text = device.DeviceToken;
+        DeviceTokenTextBox.Visibility = Visibility.Visible;
+        CopyDeviceTokenButton.Visibility = Visibility.Visible;
+    }
+
     private void SetDeviceListStatus(string message, bool isError)
     {
         DeviceListStatusTextBlock.Text = message;
@@ -412,5 +469,13 @@ public partial class MainWindow : Window
         ChildCodeStatusTextBlock.Foreground = isError
             ? System.Windows.Media.Brushes.Firebrick
             : System.Windows.Media.Brushes.ForestGreen;
+    }
+
+    private enum PairingStateKind
+    {
+        Neutral,
+        Waiting,
+        Success,
+        Error
     }
 }

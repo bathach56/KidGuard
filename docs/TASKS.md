@@ -240,9 +240,9 @@ Restrictions
   Priority: High
   Details: Bridge implemented with Demo V1 POST /devices/pair so Parent Windows Client can pair using a child code after login. Final Version 1.0.1 behavior still needs the pending pairing request API.
 
-- [ ] Add Parent pairing status view
+- [x] Add Parent pairing status view
   Priority: Medium
-  Details: Show waiting, approved, rejected, or expired state.
+  Details: Shows not started, waiting, paired, and failed states for the current Demo V1 bridge, including paired device summary and one-time Device Token copy action. Version 1.0.1 pending, approved, rejected, and expired states still depend on Backend pairing status APIs.
 
 - [x] Add Child code display screen
   Priority: High

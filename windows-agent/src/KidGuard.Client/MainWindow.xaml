@@ -162,9 +162,45 @@
                                     Padding="14"
                                     Margin="0,22,0,0">
                                 <StackPanel>
+                                    <TextBlock Text="Pairing status"
+                                               FontWeight="SemiBold" />
+                                    <Border x:Name="PairingStateBadge"
+                                            Background="#EEF2FF"
+                                            BorderBrush="#C7D2FE"
+                                            BorderThickness="1"
+                                            CornerRadius="8"
+                                            Padding="10,6"
+                                            Margin="0,8,0,10"
+                                            HorizontalAlignment="Left">
+                                        <TextBlock x:Name="PairingStateTextBlock"
+                                                   Text="Not started"
+                                                   FontWeight="SemiBold"
+                                                   Foreground="#1E3A8A" />
+                                    </Border>
                                     <TextBlock x:Name="PairingStatusTextBlock"
                                                Text="Login first, then enter a child code."
                                                Foreground="{StaticResource MutedTextBrush}" />
+                                    <Border x:Name="PairedDevicePanel"
+                                            Background="#FFFFFF"
+                                            BorderBrush="{StaticResource BorderBrush}"
+                                            BorderThickness="1"
+                                            CornerRadius="8"
+                                            Padding="12"
+                                            Margin="0,12,0,0"
+                                            Visibility="Collapsed">
+                                        <StackPanel>
+                                            <TextBlock Text="Paired device"
+                                                       FontWeight="SemiBold" />
+                                            <TextBlock x:Name="PairedDeviceNameTextBlock"
+                                                       Margin="0,6,0,0" />
+                                            <TextBlock x:Name="PairedDeviceIdTextBlock"
+                                                       Margin="0,4,0,0"
+                                                       Foreground="{StaticResource MutedTextBrush}" />
+                                            <TextBlock x:Name="PairedDeviceModeTextBlock"
+                                                       Margin="0,4,0,0"
+                                                       Foreground="{StaticResource MutedTextBrush}" />
+                                        </StackPanel>
+                                    </Border>
                                     <TextBox x:Name="DeviceTokenTextBox"
                                              Margin="0,12,0,0"
                                              MinHeight="72"
@@ -172,6 +208,14 @@
                                              AcceptsReturn="True"
                                              IsReadOnly="True"
                                              Visibility="Collapsed" />
+                                    <Button x:Name="CopyDeviceTokenButton"
+                                            Content="Copy Token"
+                                            Width="116"
+                                            Margin="0,10,0,0"
+                                            HorizontalAlignment="Left"
+                                            Style="{StaticResource SecondaryButtonStyle}"
+                                            Visibility="Collapsed"
+                                            Click="CopyDeviceTokenButton_Click" />
                                 </StackPanel>
                             </Border>
                             <DockPanel Margin="0,22,0,10">
