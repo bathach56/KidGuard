@@ -234,7 +234,7 @@ Restrictions
 
 - [ ] Add Parent dashboard
   Priority: High
-  Details: Show approved devices, pending requests, status, mode, and logs entry points.
+  Details: Basic approved device list and status are implemented through GET /devices after login. Pending requests, mode controls, and log entry points still need the Version 1.0.1 flow.
 
 - [ ] Add Parent enter child code screen
   Priority: High

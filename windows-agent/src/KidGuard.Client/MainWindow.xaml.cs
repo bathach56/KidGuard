@@ -110,6 +110,7 @@ public partial class MainWindow : Window
             SetPairingStatus(
                 $"Device paired: {pairedDevice.DeviceName} ({pairedDevice.DeviceId}). Current mode: {pairedDevice.Mode}. Device token is shown once for the Demo V1 bridge.",
                 isError: false);
+            await LoadDevicesAsync(baseUri, authSession.AccessToken);
         }
         catch (HttpRequestException exception)
         {
@@ -148,6 +149,7 @@ public partial class MainWindow : Window
         {
             authSession = await authApiClient.LoginAsync(baseUri, email, password, CancellationToken.None);
             SetParentStatus($"Login successful. Token expires in {authSession.ExpiresIn} seconds.", isError: false);
+            await LoadDevicesAsync(baseUri, authSession.AccessToken);
         }
         catch (HttpRequestException exception)
         {
@@ -165,6 +167,18 @@ public partial class MainWindow : Window
         {
             SetLoginLoadingState(isLoading: false);
         }
+    }
+
+    private async void RefreshDevicesButton_Click(object sender, RoutedEventArgs e)
+    {
+        var apiBaseUrl = ApiBaseUrlTextBox.Text.Trim();
+        if (!TryValidateDeviceListInput(apiBaseUrl, out var baseUri, out var validationMessage))
+        {
+            SetDeviceListStatus(validationMessage, isError: true);
+            return;
+        }
+
+        await LoadDevicesAsync(baseUri, authSession!.AccessToken);
     }
 
     private void ShowPanel(UIElement activePanel)
@@ -204,6 +218,23 @@ public partial class MainWindow : Window
         }
 
         return true;
+    }
+
+    private bool TryValidateDeviceListInput(
+        string apiBaseUrl,
+        out Uri baseUri,
+        out string message)
+    {
+        baseUri = default!;
+        message = string.Empty;
+
+        if (authSession is null)
+        {
+            message = "Parent login is required before loading devices.";
+            return false;
+        }
+
+        return TryValidateApiBaseUrl(apiBaseUrl, out baseUri, out message);
     }
 
     private static bool TryValidateChildCodeInput(
@@ -303,6 +334,45 @@ public partial class MainWindow : Window
         ChildCodeTextBox.IsEnabled = !isLoading;
     }
 
+    private async Task LoadDevicesAsync(Uri apiBaseUrl, string accessToken)
+    {
+        SetDeviceListLoadingState(isLoading: true);
+        SetDeviceListStatus("Loading devices...", isError: false);
+
+        try
+        {
+            var devices = await deviceApiClient.GetDevicesAsync(apiBaseUrl, accessToken, CancellationToken.None);
+            DeviceListBox.ItemsSource = devices;
+            SetDeviceListStatus(
+                devices.Count == 0
+                    ? "No approved devices yet."
+                    : $"{devices.Count} approved device(s) loaded.",
+                isError: false);
+        }
+        catch (HttpRequestException exception)
+        {
+            SetDeviceListStatus($"Cannot connect to Backend: {exception.Message}", isError: true);
+        }
+        catch (InvalidOperationException exception)
+        {
+            SetDeviceListStatus(exception.Message, isError: true);
+        }
+        catch (TaskCanceledException)
+        {
+            SetDeviceListStatus("Device list request timed out or was canceled.", isError: true);
+        }
+        finally
+        {
+            SetDeviceListLoadingState(isLoading: false);
+        }
+    }
+
+    private void SetDeviceListLoadingState(bool isLoading)
+    {
+        RefreshDevicesButton.IsEnabled = !isLoading;
+        RefreshDevicesButton.Content = isLoading ? "Loading" : "Refresh";
+    }
+
     private void SetParentStatus(string message, bool isError)
     {
         ParentLoginStatusTextBlock.Text = message;
@@ -315,6 +385,14 @@ public partial class MainWindow : Window
     {
         PairingStatusTextBlock.Text = message;
         PairingStatusTextBlock.Foreground = isError
+            ? System.Windows.Media.Brushes.Firebrick
+            : System.Windows.Media.Brushes.ForestGreen;
+    }
+
+    private void SetDeviceListStatus(string message, bool isError)
+    {
+        DeviceListStatusTextBlock.Text = message;
+        DeviceListStatusTextBlock.Foreground = isError
             ? System.Windows.Media.Brushes.Firebrick
             : System.Windows.Media.Brushes.ForestGreen;
     }

@@ -174,6 +174,25 @@
                                              Visibility="Collapsed" />
                                 </StackPanel>
                             </Border>
+                            <DockPanel Margin="0,22,0,10">
+                                <Button x:Name="RefreshDevicesButton"
+                                        Content="Refresh"
+                                        DockPanel.Dock="Right"
+                                        Width="96"
+                                        Style="{StaticResource SecondaryButtonStyle}"
+                                        Click="RefreshDevicesButton_Click" />
+                                <TextBlock Text="Approved devices"
+                                           VerticalAlignment="Center"
+                                           FontSize="18"
+                                           FontWeight="SemiBold" />
+                            </DockPanel>
+                            <ListBox x:Name="DeviceListBox"
+                                     MinHeight="120"
+                                     DisplayMemberPath="DisplayText" />
+                            <TextBlock x:Name="DeviceListStatusTextBlock"
+                                       Text="Login to load devices."
+                                       Margin="0,12,0,0"
+                                       Foreground="{StaticResource MutedTextBrush}" />
                         </StackPanel>
                     </Border>
                 </Grid>

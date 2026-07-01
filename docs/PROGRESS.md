@@ -893,3 +893,29 @@ Blocked
 Next
 
 - Replace the Demo V1 direct pair bridge with the Version 1.0.1 pending request API when Backend is ready.
+
+---
+
+## 2026-07-01
+
+### Pham Ba Thach
+
+Done
+
+- Added a basic Parent dashboard device list to the Windows Client.
+- Loaded approved devices from Backend GET /devices after login.
+- Refreshed the device list after successful Demo V1 bridge pairing.
+- Added manual Refresh action and device list status messages.
+- Verified windows-agent solution builds with 0 warnings and 0 errors.
+
+In Progress
+
+- Expanding Parent dashboard toward Version 1.0.1 behavior.
+
+Blocked
+
+- Pending request status, approve/reject status, mode controls, and log entry points still depend on finalized Version 1.0.1 Backend APIs and UI flow.
+
+Next
+
+- Add mode/log dashboard actions once the expected Windows Parent Client flow is confirmed.
