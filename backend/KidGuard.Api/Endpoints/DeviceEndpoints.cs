@@ -1,4 +1,4 @@
-﻿using System.IdentityModel.Tokens.Jwt;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using KidGuard.Api.Common;
 using KidGuard.Api.Contracts.Devices;
@@ -26,53 +26,53 @@ public static class DeviceEndpoints
             .RequireAuthorization()
             .WithName("GetDevices")
             .WithSummary("Get parent devices")
-            .WithDescription("Returns all devices owned by the authenticated parent. Requires JWT.")
+            .WithDescription("Returns approved devices owned by the authenticated parent in the Version 1.0.1 approval-based pairing flow. Requires JWT.")
             .WithOpenApi();
 
         group.MapGet("/{deviceId:guid}", GetDeviceAsync)
             .RequireAuthorization()
             .WithName("GetDevice")
             .WithSummary("Get device detail")
-            .WithDescription("Returns one device owned by the authenticated parent. Requires JWT.")
+            .WithDescription("Returns one approved device owned by the authenticated parent. Requires JWT.")
             .WithOpenApi();
 
         group.MapGet("/{deviceId:guid}/mode", GetDeviceModeAsync)
             .WithName("GetDeviceMode")
             .WithSummary("Sync device mode")
-            .WithDescription("Windows Agent retrieves its current mode. Requires Device Token.")
+            .WithDescription("Approved Windows Service retrieves its current mode after child-approved pairing. Requires Device Token.")
             .WithOpenApi();
 
         group.MapPut("/{deviceId:guid}/mode", UpdateDeviceModeAsync)
             .RequireAuthorization()
             .WithName("UpdateDeviceMode")
             .WithSummary("Update device mode")
-            .WithDescription("Parent changes a device mode to fun, study, or punishment. Requires JWT.")
+            .WithDescription("Parent changes mode only for an approved owned device. Allowed modes: fun, study, punishment. Requires JWT.")
             .WithOpenApi();
 
         group.MapPost("/{deviceId:guid}/heartbeat", ReceiveHeartbeatAsync)
             .WithName("ReceiveHeartbeat")
             .WithSummary("Receive device heartbeat")
-            .WithDescription("Windows Agent reports online status and version. Requires Device Token.")
+            .WithDescription("Approved Windows Service reports online status and version after pairing. Requires Device Token.")
             .WithOpenApi();
 
         group.MapPost("/{deviceId:guid}/logs", UploadDeviceLogAsync)
             .WithName("UploadDeviceLog")
             .WithSummary("Upload device log")
-            .WithDescription("Windows Agent uploads activity or blocking logs. Requires Device Token.")
+            .WithDescription("Approved Windows Service uploads activity or blocking logs after pairing. Requires Device Token.")
             .WithOpenApi();
 
         group.MapGet("/{deviceId:guid}/logs", GetDeviceLogsAsync)
             .RequireAuthorization()
             .WithName("GetDeviceLogs")
             .WithSummary("Get device logs")
-            .WithDescription("Returns paginated logs for a device owned by the authenticated parent. Requires JWT.")
+            .WithDescription("Returns paginated logs for an approved device owned by the authenticated parent. Requires JWT.")
             .WithOpenApi();
 
         group.MapPost("/pair", PairDeviceAsync)
             .RequireAuthorization()
             .WithName("PairDevice")
             .WithSummary("Pair device")
-            .WithDescription("Parent pairs a pending Windows Agent by pair code and receives the Device Token once. Requires JWT.")
+            .WithDescription("Legacy Demo V1 direct pair endpoint. Version 1.0.1 clients should use /pairing approval APIs. Requires JWT.")
             .WithOpenApi();
 
         return group;
@@ -95,7 +95,9 @@ public static class DeviceEndpoints
         {
             var devices = await dbContext.Devices
                 .AsNoTracking()
-                .Where(device => device.UserId == userId)
+                .Where(device => device.UserId == userId
+                    && device.PairingRequests.Any(request => request.ParentId == userId
+                        && request.Status == PairingRequestStatuses.Approved))
                 .OrderBy(device => device.DeviceName)
                 .Select(device => new DeviceListItemResponse(
                     device.Id,
@@ -135,7 +137,10 @@ public static class DeviceEndpoints
         {
             var device = await dbContext.Devices
                 .AsNoTracking()
-                .Where(item => item.Id == deviceId && item.UserId == userId)
+                .Where(item => item.Id == deviceId
+                    && item.UserId == userId
+                    && item.PairingRequests.Any(request => request.ParentId == userId
+                        && request.Status == PairingRequestStatuses.Approved))
                 .Select(item => new DeviceDetailResponse(
                     item.Id,
                     item.DeviceName,
@@ -177,7 +182,10 @@ public static class DeviceEndpoints
         {
             var device = await dbContext.Devices
                 .AsNoTracking()
-                .Where(item => item.Id == deviceId && item.DeviceToken == deviceToken)
+                .Where(item => item.Id == deviceId
+                    && item.DeviceToken == deviceToken
+                    && item.UserId != null
+                    && item.PairingRequests.Any(request => request.Status == PairingRequestStatuses.Approved))
                 .Select(item => new DeviceModeResponse(item.CurrentMode, item.UpdatedAt))
                 .FirstOrDefaultAsync(cancellationToken);
 
@@ -229,7 +237,10 @@ public static class DeviceEndpoints
         try
         {
             var device = await dbContext.Devices
-                .FirstOrDefaultAsync(item => item.Id == deviceId && item.UserId == userId, cancellationToken);
+                .FirstOrDefaultAsync(item => item.Id == deviceId
+                    && item.UserId == userId
+                    && item.PairingRequests.Any(request => request.ParentId == userId
+                        && request.Status == PairingRequestStatuses.Approved), cancellationToken);
 
             if (device is null)
             {
@@ -279,7 +290,10 @@ public static class DeviceEndpoints
         try
         {
             var device = await dbContext.Devices
-                .FirstOrDefaultAsync(item => item.Id == deviceId && item.DeviceToken == deviceToken, cancellationToken);
+                .FirstOrDefaultAsync(item => item.Id == deviceId
+                    && item.DeviceToken == deviceToken
+                    && item.UserId != null
+                    && item.PairingRequests.Any(request => request.Status == PairingRequestStatuses.Approved), cancellationToken);
 
             if (device is null)
             {
@@ -350,7 +364,10 @@ public static class DeviceEndpoints
         try
         {
             var deviceExists = await dbContext.Devices
-                .AnyAsync(item => item.Id == deviceId && item.DeviceToken == deviceToken, cancellationToken);
+                .AnyAsync(item => item.Id == deviceId
+                    && item.DeviceToken == deviceToken
+                    && item.UserId != null
+                    && item.PairingRequests.Any(request => request.Status == PairingRequestStatuses.Approved), cancellationToken);
 
             if (!deviceExists)
             {
@@ -411,7 +428,10 @@ public static class DeviceEndpoints
         {
             var deviceExists = await dbContext.Devices
                 .AsNoTracking()
-                .AnyAsync(item => item.Id == deviceId && item.UserId == userId, cancellationToken);
+                .AnyAsync(item => item.Id == deviceId
+                    && item.UserId == userId
+                    && item.PairingRequests.Any(request => request.ParentId == userId
+                        && request.Status == PairingRequestStatuses.Approved), cancellationToken);
 
             if (!deviceExists)
             {
@@ -578,6 +598,3 @@ public static class DeviceEndpoints
             statusCode: StatusCodes.Status500InternalServerError);
     }
 }
-
-
-

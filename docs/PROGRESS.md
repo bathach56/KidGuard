@@ -1029,3 +1029,30 @@ Next
 
 - Update Device List API for approved devices.
 - Keep Mode Update, Mode Sync, Heartbeat, and Log Upload APIs compatible with approved devices.
+
+---
+
+## 2026-07-01
+
+### Tran Phuc Thinh
+
+Done
+
+- Updated Device List API to return only approved devices for the authenticated parent.
+- Kept Mode Update compatible with approved owned devices only.
+- Kept Mode Sync, Heartbeat, and Log Upload compatible with approved Windows Service Device Token flow.
+- Updated Swagger metadata and endpoint descriptions for Version 1.0.1 approval-based pairing.
+- Added backend approval pairing smoke test script.
+- Verified backend build and approval pairing smoke test successfully.
+
+In Progress
+
+- Backend Version 1.0.1 core approval pairing flow is ready for Windows Client integration.
+
+Blocked
+
+- Protected API documentation files require verified Admin authority for updates.
+
+Next
+
+- Coordinate Windows Client integration against the Version 1.0.1 pairing APIs.

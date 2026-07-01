@@ -155,23 +155,23 @@ Restrictions
   Priority: High
   Details: Parent can see pending, approved, rejected, or expired status.
 
-- [ ] Update Device List API for approved devices
+- [x] Update Device List API for approved devices
   Priority: Medium
   Details: Parent should only see approved and owned devices.
 
-- [ ] Keep Mode Update API compatible with approved devices
+- [x] Keep Mode Update API compatible with approved devices
   Priority: High
   Details: Parent can change mode only for approved owned device.
 
-- [ ] Keep Mode Sync, Heartbeat, and Log Upload APIs compatible with Windows Service
+- [x] Keep Mode Sync, Heartbeat, and Log Upload APIs compatible with Windows Service
   Priority: High
   Details: Windows Service continues to use Device Token after approval.
 
-- [ ] Update Swagger for all Version 1.0.1 endpoints
+- [x] Update Swagger for all Version 1.0.1 endpoints
   Priority: High
   Details: Include auth type, request body, response body, and error cases.
 
-- [ ] Add backend smoke test for approval-based pairing
+- [x] Add backend smoke test for approval-based pairing
   Priority: High
   Details: Register, login, child code, parent request, child approve, heartbeat, mode, log.
 

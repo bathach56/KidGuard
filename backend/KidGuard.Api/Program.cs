@@ -52,7 +52,7 @@ builder.Services.AddSwaggerGen(options =>
     {
         Title = "KidGuard API",
         Version = "v1",
-        Description = "Parental Control System API for Parent Mobile and Windows Agent integration. Parent endpoints use JWT. Windows Agent endpoints use Device Token. Pair code creation uses Setup Token."
+        Description = "KidGuard Version 1.0.1 API for Windows-first Parent/Child approval-based pairing. Parent endpoints use JWT. Child pairing endpoints use temporary connection codes. Approved Windows Service endpoints use Device Token."
     });
 
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
@@ -106,7 +106,7 @@ app.MapGet("/health", () => Results.Ok(new
     data = new
     {
         status = "healthy",
-        version = "1.0.0"
+        version = "1.0.1"
     }
 }))
 .WithName("GetHealth")
