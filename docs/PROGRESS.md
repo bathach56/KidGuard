@@ -999,3 +999,33 @@ Next
 
 - Add EF migration for PairingRequests.
 - Implement Child Connection Code API.
+
+---
+
+## 2026-07-01
+
+### Tran Phuc Thinh
+
+Done
+
+- Added EF migration for PairingRequests.
+- Added Child Connection Code API.
+- Added Parent Pairing Request API.
+- Added Child Pending Request Poll API.
+- Added Child Approve Pairing API with one-time Device Token return.
+- Added Child Reject Pairing API.
+- Added Parent Pairing Status API.
+- Verified approve and reject pairing smoke tests against local Backend and LocalDB.
+
+In Progress
+
+- Preparing approved-device compatibility checks for device list, mode update, mode sync, heartbeat, and log upload.
+
+Blocked
+
+- Protected API documentation files require verified Admin authority for updates.
+
+Next
+
+- Update Device List API for approved devices.
+- Keep Mode Update, Mode Sync, Heartbeat, and Log Upload APIs compatible with approved devices.

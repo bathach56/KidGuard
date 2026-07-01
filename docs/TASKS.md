@@ -127,31 +127,31 @@ Restrictions
   Priority: High
   Details: Store requester parent, child device/session, code, status, expiration, approval time, rejection time, and created time.
 
-- [ ] Add EF migration for Version 1.0.1 pairing flow
+- [x] Add EF migration for Version 1.0.1 pairing flow
   Priority: High
   Details: Add new table or update PairCodes without breaking existing device/mode/log tables.
 
-- [ ] Add Child Connection Code API
+- [x] Add Child Connection Code API
   Priority: High
   Details: Child client requests a temporary code without parent login.
 
-- [ ] Add Parent Pairing Request API
+- [x] Add Parent Pairing Request API
   Priority: High
   Details: Parent enters child code and creates a pending request.
 
-- [ ] Add Child Pending Request Poll API
+- [x] Add Child Pending Request Poll API
   Priority: High
   Details: Child client polls Backend and receives pending parent request information.
 
-- [ ] Add Child Approve Pairing API
+- [x] Add Child Approve Pairing API
   Priority: High
   Details: Child approves request, Backend binds device to parent and issues device credentials.
 
-- [ ] Add Child Reject Pairing API
+- [x] Add Child Reject Pairing API
   Priority: High
   Details: Child rejects request and Backend marks request as rejected.
 
-- [ ] Add Pairing Status API
+- [x] Add Pairing Status API
   Priority: High
   Details: Parent can see pending, approved, rejected, or expired status.
 

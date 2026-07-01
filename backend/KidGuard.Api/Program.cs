@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 using KidGuard.Api.Data;
 using KidGuard.Api.Endpoints;
 using KidGuard.Api.Options;
@@ -96,6 +96,7 @@ app.UseAuthorization();
 
 app.MapAuthEndpoints();
 app.MapPairCodeEndpoints();
+app.MapPairingEndpoints();
 app.MapDeviceEndpoints();
 
 app.MapGet("/health", () => Results.Ok(new
@@ -112,6 +113,3 @@ app.MapGet("/health", () => Results.Ok(new
 .WithOpenApi();
 
 app.Run();
-
-
-
