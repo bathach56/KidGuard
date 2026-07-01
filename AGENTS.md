@@ -215,11 +215,17 @@ AI MAY edit
 
 /mobile
 
+/docs/TASKS.md only for own assigned task status and notes
+
+/docs/PROGRESS.md only for own progress entries
+
+/docs/IDEAS.md only to record confirmed ideas
+
 AI MUST NOT edit
 
 /windows-agent
 
-/docs
+/docs protected documentation files
 
 AGENTS.md
 
@@ -235,13 +241,19 @@ AI MAY edit
 
 /windows-agent
 
+/docs/TASKS.md only for own assigned task status and notes
+
+/docs/PROGRESS.md only for own progress entries
+
+/docs/IDEAS.md only to record confirmed ideas
+
 AI MUST NOT edit
 
 /backend
 
 /mobile
 
-/docs
+/docs protected documentation files
 
 AGENTS.md
 
@@ -261,9 +273,28 @@ Admin is the highest authority and MAY customize all modules, documentation, con
 
 Admin permission overrides the normal module ownership restrictions for Trần Phúc Thịnh and Phạm Bá Thạch.
 
-Only verified Admin MAY edit /docs and AGENTS.md.
+Only verified Admin MAY edit AGENTS.md and protected documentation files.
 
-Trần Phúc Thịnh and Phạm Bá Thạch MUST NOT edit /docs or AGENTS.md directly.
+Trần Phúc Thịnh and Phạm Bá Thạch MAY directly edit limited tracking documentation:
+
+- docs/TASKS.md only for tasks assigned to their own role
+- docs/PROGRESS.md only for their own daily progress entries
+- docs/IDEAS.md only to record confirmed ideas
+
+They MUST NOT edit AGENTS.md or protected documentation files directly.
+
+Protected documentation files include:
+
+- docs/PROJECT_RULES.md
+- docs/ARCHITECTURE.md
+- docs/API_SPEC.md
+- docs/DATABASE.md
+- docs/SECURITY.md
+- docs/DECISIONS.md
+- docs/ROADMAP.md
+- docs/VERSION_*_PLAN.md
+
+They MUST NOT change architecture, API contracts, database design, security rules, roadmap direction, team authority rules, or another member's task ownership unless current user is verified Admin.
 
 ---
 

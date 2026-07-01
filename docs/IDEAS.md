@@ -88,6 +88,16 @@ AI may update IDEAS.md only after the developer confirms that the idea should be
 
 AI may update TASKS.md, API_SPEC.md, DATABASE.md, ARCHITECTURE.md, SECURITY.md, or DECISIONS.md only after the team confirms the idea is approved for implementation.
 
+Team members may record confirmed ideas in this file without verified Admin authority.
+
+Limits:
+
+- They may add idea entries.
+- They may update status for ideas they own after team discussion.
+- They must not change idea workflow rules.
+- They must not convert ideas into tasks without the required approval.
+- They must not change API, database, architecture, security, mode behavior, or roadmap direction in this file.
+
 ---
 
 # Idea Approval Workflow

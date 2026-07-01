@@ -677,6 +677,67 @@ These alternatives were rejected because Version 1.0.1 needs a strict authority 
 
 ---
 
+## DEC-0017
+
+Date
+
+2026-07-01
+
+Status
+
+Accepted
+
+Category
+
+Team
+
+Decision
+
+Member 1 and Member 2 may edit limited tracking documentation without verified Admin authority.
+
+Allowed tracking documentation:
+
+- TASKS.md for tasks assigned to their own role.
+- PROGRESS.md for their own daily progress entries.
+- IDEAS.md for confirmed idea records.
+
+Protected documentation remains restricted to verified Admin:
+
+- AGENTS.md
+- PROJECT_RULES.md
+- ARCHITECTURE.md
+- API_SPEC.md
+- DATABASE.md
+- SECURITY.md
+- DECISIONS.md
+- ROADMAP.md
+- VERSION_*_PLAN.md
+
+Reason
+
+Team members need to record what they completed, update their own task status, and capture useful ideas during normal development.
+
+Locking every documentation file behind Admin makes progress tracking slower and makes the task board less accurate.
+
+Impact
+
+AI may help a normal team member update only their own task/progress/idea records.
+
+AI must still refuse protected documentation edits unless the current user is verified Admin.
+
+AI must not let a team member change another member's task ownership, source-of-truth contracts, project authority rules, architecture, API, database, security, roadmap direction, or release plans.
+
+Alternatives Considered
+
+- Keep all documentation restricted to Admin.
+- Let all members edit every documentation file.
+
+The first alternative was rejected because it blocks normal progress tracking.
+
+The second alternative was rejected because source-of-truth files still need strict control.
+
+---
+
 # Future Decisions
 
 When a major change is proposed, create a new decision.
@@ -773,6 +834,7 @@ AI must never make architectural decisions automatically.
 | DEC-0014 | Accepted | Architecture | Version 1.0.1 uses Windows-first Parent/Child approval pairing |
 | DEC-0015 | Accepted | Security | Admin authority requires owner secret hash verification |
 | DEC-0016 | Accepted | Team | Documentation and AGENTS.md edits require verified Admin |
+| DEC-0017 | Accepted | Team | Team members may edit limited tracking documentation |
 
 ---
 

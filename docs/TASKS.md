@@ -106,9 +106,12 @@ Backend, Database, API, Swagger, and Mobile adaptation after Windows is stable.
 
 Restrictions
 
-- Must not edit documentation files.
+- Must not edit protected documentation files.
 - Must not edit AGENTS.md.
 - Must not edit Windows Agent implementation files.
+- May update TASKS.md only for own assigned task status and notes.
+- May update PROGRESS.md only for own progress entries.
+- May update IDEAS.md only to record confirmed ideas.
 
 ### Thịnh - Backend And Database
 
@@ -200,9 +203,12 @@ Windows Parent Client, Windows Child Client, Windows Service, process protection
 
 Restrictions
 
-- Must not edit documentation files.
+- Must not edit protected documentation files.
 - Must not edit AGENTS.md.
 - Must not edit Backend or Mobile implementation files.
+- May update TASKS.md only for own assigned task status and notes.
+- May update PROGRESS.md only for own progress entries.
+- May update IDEAS.md only to record confirmed ideas.
 
 ### Thạch - Windows Client
 

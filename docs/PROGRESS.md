@@ -268,6 +268,31 @@ Next
 
 ---
 
+## 2026-07-01
+
+### Admin
+
+Done
+
+- Updated documentation permissions so team members can maintain limited tracking documentation.
+- Allowed Trần Phúc Thịnh and Phạm Bá Thạch to update their own TASKS.md task status, PROGRESS.md entries, and confirmed IDEAS.md records.
+- Kept protected documentation and AGENTS.md restricted to verified Admin.
+- Added DEC-0017 for the limited tracking documentation rule.
+
+In Progress
+
+- None.
+
+Blocked
+
+- None.
+
+Next
+
+- Team members can keep task status and progress records current without needing Admin for every tracking update.
+
+---
+
 ## 2026-06-29
 
 ### Tran Phuc Thinh

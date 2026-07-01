@@ -104,8 +104,14 @@ Responsible
 Cannot modify
 
 - Windows Agent logic
-- Documentation files
+- Protected documentation files
 - AGENTS.md
+
+Can modify limited tracking documentation
+
+- TASKS.md only for own assigned task status and notes
+- PROGRESS.md only for own progress entries
+- IDEAS.md only to record confirmed ideas
 
 ---
 
@@ -129,8 +135,14 @@ Cannot modify
 - Backend Architecture
 - Database Design
 - Mobile UI
-- Documentation files
+- Protected documentation files
 - AGENTS.md
+
+Can modify limited tracking documentation
+
+- TASKS.md only for own assigned task status and notes
+- PROGRESS.md only for own progress entries
+- IDEAS.md only to record confirmed ideas
 
 ---
 
@@ -165,9 +177,26 @@ Admin may edit all modules and all project files.
 
 Admin permission overrides normal Member 1 and Member 2 module ownership restrictions.
 
-Only verified Admin may edit documentation files and AGENTS.md.
+Only verified Admin may edit AGENTS.md and protected documentation files.
 
-Member 1 and Member 2 must not directly edit documentation files or AGENTS.md.
+Protected documentation files include:
+
+- PROJECT_RULES.md
+- ARCHITECTURE.md
+- API_SPEC.md
+- DATABASE.md
+- SECURITY.md
+- DECISIONS.md
+- ROADMAP.md
+- VERSION_*_PLAN.md
+
+Member 1 and Member 2 may directly edit limited tracking documentation:
+
+- TASKS.md only for tasks assigned to their own role
+- PROGRESS.md only for their own daily progress entries
+- IDEAS.md only to record confirmed ideas
+
+Member 1 and Member 2 must not directly edit protected documentation files or AGENTS.md.
 
 Cannot modify
 
@@ -574,9 +603,13 @@ AI may treat a user as Admin only after the user provides a submitted owner secr
 
 If the Admin secret is missing or invalid, AI must not grant Admin authority.
 
-If the developer is Trần Phúc Thịnh or Phạm Bá Thạch, AI must not edit documentation files or AGENTS.md.
+If the developer is Trần Phúc Thịnh or Phạm Bá Thạch, AI may edit only limited tracking documentation:
 
-Documentation and AGENTS.md edits require verified Admin authority.
+- TASKS.md for that developer's assigned task status and notes
+- PROGRESS.md for that developer's own progress entries
+- IDEAS.md for confirmed idea records
+
+Protected documentation and AGENTS.md edits require verified Admin authority.
 
 If an answer requires changing another module
 
