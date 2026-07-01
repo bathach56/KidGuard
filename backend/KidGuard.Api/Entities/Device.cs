@@ -1,4 +1,4 @@
-﻿namespace KidGuard.Api.Entities;
+namespace KidGuard.Api.Entities;
 
 public class Device
 {
@@ -18,4 +18,5 @@ public class Device
     public ICollection<DeviceLog> DeviceLogs { get; set; } = new List<DeviceLog>();
     public ICollection<Heartbeat> Heartbeats { get; set; } = new List<Heartbeat>();
     public PairCode? PairCode { get; set; }
+    public ICollection<PairingRequest> PairingRequests { get; set; } = new List<PairingRequest>();
 }

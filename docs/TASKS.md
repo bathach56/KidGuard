@@ -1,4 +1,4 @@
-﻿# TASKS.md
+# TASKS.md
 
 # Parental Control System
 
@@ -123,7 +123,7 @@ Restrictions
   Priority: High
   Details: Login must return JWT and work for both Windows Parent Client and future Mobile Parent App.
 
-- [ ] Design PairingRequests database model
+- [x] Design PairingRequests database model
   Priority: High
   Details: Store requester parent, child device/session, code, status, expiration, approval time, rejection time, and created time.
 
@@ -731,25 +731,3 @@ These features are not part of Demo V1 and must not delay Demo V1.
 - AI Recommendation
 - Remote Desktop
 - Multi-platform Agent
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

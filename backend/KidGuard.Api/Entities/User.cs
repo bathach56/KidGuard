@@ -1,4 +1,4 @@
-﻿namespace KidGuard.Api.Entities;
+namespace KidGuard.Api.Entities;
 
 public class User
 {
@@ -11,4 +11,5 @@ public class User
     public DateTime UpdatedAt { get; set; }
 
     public ICollection<Device> Devices { get; set; } = new List<Device>();
+    public ICollection<PairingRequest> PairingRequests { get; set; } = new List<PairingRequest>();
 }

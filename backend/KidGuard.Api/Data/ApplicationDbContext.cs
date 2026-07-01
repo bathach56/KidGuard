@@ -1,4 +1,4 @@
-﻿using KidGuard.Api.Entities;
+using KidGuard.Api.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace KidGuard.Api.Data;
@@ -14,6 +14,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<Device> Devices => Set<Device>();
     public DbSet<Mode> Modes => Set<Mode>();
     public DbSet<PairCode> PairCodes => Set<PairCode>();
+    public DbSet<PairingRequest> PairingRequests => Set<PairingRequest>();
     public DbSet<Heartbeat> Heartbeats => Set<Heartbeat>();
     public DbSet<DeviceLog> DeviceLogs => Set<DeviceLog>();
 
@@ -26,6 +27,7 @@ public class ApplicationDbContext : DbContext
         ConfigureModes(modelBuilder);
         ConfigureDevices(modelBuilder);
         ConfigurePairCodes(modelBuilder);
+        ConfigurePairingRequests(modelBuilder);
         ConfigureHeartbeats(modelBuilder);
         ConfigureDeviceLogs(modelBuilder);
     }
@@ -124,6 +126,35 @@ public class ApplicationDbContext : DbContext
         });
     }
 
+
+    private static void ConfigurePairingRequests(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<PairingRequest>(entity =>
+        {
+            entity.ToTable("PairingRequests");
+            entity.HasKey(pairingRequest => pairingRequest.Id);
+            entity.HasIndex(pairingRequest => pairingRequest.ParentId);
+            entity.HasIndex(pairingRequest => pairingRequest.DeviceId);
+            entity.HasIndex(pairingRequest => pairingRequest.ConnectionCode);
+            entity.HasIndex(pairingRequest => pairingRequest.Status);
+            entity.HasIndex(pairingRequest => pairingRequest.ExpiresAt);
+
+            entity.Property(pairingRequest => pairingRequest.ConnectionCode).HasMaxLength(20).IsRequired();
+            entity.Property(pairingRequest => pairingRequest.Status).HasMaxLength(20).IsRequired();
+            entity.Property(pairingRequest => pairingRequest.CreatedAt).HasDefaultValueSql("GETUTCDATE()");
+            entity.Property(pairingRequest => pairingRequest.UpdatedAt).HasDefaultValueSql("GETUTCDATE()");
+
+            entity.HasOne(pairingRequest => pairingRequest.Parent)
+                .WithMany(parent => parent.PairingRequests)
+                .HasForeignKey(pairingRequest => pairingRequest.ParentId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(pairingRequest => pairingRequest.Device)
+                .WithMany(device => device.PairingRequests)
+                .HasForeignKey(pairingRequest => pairingRequest.DeviceId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+    }
     private static void ConfigureHeartbeats(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Heartbeat>(entity =>
@@ -166,6 +197,3 @@ public class ApplicationDbContext : DbContext
         });
     }
 }
-
-
-

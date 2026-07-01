@@ -1,4 +1,4 @@
-﻿# PROGRESS.md
+# PROGRESS.md
 
 # Daily Progress Log
 
@@ -973,3 +973,29 @@ Next
 
 - Design PairingRequests database model.
 - Add EF migration for Version 1.0.1 pairing flow after the model is implemented.
+
+---
+
+## 2026-07-01
+
+### Tran Phuc Thinh
+
+Done
+
+- Added PairingRequest entity and approved Version 1.0.1 pairing request statuses.
+- Added EF DbSet and mappings for PairingRequests.
+- Linked pairing requests to parent users and child devices.
+- Verified backend build with 0 warnings and 0 errors.
+
+In Progress
+
+- Preparing EF migration for the Version 1.0.1 pairing flow.
+
+Blocked
+
+- Protected database/API documentation files require verified Admin authority for updates.
+
+Next
+
+- Add EF migration for PairingRequests.
+- Implement Child Connection Code API.
