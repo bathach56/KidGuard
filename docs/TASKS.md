@@ -115,11 +115,11 @@ Restrictions
 
 ### Thịnh - Backend And Database
 
-- [ ] Add Parent Register API
+- [x] Add Parent Register API
   Priority: High
   Details: Parent can create an account with email, password, full name, and optional phone number.
 
-- [ ] Keep and verify Parent Login API
+- [x] Keep and verify Parent Login API
   Priority: High
   Details: Login must return JWT and work for both Windows Parent Client and future Mobile Parent App.
 
@@ -731,6 +731,7 @@ These features are not part of Demo V1 and must not delay Demo V1.
 - AI Recommendation
 - Remote Desktop
 - Multi-platform Agent
+
 
 
 

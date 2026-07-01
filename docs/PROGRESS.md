@@ -945,3 +945,31 @@ Blocked
 Next
 
 - Replace Demo V1 bridge states with Version 1.0.1 pairing status API results after Backend is ready.
+
+---
+
+## 2026-07-01
+
+### Tran Phuc Thinh
+
+Done
+
+- Added Backend Parent Register API at POST /auth/register.
+- Added RegisterRequest and RegisterResponse contracts.
+- Extended password hashing service to hash new parent passwords with BCrypt.
+- Verified Parent Login API still works by logging in with a newly registered parent account.
+- Verified backend build with 0 warnings and 0 errors.
+- Ran register/login smoke test successfully.
+
+In Progress
+
+- Preparing Version 1.0.1 backend pairing request model and approval-based pairing APIs.
+
+Blocked
+
+- Protected API documentation files require verified Admin authority for updates.
+
+Next
+
+- Design PairingRequests database model.
+- Add EF migration for Version 1.0.1 pairing flow after the model is implemented.
