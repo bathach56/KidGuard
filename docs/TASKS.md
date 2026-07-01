@@ -238,7 +238,7 @@ Restrictions
 
 - [ ] Add Parent enter child code screen
   Priority: High
-  Details: Parent enters child connection code and creates pending request.
+  Details: Bridge implemented with Demo V1 POST /devices/pair so Parent Windows Client can pair using a child code after login. Final Version 1.0.1 behavior still needs the pending pairing request API.
 
 - [ ] Add Parent pairing status view
   Priority: Medium

@@ -8,8 +8,10 @@ namespace KidGuard.Client;
 public partial class MainWindow : Window
 {
     private readonly AuthApiClient authApiClient = new();
+    private readonly DeviceApiClient deviceApiClient = new();
     private readonly PairCodeApiClient pairCodeApiClient = new();
     private AuthSession? authSession;
+    private PairedDevice? pairedDevice;
     private PairCodeSession? pairCodeSession;
 
     public MainWindow()
@@ -78,6 +80,52 @@ public partial class MainWindow : Window
         finally
         {
             SetCreateCodeLoadingState(isLoading: false);
+        }
+    }
+
+    private async void SendPairRequestButton_Click(object sender, RoutedEventArgs e)
+    {
+        var apiBaseUrl = ApiBaseUrlTextBox.Text.Trim();
+        var pairCode = ChildCodeTextBox.Text.Trim().ToUpperInvariant();
+
+        if (!TryValidatePairInput(apiBaseUrl, pairCode, out var baseUri, out var validationMessage))
+        {
+            SetPairingStatus(validationMessage, isError: true);
+            return;
+        }
+
+        SetPairRequestLoadingState(isLoading: true);
+        SetPairingStatus("Pairing device...", isError: false);
+
+        try
+        {
+            pairedDevice = await deviceApiClient.PairDeviceAsync(
+                baseUri,
+                authSession!.AccessToken,
+                pairCode,
+                CancellationToken.None);
+
+            DeviceTokenTextBox.Text = pairedDevice.DeviceToken;
+            DeviceTokenTextBox.Visibility = Visibility.Visible;
+            SetPairingStatus(
+                $"Device paired: {pairedDevice.DeviceName} ({pairedDevice.DeviceId}). Current mode: {pairedDevice.Mode}. Device token is shown once for the Demo V1 bridge.",
+                isError: false);
+        }
+        catch (HttpRequestException exception)
+        {
+            SetPairingStatus($"Cannot connect to Backend: {exception.Message}", isError: true);
+        }
+        catch (InvalidOperationException exception)
+        {
+            SetPairingStatus(exception.Message, isError: true);
+        }
+        catch (TaskCanceledException)
+        {
+            SetPairingStatus("Pairing request timed out or was canceled.", isError: true);
+        }
+        finally
+        {
+            SetPairRequestLoadingState(isLoading: false);
         }
     }
 
@@ -188,6 +236,35 @@ public partial class MainWindow : Window
         return true;
     }
 
+    private bool TryValidatePairInput(
+        string apiBaseUrl,
+        string pairCode,
+        out Uri baseUri,
+        out string message)
+    {
+        baseUri = default!;
+        message = string.Empty;
+
+        if (authSession is null)
+        {
+            message = "Parent login is required before pairing.";
+            return false;
+        }
+
+        if (!TryValidateApiBaseUrl(apiBaseUrl, out baseUri, out message))
+        {
+            return false;
+        }
+
+        if (string.IsNullOrWhiteSpace(pairCode))
+        {
+            message = "Child connection code is required.";
+            return false;
+        }
+
+        return true;
+    }
+
     private static bool TryValidateApiBaseUrl(string apiBaseUrl, out Uri baseUri, out string message)
     {
         baseUri = default!;
@@ -219,10 +296,25 @@ public partial class MainWindow : Window
         ApiBaseUrlTextBox.IsEnabled = !isLoading;
     }
 
+    private void SetPairRequestLoadingState(bool isLoading)
+    {
+        SendPairRequestButton.IsEnabled = !isLoading;
+        SendPairRequestButton.Content = isLoading ? "Sending" : "Send Request";
+        ChildCodeTextBox.IsEnabled = !isLoading;
+    }
+
     private void SetParentStatus(string message, bool isError)
     {
         ParentLoginStatusTextBlock.Text = message;
         ParentLoginStatusTextBlock.Foreground = isError
+            ? System.Windows.Media.Brushes.Firebrick
+            : System.Windows.Media.Brushes.ForestGreen;
+    }
+
+    private void SetPairingStatus(string message, bool isError)
+    {
+        PairingStatusTextBlock.Text = message;
+        PairingStatusTextBlock.Foreground = isError
             ? System.Windows.Media.Brushes.Firebrick
             : System.Windows.Media.Brushes.ForestGreen;
     }

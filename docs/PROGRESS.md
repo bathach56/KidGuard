@@ -868,3 +868,28 @@ Next
 
 - Wire pending request polling after Backend exposes the child pending request API.
 - Wire approve/reject after Backend exposes the child approval APIs.
+
+---
+
+## 2026-07-01
+
+### Pham Ba Thach
+
+Done
+
+- Wired Parent pairing action to the existing Backend POST /devices/pair endpoint.
+- Parent Windows Client can now login, enter a child code, pair the device, and display the one-time Device Token for the Demo V1 bridge.
+- Added parent pairing status and error messages.
+- Verified windows-agent solution builds with 0 warnings and 0 errors.
+
+In Progress
+
+- Preparing the Parent pairing status flow for Version 1.0.1.
+
+Blocked
+
+- Final Parent enter-code behavior still requires the Version 1.0.1 pending pairing request API instead of direct Demo V1 pairing.
+
+Next
+
+- Replace the Demo V1 direct pair bridge with the Version 1.0.1 pending request API when Backend is ready.
