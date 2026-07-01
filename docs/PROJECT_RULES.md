@@ -130,6 +130,45 @@ Cannot modify
 
 ---
 
+## Admin
+
+Name
+
+Admin
+
+Responsible
+
+- Entire repository
+- Backend
+- Database
+- Mobile
+- Windows Agent
+- Documentation
+- Configuration
+- Testing
+- Integration
+- Emergency fixes
+- Security fixes
+- Project maintenance
+
+Authority
+
+Admin is the highest permission level in this repository.
+
+Admin may customize every part of the project when needed.
+
+Admin may edit all modules and all project files.
+
+Admin permission overrides normal Member 1 and Member 2 module ownership restrictions.
+
+Cannot modify
+
+- None, inside this repository.
+
+Admin still must keep changes understandable, documented, tested when reasonable, and committed with the project commit convention.
+
+---
+
 # 6. Development Principles
 
 Always
@@ -494,8 +533,11 @@ Allowed developers
 
 - Trần Phúc Thịnh
 - Phạm Bá Thạch
+- Admin
 
 AI only assists within that developer's responsibility.
+
+If the developer is Admin, the responsibility is the entire repository.
 
 If an answer requires changing another module
 
@@ -506,6 +548,8 @@ Explain the impact
 ↓
 
 Do not generate code outside the current developer's scope.
+
+This restriction does not apply when the current developer is Admin.
 
 ---
 

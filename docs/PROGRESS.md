@@ -172,6 +172,29 @@ If daily progress reveals a new idea, follow the idea confirmation rules in IDEA
 
 ---
 
+## 2026-07-01
+
+### Admin
+
+Done
+
+- Added Admin as the highest repository permission level.
+- Updated AGENTS.md, PROJECT_RULES.md, and DECISIONS.md with Admin scope and authority.
+
+In Progress
+
+- None.
+
+Blocked
+
+- None.
+
+Next
+
+- Use Admin permission for cross-module fixes when needed.
+
+---
+
 ## 2026-06-29
 
 ### Tran Phuc Thinh

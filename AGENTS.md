@@ -104,6 +104,40 @@ feature/agent/*
 
 ---
 
+# Admin Role
+
+Name
+
+Admin
+
+Role
+
+Highest Project Authority
+
+Authority
+
+Admin is the highest permission level in this repository.
+
+Admin MAY edit everything in this project, including:
+
+- /backend
+- /mobile
+- /windows-agent
+- /docs
+- Configuration files
+- Build files
+- Tests
+- Documentation
+- Integration scripts
+
+Admin MAY change any module when needed for bug fixes, security fixes, integration fixes, demo fixes, refactoring, testing, documentation, or project maintenance.
+
+Admin permission overrides the normal Member 1 and Member 2 module scope restrictions.
+
+Admin MUST still keep changes understandable, documented, and committed with the project commit convention.
+
+---
+
 # AI Startup Rules
 
 Every NEW conversation MUST begin with these questions.
@@ -120,6 +154,7 @@ Available answers
 
 - Trần Phúc Thịnh
 - Phạm Bá Thạch
+- Admin
 
 Question 3
 
@@ -182,6 +217,20 @@ AI MUST NOT edit
 /mobile
 
 unless explicitly requested.
+
+---
+
+If current user is
+
+Admin
+
+AI MAY edit
+
+Everything in this repository.
+
+Admin is the highest authority and MAY customize all modules, documentation, configuration, tests, and project files.
+
+Admin permission overrides the normal module ownership restrictions for Trần Phúc Thịnh and Phạm Bá Thạch.
 
 ---
 
@@ -515,6 +564,8 @@ AI must verify
 ✓ Database exists
 
 ✓ Architecture unchanged
+
+If current user is Admin, module ownership is automatically valid for every file in this repository.
 
 If any answer is NO
 

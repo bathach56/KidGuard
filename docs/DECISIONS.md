@@ -461,6 +461,59 @@ These alternatives are rejected for Demo V1 because they weaken security or brea
 
 ---
 
+## DEC-0013
+
+Date
+
+2026-07-01
+
+Status
+
+Accepted
+
+Category
+
+Team
+
+Decision
+
+The project adds an Admin role as the highest permission level in the repository.
+
+Admin may edit every module and every project file when needed.
+
+Admin permission overrides the normal module ownership restrictions for:
+
+- Trần Phúc Thịnh
+- Phạm Bá Thạch
+
+Reason
+
+The team needs a highest-level project role that can quickly fix bugs, security issues, integration problems, demo blockers, documentation issues, and cross-module problems without waiting for separate module permissions.
+
+Impact
+
+When the current developer is Admin, AI may assist across the entire repository:
+
+- Backend
+- Database
+- Mobile
+- Windows Agent
+- Documentation
+- Configuration
+- Tests
+- Integration scripts
+
+Admin changes must still be understandable, documented when needed, tested when reasonable, and committed with the project commit convention.
+
+Alternatives Considered
+
+- Keep only separate module owners.
+- Require explicit permission every time a cross-module bug appears.
+
+These alternatives were rejected because they slow down urgent integration and demo fixes.
+
+---
+
 # Future Decisions
 
 When a major change is proposed, create a new decision.
@@ -553,6 +606,7 @@ AI must never make architectural decisions automatically.
 | DEC-0010 | Accepted | Documentation | Documentation-first approach |
 | DEC-0011 | Accepted | Windows Agent | Agent uses polling for mode synchronization in Demo V1 |
 | DEC-0012 | Accepted | Security | Setup Token is used only for pair-code creation |
+| DEC-0013 | Accepted | Team | Admin is the highest repository permission level |
 
 ---
 
