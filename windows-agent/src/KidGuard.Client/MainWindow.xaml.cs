@@ -2,6 +2,7 @@ using System.Net.Http;
 using System.Windows;
 using KidGuard.Client.Api;
 using KidGuard.Client.Configuration;
+using KidGuard.Client.Services;
 
 namespace KidGuard.Client;
 
@@ -10,9 +11,12 @@ public partial class MainWindow : Window
     private readonly AuthApiClient authApiClient = new();
     private readonly DeviceApiClient deviceApiClient = new();
     private readonly PairCodeApiClient pairCodeApiClient = new();
+    private readonly PairingApiClient pairingApiClient = new();
+    private readonly ClientDeviceCredentialStore credentialStore = new();
     private AuthSession? authSession;
-    private PairedDevice? pairedDevice;
     private PairCodeSession? pairCodeSession;
+    private PairingRequestSession? pairingRequestSession;
+    private PendingPairingRequest? pendingPairingRequest;
 
     public MainWindow()
     {
@@ -41,10 +45,9 @@ public partial class MainWindow : Window
     private async void CreateCodeButton_Click(object sender, RoutedEventArgs e)
     {
         var apiBaseUrl = ChildApiBaseUrlTextBox.Text.Trim();
-        var setupToken = ChildSetupTokenPasswordBox.Password.Trim();
         var deviceName = ChildDeviceNameTextBox.Text.Trim();
 
-        if (!TryValidateChildCodeInput(apiBaseUrl, setupToken, deviceName, out var baseUri, out var validationMessage))
+        if (!TryValidateChildCodeInput(apiBaseUrl, deviceName, out var baseUri, out var validationMessage))
         {
             SetChildStatus(validationMessage, isError: true);
             return;
@@ -57,13 +60,15 @@ public partial class MainWindow : Window
         {
             pairCodeSession = await pairCodeApiClient.CreatePairCodeAsync(
                 baseUri,
-                setupToken,
                 deviceName,
                 Environment.MachineName,
                 CancellationToken.None);
 
-            ConnectionCodeTextBlock.Text = pairCodeSession.PairCode;
-            SetChildStatus($"Code expires in {pairCodeSession.ExpiresIn} seconds.", isError: false);
+            ConnectionCodeTextBlock.Text = pairCodeSession.ConnectionCode;
+            PendingRequestTextBlock.Text = "No parent request yet.";
+            pendingPairingRequest = null;
+            SetChildDecisionButtonsEnabled(isEnabled: false);
+            SetChildStatus($"Code expires in {pairCodeSession.ExpiresInSeconds} seconds.", isError: false);
         }
         catch (HttpRequestException exception)
         {
@@ -95,22 +100,21 @@ public partial class MainWindow : Window
         }
 
         SetPairRequestLoadingState(isLoading: true);
-        UpdatePairingState("Waiting", "Pairing device...", PairingStateKind.Waiting);
+        UpdatePairingState("Waiting", "Sending pairing request...", PairingStateKind.Waiting);
 
         try
         {
-            pairedDevice = await deviceApiClient.PairDeviceAsync(
+            pairingRequestSession = await pairingApiClient.CreateParentPairingRequestAsync(
                 baseUri,
                 authSession!.AccessToken,
                 pairCode,
                 CancellationToken.None);
 
-            ShowPairedDevice(pairedDevice);
+            ShowPairingRequest(pairingRequestSession);
             UpdatePairingState(
-                "Paired",
-                "Device paired. Copy the one-time Device Token for the Demo V1 bridge.",
-                PairingStateKind.Success);
-            await LoadDevicesAsync(baseUri, authSession.AccessToken);
+                pairingRequestSession.Status,
+                "Pairing request sent. Ask the child to approve it, then refresh status.",
+                PairingStateKind.Waiting);
         }
         catch (HttpRequestException exception)
         {
@@ -127,6 +131,101 @@ public partial class MainWindow : Window
         finally
         {
             SetPairRequestLoadingState(isLoading: false);
+        }
+    }
+
+    private async void RefreshPairingStatusButton_Click(object sender, RoutedEventArgs e)
+    {
+        var apiBaseUrl = ApiBaseUrlTextBox.Text.Trim();
+
+        if (pairingRequestSession is null)
+        {
+            UpdatePairingState("Not started", "Send a pairing request before refreshing status.", PairingStateKind.Error);
+            return;
+        }
+
+        if (!TryValidateDeviceListInput(apiBaseUrl, out var baseUri, out var validationMessage))
+        {
+            UpdatePairingState(pairingRequestSession.Status, validationMessage, PairingStateKind.Error);
+            return;
+        }
+
+        SetPairRequestLoadingState(isLoading: true);
+
+        try
+        {
+            pairingRequestSession = await pairingApiClient.GetPairingStatusAsync(
+                baseUri,
+                authSession!.AccessToken,
+                pairingRequestSession.PairingRequestId,
+                CancellationToken.None);
+
+            ShowPairingRequest(pairingRequestSession);
+            UpdatePairingState(
+                pairingRequestSession.Status,
+                $"Pairing status is {pairingRequestSession.Status}.",
+                GetPairingStateKind(pairingRequestSession.Status));
+
+            if (string.Equals(pairingRequestSession.Status, "approved", StringComparison.OrdinalIgnoreCase))
+            {
+                await LoadDevicesAsync(baseUri, authSession.AccessToken);
+            }
+        }
+        catch (HttpRequestException exception)
+        {
+            UpdatePairingState(pairingRequestSession.Status, $"Cannot connect to Backend: {exception.Message}", PairingStateKind.Error);
+        }
+        catch (InvalidOperationException exception)
+        {
+            UpdatePairingState(pairingRequestSession.Status, exception.Message, PairingStateKind.Error);
+        }
+        catch (TaskCanceledException)
+        {
+            UpdatePairingState(pairingRequestSession.Status, "Pairing status request timed out or was canceled.", PairingStateKind.Error);
+        }
+        finally
+        {
+            SetPairRequestLoadingState(isLoading: false);
+        }
+    }
+
+    private async void ParentRegisterButton_Click(object sender, RoutedEventArgs e)
+    {
+        var apiBaseUrl = ApiBaseUrlTextBox.Text.Trim();
+        var email = ParentEmailTextBox.Text.Trim();
+        var password = ParentPasswordBox.Password;
+        var fullName = ParentFullNameTextBox.Text.Trim();
+        var phoneNumber = ParentPhoneNumberTextBox.Text.Trim();
+
+        if (!TryValidateRegisterInput(apiBaseUrl, email, password, fullName, out var baseUri, out var validationMessage))
+        {
+            SetParentStatus(validationMessage, isError: true);
+            return;
+        }
+
+        SetLoginLoadingState(isLoading: true);
+        SetParentStatus("Registering...", isError: false);
+
+        try
+        {
+            await authApiClient.RegisterAsync(baseUri, email, password, fullName, phoneNumber, CancellationToken.None);
+            SetParentStatus("Register successful. You can login now.", isError: false);
+        }
+        catch (HttpRequestException exception)
+        {
+            SetParentStatus($"Cannot connect to Backend: {exception.Message}", isError: true);
+        }
+        catch (InvalidOperationException exception)
+        {
+            SetParentStatus(exception.Message, isError: true);
+        }
+        catch (TaskCanceledException)
+        {
+            SetParentStatus("Register request timed out or was canceled.", isError: true);
+        }
+        finally
+        {
+            SetLoginLoadingState(isLoading: false);
         }
     }
 
@@ -181,6 +280,126 @@ public partial class MainWindow : Window
         await LoadDevicesAsync(baseUri, authSession!.AccessToken);
     }
 
+    private void DeviceListBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+    {
+        if (DeviceListBox.SelectedItem is not DeviceSummary device)
+        {
+            SetDeviceActionsEnabled(isEnabled: false);
+            ModeStatusTextBlock.Text = "Select an approved device to change mode.";
+            LogsStatusTextBlock.Text = "Select a device to load logs.";
+            return;
+        }
+
+        SelectMode(device.Mode);
+        SetDeviceActionsEnabled(isEnabled: true);
+        ModeStatusTextBlock.Text = $"Selected {device.DeviceName}.";
+        LogsStatusTextBlock.Text = "Refresh logs to view recent activity.";
+    }
+
+    private async void UpdateModeButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (!TryGetSelectedDevice(out var device, out var validationMessage))
+        {
+            SetModeStatus(validationMessage, isError: true);
+            return;
+        }
+
+        if (!TryValidateDeviceListInput(ApiBaseUrlTextBox.Text.Trim(), out var baseUri, out validationMessage))
+        {
+            SetModeStatus(validationMessage, isError: true);
+            return;
+        }
+
+        var selectedMode = GetSelectedMode();
+        if (string.IsNullOrWhiteSpace(selectedMode))
+        {
+            SetModeStatus("Select a mode before updating.", isError: true);
+            return;
+        }
+
+        SetDeviceActionLoadingState(isLoading: true);
+        SetModeStatus($"Updating {device.DeviceName} to {selectedMode}...", isError: false);
+
+        try
+        {
+            var updatedMode = await deviceApiClient.UpdateDeviceModeAsync(
+                baseUri,
+                authSession!.AccessToken,
+                device.DeviceId,
+                selectedMode,
+                CancellationToken.None);
+
+            SetModeStatus($"Mode updated to {updatedMode}.", isError: false);
+            await LoadDevicesAsync(baseUri, authSession.AccessToken);
+        }
+        catch (HttpRequestException exception)
+        {
+            SetModeStatus($"Cannot connect to Backend: {exception.Message}", isError: true);
+        }
+        catch (InvalidOperationException exception)
+        {
+            SetModeStatus(exception.Message, isError: true);
+        }
+        catch (TaskCanceledException)
+        {
+            SetModeStatus("Mode update timed out or was canceled.", isError: true);
+        }
+        finally
+        {
+            SetDeviceActionLoadingState(isLoading: false);
+        }
+    }
+
+    private async void RefreshLogsButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (!TryGetSelectedDevice(out var device, out var validationMessage))
+        {
+            SetLogsStatus(validationMessage, isError: true);
+            return;
+        }
+
+        if (!TryValidateDeviceListInput(ApiBaseUrlTextBox.Text.Trim(), out var baseUri, out validationMessage))
+        {
+            SetLogsStatus(validationMessage, isError: true);
+            return;
+        }
+
+        SetDeviceActionLoadingState(isLoading: true);
+        SetLogsStatus($"Loading logs for {device.DeviceName}...", isError: false);
+
+        try
+        {
+            var logs = await deviceApiClient.GetDeviceLogsAsync(
+                baseUri,
+                authSession!.AccessToken,
+                device.DeviceId,
+                CancellationToken.None);
+
+            DeviceLogsListBox.ItemsSource = logs;
+            SetLogsStatus(
+                logs.Count == 0
+                    ? "No logs found for this device."
+                    : $"{logs.Count} recent log(s) loaded.",
+                isError: false);
+        }
+        catch (HttpRequestException exception)
+        {
+            SetLogsStatus($"Cannot connect to Backend: {exception.Message}", isError: true);
+        }
+        catch (InvalidOperationException exception)
+        {
+            SetLogsStatus(exception.Message, isError: true);
+        }
+        catch (TaskCanceledException)
+        {
+            SetLogsStatus("Log request timed out or was canceled.", isError: true);
+        }
+        finally
+        {
+            SetDeviceActionLoadingState(isLoading: false);
+        }
+    }
+
     private void CopyDeviceTokenButton_Click(object sender, RoutedEventArgs e)
     {
         if (string.IsNullOrWhiteSpace(DeviceTokenTextBox.Text))
@@ -191,6 +410,64 @@ public partial class MainWindow : Window
 
         Clipboard.SetText(DeviceTokenTextBox.Text);
         UpdatePairingState("Paired", "Device Token copied to clipboard.", PairingStateKind.Success);
+    }
+
+    private async void CheckPendingRequestButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (!TryValidatePendingRequestInput(out var baseUri, out var connectionCode, out var validationMessage))
+        {
+            SetChildStatus(validationMessage, isError: true);
+            return;
+        }
+
+        SetChildPendingLoadingState(isLoading: true);
+        SetChildStatus("Checking pending request...", isError: false);
+
+        try
+        {
+            pendingPairingRequest = await pairingApiClient.GetChildPendingRequestAsync(
+                baseUri,
+                connectionCode,
+                CancellationToken.None);
+
+            if (pendingPairingRequest is null)
+            {
+                PendingRequestTextBlock.Text = "No parent request yet.";
+                SetChildDecisionButtonsEnabled(isEnabled: false);
+                SetChildStatus("No pending request found.", isError: false);
+                return;
+            }
+
+            PendingRequestTextBlock.Text = pendingPairingRequest.DisplayText;
+            SetChildDecisionButtonsEnabled(isEnabled: true);
+            SetChildStatus("Pending request found. Approve or reject it.", isError: false);
+        }
+        catch (HttpRequestException exception)
+        {
+            SetChildStatus($"Cannot connect to Backend: {exception.Message}", isError: true);
+        }
+        catch (InvalidOperationException exception)
+        {
+            SetChildStatus(exception.Message, isError: true);
+        }
+        catch (TaskCanceledException)
+        {
+            SetChildStatus("Pending request check timed out or was canceled.", isError: true);
+        }
+        finally
+        {
+            SetChildPendingLoadingState(isLoading: false);
+        }
+    }
+
+    private async void ApprovePairingButton_Click(object sender, RoutedEventArgs e)
+    {
+        await SubmitChildPairingDecisionAsync(approve: true);
+    }
+
+    private async void RejectPairingButton_Click(object sender, RoutedEventArgs e)
+    {
+        await SubmitChildPairingDecisionAsync(approve: false);
     }
 
     private void ShowPanel(UIElement activePanel)
@@ -251,7 +528,6 @@ public partial class MainWindow : Window
 
     private static bool TryValidateChildCodeInput(
         string apiBaseUrl,
-        string setupToken,
         string deviceName,
         out Uri baseUri,
         out string message)
@@ -264,15 +540,54 @@ public partial class MainWindow : Window
             return false;
         }
 
-        if (string.IsNullOrWhiteSpace(setupToken))
-        {
-            message = $"Setup token is required. Set {ClientConfiguration.SetupTokenEnvironmentVariable} or {ClientConfiguration.AgentSetupTokenEnvironmentVariable}.";
-            return false;
-        }
-
         if (string.IsNullOrWhiteSpace(deviceName))
         {
             message = "Device name is required.";
+            return false;
+        }
+
+        return true;
+    }
+
+    private static bool TryValidateRegisterInput(
+        string apiBaseUrl,
+        string email,
+        string password,
+        string fullName,
+        out Uri baseUri,
+        out string message)
+    {
+        if (!TryValidateLoginInput(apiBaseUrl, email, password, out baseUri, out message))
+        {
+            return false;
+        }
+
+        if (string.IsNullOrWhiteSpace(fullName))
+        {
+            message = "Full name is required.";
+            return false;
+        }
+
+        return true;
+    }
+
+    private bool TryValidatePendingRequestInput(
+        out Uri baseUri,
+        out string connectionCode,
+        out string message)
+    {
+        baseUri = default!;
+        connectionCode = pairCodeSession?.ConnectionCode ?? string.Empty;
+        message = string.Empty;
+
+        if (!TryValidateApiBaseUrl(ChildApiBaseUrlTextBox.Text.Trim(), out baseUri, out message))
+        {
+            return false;
+        }
+
+        if (string.IsNullOrWhiteSpace(connectionCode))
+        {
+            message = "Create a child connection code before checking pending requests.";
             return false;
         }
 
@@ -333,15 +648,19 @@ public partial class MainWindow : Window
     private void SetLoginLoadingState(bool isLoading)
     {
         ParentLoginButton.IsEnabled = !isLoading;
+        ParentRegisterButton.IsEnabled = !isLoading;
         ParentLoginButton.Content = isLoading ? "Logging in" : "Login";
         ParentEmailTextBox.IsEnabled = !isLoading;
         ParentPasswordBox.IsEnabled = !isLoading;
+        ParentFullNameTextBox.IsEnabled = !isLoading;
+        ParentPhoneNumberTextBox.IsEnabled = !isLoading;
         ApiBaseUrlTextBox.IsEnabled = !isLoading;
     }
 
     private void SetPairRequestLoadingState(bool isLoading)
     {
         SendPairRequestButton.IsEnabled = !isLoading;
+        RefreshPairingStatusButton.IsEnabled = !isLoading;
         SendPairRequestButton.Content = isLoading ? "Sending" : "Send Request";
         ChildCodeTextBox.IsEnabled = !isLoading;
     }
@@ -355,6 +674,7 @@ public partial class MainWindow : Window
         {
             var devices = await deviceApiClient.GetDevicesAsync(apiBaseUrl, accessToken, CancellationToken.None);
             DeviceListBox.ItemsSource = devices;
+            SetDeviceActionsEnabled(devices.Count > 0 && DeviceListBox.SelectedItem is DeviceSummary);
             SetDeviceListStatus(
                 devices.Count == 0
                     ? "No approved devices yet."
@@ -383,6 +703,73 @@ public partial class MainWindow : Window
     {
         RefreshDevicesButton.IsEnabled = !isLoading;
         RefreshDevicesButton.Content = isLoading ? "Loading" : "Refresh";
+    }
+
+    private bool TryGetSelectedDevice(out DeviceSummary device, out string message)
+    {
+        if (DeviceListBox.SelectedItem is DeviceSummary selectedDevice)
+        {
+            device = selectedDevice;
+            message = string.Empty;
+            return true;
+        }
+
+        device = default!;
+        message = "Select an approved device first.";
+        return false;
+    }
+
+    private string? GetSelectedMode()
+    {
+        return DeviceModeComboBox.SelectedItem is System.Windows.Controls.ComboBoxItem selectedMode
+            ? selectedMode.Content?.ToString()
+            : null;
+    }
+
+    private void SelectMode(string mode)
+    {
+        foreach (var item in DeviceModeComboBox.Items)
+        {
+            if (item is System.Windows.Controls.ComboBoxItem comboBoxItem
+                && string.Equals(comboBoxItem.Content?.ToString(), mode, StringComparison.OrdinalIgnoreCase))
+            {
+                DeviceModeComboBox.SelectedItem = comboBoxItem;
+                return;
+            }
+        }
+    }
+
+    private void SetDeviceActionsEnabled(bool isEnabled)
+    {
+        DeviceModeComboBox.IsEnabled = isEnabled;
+        UpdateModeButton.IsEnabled = isEnabled;
+        RefreshLogsButton.IsEnabled = isEnabled;
+    }
+
+    private void SetDeviceActionLoadingState(bool isLoading)
+    {
+        var hasSelectedDevice = DeviceListBox.SelectedItem is DeviceSummary;
+        DeviceModeComboBox.IsEnabled = !isLoading && hasSelectedDevice;
+        UpdateModeButton.IsEnabled = !isLoading && hasSelectedDevice;
+        RefreshLogsButton.IsEnabled = !isLoading && hasSelectedDevice;
+        UpdateModeButton.Content = isLoading ? "Updating" : "Update Mode";
+        RefreshLogsButton.Content = isLoading ? "Loading" : "Refresh Logs";
+    }
+
+    private void SetModeStatus(string message, bool isError)
+    {
+        ModeStatusTextBlock.Text = message;
+        ModeStatusTextBlock.Foreground = isError
+            ? System.Windows.Media.Brushes.Firebrick
+            : System.Windows.Media.Brushes.ForestGreen;
+    }
+
+    private void SetLogsStatus(string message, bool isError)
+    {
+        LogsStatusTextBlock.Text = message;
+        LogsStatusTextBlock.Foreground = isError
+            ? System.Windows.Media.Brushes.Firebrick
+            : System.Windows.Media.Brushes.ForestGreen;
     }
 
     private void SetParentStatus(string message, bool isError)
@@ -446,6 +833,27 @@ public partial class MainWindow : Window
         CopyDeviceTokenButton.Visibility = Visibility.Visible;
     }
 
+    private void ShowPairingRequest(PairingRequestSession request)
+    {
+        PairedDeviceNameTextBlock.Text = request.DeviceName;
+        PairedDeviceIdTextBlock.Text = $"Device ID: {request.DeviceId}";
+        PairedDeviceModeTextBlock.Text = $"Computer: {request.ComputerName}";
+        PairedDevicePanel.Visibility = Visibility.Visible;
+        DeviceTokenTextBox.Visibility = Visibility.Collapsed;
+        CopyDeviceTokenButton.Visibility = Visibility.Collapsed;
+    }
+
+    private static PairingStateKind GetPairingStateKind(string status)
+    {
+        return status.ToLowerInvariant() switch
+        {
+            "pending" => PairingStateKind.Waiting,
+            "approved" => PairingStateKind.Success,
+            "rejected" or "expired" => PairingStateKind.Error,
+            _ => PairingStateKind.Neutral
+        };
+    }
+
     private void SetDeviceListStatus(string message, bool isError)
     {
         DeviceListStatusTextBlock.Text = message;
@@ -463,12 +871,95 @@ public partial class MainWindow : Window
         ChildDeviceNameTextBox.IsEnabled = !isLoading;
     }
 
+    private void SetChildPendingLoadingState(bool isLoading)
+    {
+        CheckPendingRequestButton.IsEnabled = !isLoading;
+        CheckPendingRequestButton.Content = isLoading ? "Checking" : "Check";
+        if (pendingPairingRequest is not null)
+        {
+            SetChildDecisionButtonsEnabled(!isLoading);
+        }
+    }
+
+    private void SetChildDecisionButtonsEnabled(bool isEnabled)
+    {
+        ApprovePairingButton.IsEnabled = isEnabled;
+        RejectPairingButton.IsEnabled = isEnabled;
+    }
+
     private void SetChildStatus(string message, bool isError)
     {
         ChildCodeStatusTextBlock.Text = message;
         ChildCodeStatusTextBlock.Foreground = isError
             ? System.Windows.Media.Brushes.Firebrick
             : System.Windows.Media.Brushes.ForestGreen;
+    }
+
+    private async Task SubmitChildPairingDecisionAsync(bool approve)
+    {
+        if (!TryValidatePendingRequestInput(out var baseUri, out var connectionCode, out var validationMessage))
+        {
+            SetChildStatus(validationMessage, isError: true);
+            return;
+        }
+
+        if (pendingPairingRequest is null)
+        {
+            SetChildStatus("Check and select a pending request before deciding.", isError: true);
+            return;
+        }
+
+        SetChildPendingLoadingState(isLoading: true);
+        SetChildStatus(approve ? "Approving request..." : "Rejecting request...", isError: false);
+
+        try
+        {
+            var result = approve
+                ? await pairingApiClient.ApprovePairingAsync(
+                    baseUri,
+                    pendingPairingRequest.PairingRequestId,
+                    connectionCode,
+                    CancellationToken.None)
+                : await pairingApiClient.RejectPairingAsync(
+                    baseUri,
+                    pendingPairingRequest.PairingRequestId,
+                    connectionCode,
+                    CancellationToken.None);
+
+            if (approve && result.DeviceId is Guid deviceId && !string.IsNullOrWhiteSpace(result.DeviceToken))
+            {
+                await credentialStore.SaveCredentialsAsync(deviceId, result.DeviceToken, CancellationToken.None);
+                PendingRequestTextBlock.Text = $"Approved {result.DeviceName}. Credentials saved for the Windows Service.";
+            }
+            else
+            {
+                PendingRequestTextBlock.Text = "Pairing request rejected.";
+            }
+
+            pendingPairingRequest = null;
+            SetChildDecisionButtonsEnabled(isEnabled: false);
+            SetChildStatus($"Pairing {result.Status}.", isError: false);
+        }
+        catch (HttpRequestException exception)
+        {
+            SetChildStatus($"Cannot connect to Backend: {exception.Message}", isError: true);
+        }
+        catch (InvalidOperationException exception)
+        {
+            SetChildStatus(exception.Message, isError: true);
+        }
+        catch (TaskCanceledException)
+        {
+            SetChildStatus("Pairing decision timed out or was canceled.", isError: true);
+        }
+        catch (UnauthorizedAccessException exception)
+        {
+            SetChildStatus($"Cannot save credentials. Run KidGuard as Administrator: {exception.Message}", isError: true);
+        }
+        finally
+        {
+            SetChildPendingLoadingState(isLoading: false);
+        }
     }
 
     private enum PairingStateKind

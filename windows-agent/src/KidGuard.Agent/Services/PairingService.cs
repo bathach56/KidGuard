@@ -5,17 +5,14 @@ namespace KidGuard.Agent.Services;
 
 public sealed class PairingService
 {
-    private readonly BackendApiClient _backendApiClient;
     private readonly DeviceCredentialStore _deviceCredentialStore;
     private readonly ILogger<PairingService> _logger;
-    private DateTimeOffset _nextPairCodeRequestAt = DateTimeOffset.MinValue;
+    private bool _hasLoggedWaitingForApproval;
 
     public PairingService(
-        BackendApiClient backendApiClient,
         DeviceCredentialStore deviceCredentialStore,
         ILogger<PairingService> logger)
     {
-        _backendApiClient = backendApiClient;
         _deviceCredentialStore = deviceCredentialStore;
         _logger = logger;
     }
@@ -23,29 +20,24 @@ public sealed class PairingService
     public async Task<bool> IsPairedAsync(CancellationToken cancellationToken)
     {
         var credentials = await _deviceCredentialStore.GetCredentialsAsync(cancellationToken);
-        return credentials is not null;
+        var isPaired = credentials is not null;
+        if (isPaired)
+        {
+            _hasLoggedWaitingForApproval = false;
+        }
+
+        return isPaired;
     }
 
-    public async Task EnsurePairCodeAsync(CancellationToken cancellationToken)
+    public void LogWaitingForApproval()
     {
-        if (await IsPairedAsync(cancellationToken) || DateTimeOffset.UtcNow < _nextPairCodeRequestAt)
+        if (_hasLoggedWaitingForApproval)
         {
             return;
         }
 
-        var pairCode = await _backendApiClient.CreatePairCodeAsync(cancellationToken);
-        if (pairCode is null)
-        {
-            _nextPairCodeRequestAt = DateTimeOffset.UtcNow.AddMinutes(1);
-            _logger.LogWarning("Device is not paired. Failed to create pair code. The agent will retry in 1 minute.");
-            return;
-        }
-
-        _nextPairCodeRequestAt = DateTimeOffset.UtcNow.AddSeconds(pairCode.ExpiresIn);
-        _logger.LogInformation(
-            "Device is not paired. Pair code: {PairCode}. Expires in {ExpiresIn} seconds.",
-            pairCode.PairCode,
-            pairCode.ExpiresIn);
+        _hasLoggedWaitingForApproval = true;
+        _logger.LogInformation("Device is not approved yet. Waiting for Windows Client to save approved credentials.");
     }
 
     public Task SaveDeviceCredentialsAsync(

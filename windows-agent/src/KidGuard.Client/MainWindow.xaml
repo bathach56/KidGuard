@@ -117,6 +117,10 @@
                             <TextBox x:Name="ParentEmailTextBox" />
                             <TextBlock Text="Password" />
                             <PasswordBox x:Name="ParentPasswordBox" />
+                            <TextBlock Text="Full name" />
+                            <TextBox x:Name="ParentFullNameTextBox" />
+                            <TextBlock Text="Phone number" />
+                            <TextBox x:Name="ParentPhoneNumberTextBox" />
                             <StackPanel Orientation="Horizontal">
                                 <Button x:Name="ParentLoginButton"
                                         Content="Login"
@@ -128,8 +132,7 @@
                                         Width="112"
                                         Margin="10,0,0,0"
                                         Style="{StaticResource SecondaryButtonStyle}"
-                                        IsEnabled="False"
-                                        ToolTip="Waiting for the Version 1.0.1 Parent Register API." />
+                                        Click="ParentRegisterButton_Click" />
                             </StackPanel>
                             <TextBlock x:Name="ParentLoginStatusTextBlock"
                                        Text="Set KIDGUARD_API_BASE_URL before login."
@@ -155,6 +158,12 @@
                                     HorizontalAlignment="Left"
                                     Style="{StaticResource PrimaryButtonStyle}"
                                     Click="SendPairRequestButton_Click" />
+                            <Button x:Name="RefreshPairingStatusButton"
+                                    Content="Refresh Status"
+                                    Width="140"
+                                    HorizontalAlignment="Left"
+                                    Style="{StaticResource SecondaryButtonStyle}"
+                                    Click="RefreshPairingStatusButton_Click" />
                             <Border Background="#F9FAFB"
                                     BorderBrush="{StaticResource BorderBrush}"
                                     BorderThickness="1"
@@ -232,10 +241,55 @@
                             </DockPanel>
                             <ListBox x:Name="DeviceListBox"
                                      MinHeight="120"
-                                     DisplayMemberPath="DisplayText" />
+                                     DisplayMemberPath="DisplayText"
+                                     SelectionChanged="DeviceListBox_SelectionChanged" />
                             <TextBlock x:Name="DeviceListStatusTextBlock"
                                        Text="Login to load devices."
                                        Margin="0,12,0,0"
+                                       Foreground="{StaticResource MutedTextBrush}" />
+                            <TextBlock Text="Mode control"
+                                       Margin="0,18,0,0"
+                                       FontSize="18"
+                                       FontWeight="SemiBold" />
+                            <StackPanel Orientation="Horizontal">
+                                <ComboBox x:Name="DeviceModeComboBox"
+                                          Width="150"
+                                          IsEnabled="False">
+                                    <ComboBoxItem Content="fun" />
+                                    <ComboBoxItem Content="study" />
+                                    <ComboBoxItem Content="punishment" />
+                                </ComboBox>
+                                <Button x:Name="UpdateModeButton"
+                                        Content="Update Mode"
+                                        Width="126"
+                                        Margin="10,0,0,0"
+                                        Style="{StaticResource PrimaryButtonStyle}"
+                                        IsEnabled="False"
+                                        Click="UpdateModeButton_Click" />
+                            </StackPanel>
+                            <TextBlock x:Name="ModeStatusTextBlock"
+                                       Text="Select an approved device to change mode."
+                                       Margin="0,8,0,0"
+                                       Foreground="{StaticResource MutedTextBrush}" />
+                            <DockPanel Margin="0,18,0,10">
+                                <Button x:Name="RefreshLogsButton"
+                                        Content="Refresh Logs"
+                                        DockPanel.Dock="Right"
+                                        Width="116"
+                                        Style="{StaticResource SecondaryButtonStyle}"
+                                        IsEnabled="False"
+                                        Click="RefreshLogsButton_Click" />
+                                <TextBlock Text="Recent logs"
+                                           VerticalAlignment="Center"
+                                           FontSize="18"
+                                           FontWeight="SemiBold" />
+                            </DockPanel>
+                            <ListBox x:Name="DeviceLogsListBox"
+                                     MinHeight="100"
+                                     DisplayMemberPath="DisplayText" />
+                            <TextBlock x:Name="LogsStatusTextBlock"
+                                       Text="Select a device to load logs."
+                                       Margin="0,8,0,0"
                                        Foreground="{StaticResource MutedTextBrush}" />
                         </StackPanel>
                     </Border>
@@ -323,17 +377,31 @@
                                     CornerRadius="8"
                                     Padding="14"
                                     Margin="0,18,0,16">
-                                <TextBlock Text="No parent request yet."
-                                           Foreground="{StaticResource MutedTextBrush}" />
+                                <TextBlock x:Name="PendingRequestTextBlock"
+                                           Text="No parent request yet."
+                                           Foreground="{StaticResource MutedTextBrush}"
+                                           TextWrapping="Wrap" />
                             </Border>
                             <StackPanel Orientation="Horizontal">
-                                <Button Content="Approve"
-                                        Width="112"
-                                        Style="{StaticResource PrimaryButtonStyle}" />
-                                <Button Content="Reject"
+                                <Button x:Name="CheckPendingRequestButton"
+                                        Content="Check"
+                                        Width="90"
+                                        Style="{StaticResource SecondaryButtonStyle}"
+                                        Click="CheckPendingRequestButton_Click" />
+                                <Button x:Name="ApprovePairingButton"
+                                        Content="Approve"
                                         Width="112"
                                         Margin="10,0,0,0"
-                                        Style="{StaticResource SecondaryButtonStyle}" />
+                                        Style="{StaticResource PrimaryButtonStyle}"
+                                        IsEnabled="False"
+                                        Click="ApprovePairingButton_Click" />
+                                <Button x:Name="RejectPairingButton"
+                                        Content="Reject"
+                                        Width="112"
+                                        Margin="10,0,0,0"
+                                        Style="{StaticResource SecondaryButtonStyle}"
+                                        IsEnabled="False"
+                                        Click="RejectPairingButton_Click" />
                             </StackPanel>
                         </StackPanel>
                     </Border>

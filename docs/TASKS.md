@@ -228,37 +228,37 @@ Restrictions
   Priority: High
   Details: Parent login screen calls Backend POST /auth/login and stores the returned JWT in memory for the current client session.
 
-- [ ] Add Parent register screen
+- [x] Add Parent register screen
   Priority: High
-  Details: Parent can create account from Windows app.
+  Details: Parent can create account from Windows app through POST /auth/register.
 
-- [ ] Add Parent dashboard
+- [x] Add Parent dashboard
   Priority: High
-  Details: Basic approved device list and status are implemented through GET /devices after login. Pending requests, mode controls, and log entry points still need the Version 1.0.1 flow.
+  Details: Parent dashboard loads approved devices, refreshes pairing status, updates mode through PUT /devices/{deviceId}/mode, and loads recent logs through GET /devices/{deviceId}/logs.
 
-- [ ] Add Parent enter child code screen
+- [x] Add Parent enter child code screen
   Priority: High
-  Details: Bridge implemented with Demo V1 POST /devices/pair so Parent Windows Client can pair using a child code after login. Final Version 1.0.1 behavior still needs the pending pairing request API.
+  Details: Parent Windows Client now sends a Version 1.0.1 pending pairing request through POST /pairing/requests after login.
 
 - [x] Add Parent pairing status view
   Priority: Medium
-  Details: Shows not started, waiting, paired, and failed states for the current Demo V1 bridge, including paired device summary and one-time Device Token copy action. Version 1.0.1 pending, approved, rejected, and expired states still depend on Backend pairing status APIs.
+  Details: Shows not started, pending, approved, rejected, expired, and failed states using the Version 1.0.1 pairing status API.
 
 - [x] Add Child code display screen
   Priority: High
-  Details: Child can create and display a temporary code through the existing POST /pair-code endpoint while waiting for the Version 1.0.1 child connection API.
+  Details: Child can create and display a temporary code through POST /pairing/child/connection-code.
 
-- [ ] Add Child pending request polling
+- [x] Add Child pending request polling
   Priority: High
-  Details: Child client asks Backend for pending parent request.
+  Details: Child client checks Backend GET /pairing/child/pending with the active connection code.
 
-- [ ] Add Child approval request dialog
+- [x] Add Child approval request dialog
   Priority: High
-  Details: Child sees parent request and can approve or reject.
+  Details: Child sees parent request and can approve through POST /pairing/child/approve or reject through POST /pairing/child/reject.
 
-- [ ] Save approved device credentials securely
+- [x] Save approved device credentials securely
   Priority: High
-  Details: Reuse protected credential storage; never store Device Token in plain text.
+  Details: Windows Client saves approved Device Token with DPAPI LocalMachine to the same protected credential file used by the Windows Service.
 
 - [ ] Add Windows client error states
   Priority: Medium
@@ -266,33 +266,33 @@ Restrictions
 
 ### Thạch - Windows Service
 
-- [ ] Keep Windows Service separate from Windows UI
+- [x] Keep Windows Service separate from Windows UI
   Priority: High
-  Details: UI handles interaction; service handles protection.
+  Details: UI handles interaction; service handles protection. Service now waits for approved credentials before protection starts.
 
-- [ ] Connect approved credentials from Windows Client to Windows Service
+- [x] Connect approved credentials from Windows Client to Windows Service
   Priority: High
-  Details: Service starts normal heartbeat/mode/log flow only after approval.
+  Details: Windows Client saves approved credentials with DPAPI LocalMachine and Agent smoke verified heartbeat, mode sync, and log upload after approval.
 
-- [ ] Reuse ProcessMonitorService
+- [x] Reuse ProcessMonitorService
   Priority: High
   Details: Continue scanning running processes.
 
-- [ ] Reuse ProcessBlockerService
+- [x] Reuse ProcessBlockerService
   Priority: High
-  Details: Continue blocking demo process such as notepad.exe.
+  Details: Continue blocking demo process such as notepad.exe after approval; real visual notepad.exe test still remains under Real Windows Testing.
 
-- [ ] Reuse LocalCacheService
+- [x] Reuse LocalCacheService
   Priority: High
-  Details: Continue using last known mode offline.
+  Details: Continue using local cache for mode and pending logs; Agent smoke verified pending log upload after approval.
 
-- [ ] Reuse BackendApiClient where possible
+- [x] Reuse BackendApiClient where possible
   Priority: Medium
-  Details: Extend client only where new 1.0.1 endpoints are required.
+  Details: Reused BackendApiClient for heartbeat, mode sync, and log upload; fixed HttpClient reuse after first request.
 
-- [ ] Improve local logging for demo troubleshooting
+- [x] Improve local logging for demo troubleshooting
   Priority: Medium
-  Details: Make pairing, approval, heartbeat, mode sync, block, and upload events easy to inspect.
+  Details: Added waiting-for-approval and pending-log upload logging for service troubleshooting.
 
 - [ ] Verify service runs with Administrator permission
   Priority: High

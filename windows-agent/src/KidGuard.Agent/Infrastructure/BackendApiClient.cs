@@ -184,7 +184,16 @@ public sealed class BackendApiClient
             return false;
         }
 
-        _httpClient.BaseAddress = baseUri;
+        if (_httpClient.BaseAddress is null)
+        {
+            _httpClient.BaseAddress = baseUri;
+        }
+        else if (_httpClient.BaseAddress != baseUri)
+        {
+            _logger.LogWarning("Backend API base URL changed after the HTTP client was initialized. Restart the agent to use {ApiBaseUrl}.", apiBaseUrl);
+            return false;
+        }
+
         _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", bearerToken);
         return true;
     }

@@ -89,13 +89,8 @@ public sealed class AgentWorker : BackgroundService
 
     private async Task RunUnpairedWorkAsync(DateTimeOffset now, CancellationToken cancellationToken)
     {
-        await _pairingService.EnsurePairCodeAsync(cancellationToken);
-
-        if (now >= _nextProcessScanAt)
-        {
-            await _processMonitorService.ScanAsync(cancellationToken);
-            _nextProcessScanAt = now.AddSeconds(_options.CurrentValue.ProcessScanIntervalSeconds);
-        }
+        _pairingService.LogWaitingForApproval();
+        await Task.CompletedTask;
     }
 
     private async Task SendHeartbeatAsync(CancellationToken cancellationToken)
@@ -122,6 +117,12 @@ public sealed class AgentWorker : BackgroundService
     private async Task UploadPendingLogsAsync(CancellationToken cancellationToken)
     {
         var pendingLogs = await _localCacheService.GetPendingLogsAsync(cancellationToken);
+        if (pendingLogs.Count == 0)
+        {
+            return;
+        }
+
+        _logger.LogInformation("Uploading {Count} pending activity log(s).", pendingLogs.Count);
         var uploadedLogs = new List<Models.ActivityLogEntry>();
 
         foreach (var logEntry in pendingLogs)
@@ -134,5 +135,6 @@ public sealed class AgentWorker : BackgroundService
         }
 
         await _localCacheService.RemovePendingLogsAsync(uploadedLogs, cancellationToken);
+        _logger.LogInformation("Uploaded {Count} pending activity log(s).", uploadedLogs.Count);
     }
 }

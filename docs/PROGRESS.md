@@ -1056,3 +1056,43 @@ Blocked
 Next
 
 - Coordinate Windows Client integration against the Version 1.0.1 pairing APIs.
+
+---
+
+## 2026-07-05
+
+### Pham Ba Thach
+
+Done
+
+- Switched work to feature/agent/windows-approval-pairing.
+- Wired Windows Parent Client register to POST /auth/register.
+- Replaced Demo V1 direct pair bridge with Version 1.0.1 POST /pairing/requests.
+- Added parent pairing status refresh through GET /pairing/requests/{pairingRequestId}/status.
+- Replaced child code creation with POST /pairing/child/connection-code.
+- Added child pending request check, approve, and reject actions.
+- Saved approved device credentials with DPAPI LocalMachine for Windows Service reuse.
+- Verified windows-agent solution builds with 0 warnings and 0 errors.
+- Added Parent dashboard mode control for approved devices.
+- Added Parent dashboard recent log loading for approved devices.
+- Verified windows-agent solution builds again with 0 warnings and 0 errors.
+- Updated Windows Service so protection waits for approved credentials instead of using the legacy unpaired pair-code flow.
+- Fixed BackendApiClient HttpClient reuse so heartbeat, mode sync, and log upload can run in the same Agent process.
+- Added Agent approval smoke script for credentials, heartbeat, mode sync, and pending log upload.
+- Verified backend approval pairing smoke test passed.
+- Verified Agent approval flow smoke test passed.
+- Verified windows-agent solution builds with 0 warnings and 0 errors after the service fixes.
+
+In Progress
+
+- Preparing final manual Windows UI and Administrator tests.
+
+Blocked
+
+- Real visual notepad.exe blocking and offline/reconnect protection still require manual Windows Agent execution with Administrator permission.
+
+Next
+
+- Run full approval pairing locally against Backend.
+- Start Windows Service with saved credentials and verify heartbeat, mode sync, notepad.exe blocking, and log upload.
+- Run the real Windows UI flow and offline/reconnect test as Administrator.

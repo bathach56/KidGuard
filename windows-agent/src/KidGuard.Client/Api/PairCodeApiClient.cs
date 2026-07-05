@@ -1,5 +1,4 @@
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
 
@@ -11,7 +10,6 @@ public sealed class PairCodeApiClient
 
     public async Task<PairCodeSession> CreatePairCodeAsync(
         Uri apiBaseUrl,
-        string setupToken,
         string deviceName,
         string computerName,
         CancellationToken cancellationToken)
@@ -20,10 +18,9 @@ public sealed class PairCodeApiClient
         {
             BaseAddress = apiBaseUrl
         };
-        httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", setupToken);
 
         using var response = await httpClient.PostAsJsonAsync(
-            "pair-code",
+            "pairing/child/connection-code",
             new CreatePairCodeRequest(deviceName, computerName, "1.0.1"),
             JsonOptions,
             cancellationToken);
@@ -46,10 +43,18 @@ public sealed class PairCodeApiClient
             throw new InvalidOperationException($"{apiResponse.Message} ({errorDetails})");
         }
 
-        return new PairCodeSession(apiResponse.Data.PairCode, apiResponse.Data.ExpiresIn);
+        return new PairCodeSession(
+            apiResponse.Data.DeviceId,
+            apiResponse.Data.ConnectionCode,
+            apiResponse.Data.ExpiresInSeconds,
+            apiResponse.Data.ExpiresAt);
     }
 
     private sealed record CreatePairCodeRequest(string DeviceName, string ComputerName, string AgentVersion);
 
-    private sealed record CreatePairCodeResponse(string PairCode, int ExpiresIn);
+    private sealed record CreatePairCodeResponse(
+        Guid DeviceId,
+        string ConnectionCode,
+        int ExpiresInSeconds,
+        DateTime ExpiresAt);
 }
