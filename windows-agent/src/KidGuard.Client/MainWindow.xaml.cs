@@ -8,11 +8,14 @@ namespace KidGuard.Client;
 
 public partial class MainWindow : Window
 {
+    private const string DefaultApiBaseUrl = "http://127.0.0.1:5133";
+
     private readonly AuthApiClient authApiClient = new();
     private readonly DeviceApiClient deviceApiClient = new();
     private readonly PairCodeApiClient pairCodeApiClient = new();
     private readonly PairingApiClient pairingApiClient = new();
     private readonly ClientDeviceCredentialStore credentialStore = new();
+    private readonly AgentServiceManager agentServiceManager = new();
     private AuthSession? authSession;
     private PairCodeSession? pairCodeSession;
     private PairingRequestSession? pairingRequestSession;
@@ -21,8 +24,13 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
-        ApiBaseUrlTextBox.Text = ClientConfiguration.GetConfiguredApiBaseUrl();
-        ChildApiBaseUrlTextBox.Text = ClientConfiguration.GetConfiguredApiBaseUrl();
+        var configuredApiBaseUrl = ClientConfiguration.GetConfiguredApiBaseUrl();
+        var apiBaseUrl = string.IsNullOrWhiteSpace(configuredApiBaseUrl)
+            ? DefaultApiBaseUrl
+            : configuredApiBaseUrl;
+
+        ApiBaseUrlTextBox.Text = apiBaseUrl;
+        ChildApiBaseUrlTextBox.Text = apiBaseUrl;
         ChildSetupTokenPasswordBox.Password = ClientConfiguration.GetConfiguredSetupToken();
         ChildDeviceNameTextBox.Text = Environment.MachineName;
     }
@@ -30,16 +38,29 @@ public partial class MainWindow : Window
     private void ParentModeButton_Click(object sender, RoutedEventArgs e)
     {
         ShowPanel(ParentPanel);
+        ShowParentDashboard(authSession is not null);
+        ShowLoginForm();
     }
 
     private void ChildModeButton_Click(object sender, RoutedEventArgs e)
     {
+        ResetChildRequestView();
         ShowPanel(ChildPanel);
     }
 
     private void BackButton_Click(object sender, RoutedEventArgs e)
     {
         ShowPanel(RoleSelectionPanel);
+    }
+
+    private void LoginTabButton_Click(object sender, RoutedEventArgs e)
+    {
+        ShowLoginForm();
+    }
+
+    private void RegisterTabButton_Click(object sender, RoutedEventArgs e)
+    {
+        ShowRegisterForm();
     }
 
     private async void CreateCodeButton_Click(object sender, RoutedEventArgs e)
@@ -67,6 +88,9 @@ public partial class MainWindow : Window
             ConnectionCodeTextBlock.Text = pairCodeSession.ConnectionCode;
             PendingRequestTextBlock.Text = "No parent request yet.";
             pendingPairingRequest = null;
+            PendingRequestPanel.Visibility = Visibility.Collapsed;
+            ChildDecisionPanel.Visibility = Visibility.Collapsed;
+            CheckPendingRequestButton.Visibility = Visibility.Visible;
             SetChildDecisionButtonsEnabled(isEnabled: false);
             SetChildStatus($"Code expires in {pairCodeSession.ExpiresInSeconds} seconds.", isError: false);
         }
@@ -192,12 +216,13 @@ public partial class MainWindow : Window
     private async void ParentRegisterButton_Click(object sender, RoutedEventArgs e)
     {
         var apiBaseUrl = ApiBaseUrlTextBox.Text.Trim();
-        var email = ParentEmailTextBox.Text.Trim();
-        var password = ParentPasswordBox.Password;
+        var email = ParentRegisterEmailTextBox.Text.Trim();
+        var password = ParentRegisterPasswordBox.Password;
+        var confirmPassword = ParentRegisterConfirmPasswordBox.Password;
         var fullName = ParentFullNameTextBox.Text.Trim();
         var phoneNumber = ParentPhoneNumberTextBox.Text.Trim();
 
-        if (!TryValidateRegisterInput(apiBaseUrl, email, password, fullName, out var baseUri, out var validationMessage))
+        if (!TryValidateRegisterInput(apiBaseUrl, email, password, confirmPassword, fullName, out var baseUri, out var validationMessage))
         {
             SetParentStatus(validationMessage, isError: true);
             return;
@@ -248,6 +273,7 @@ public partial class MainWindow : Window
         {
             authSession = await authApiClient.LoginAsync(baseUri, email, password, CancellationToken.None);
             SetParentStatus($"Login successful. Token expires in {authSession.ExpiresIn} seconds.", isError: false);
+            ShowParentDashboard(isLoggedIn: true);
             await LoadDevicesAsync(baseUri, authSession.AccessToken);
         }
         catch (HttpRequestException exception)
@@ -433,14 +459,18 @@ public partial class MainWindow : Window
             if (pendingPairingRequest is null)
             {
                 PendingRequestTextBlock.Text = "No parent request yet.";
+                PendingRequestPanel.Visibility = Visibility.Collapsed;
+                ChildDecisionPanel.Visibility = Visibility.Collapsed;
                 SetChildDecisionButtonsEnabled(isEnabled: false);
                 SetChildStatus("No pending request found.", isError: false);
                 return;
             }
 
             PendingRequestTextBlock.Text = pendingPairingRequest.DisplayText;
+            PendingRequestPanel.Visibility = Visibility.Visible;
+            ChildDecisionPanel.Visibility = Visibility.Visible;
             SetChildDecisionButtonsEnabled(isEnabled: true);
-            SetChildStatus("Pending request found. Approve or reject it.", isError: false);
+            SetChildStatus("Parent request found. Grant permission to pair, or deny to reject pairing.", isError: false);
         }
         catch (HttpRequestException exception)
         {
@@ -477,6 +507,42 @@ public partial class MainWindow : Window
         ChildPanel.Visibility = Visibility.Collapsed;
 
         activePanel.Visibility = Visibility.Visible;
+    }
+
+    private void ShowParentDashboard(bool isLoggedIn)
+    {
+        ParentAuthPanel.Visibility = isLoggedIn ? Visibility.Collapsed : Visibility.Visible;
+        ParentDashboardPanel.Visibility = isLoggedIn ? Visibility.Visible : Visibility.Collapsed;
+    }
+
+    private void ShowLoginForm()
+    {
+        LoginFormPanel.Visibility = Visibility.Visible;
+        RegisterFormPanel.Visibility = Visibility.Collapsed;
+        LoginTabButton.Style = (Style)FindResource("PrimaryButtonStyle");
+        RegisterTabButton.Style = (Style)FindResource("SecondaryButtonStyle");
+    }
+
+    private void ShowRegisterForm()
+    {
+        LoginFormPanel.Visibility = Visibility.Collapsed;
+        RegisterFormPanel.Visibility = Visibility.Visible;
+        LoginTabButton.Style = (Style)FindResource("SecondaryButtonStyle");
+        RegisterTabButton.Style = (Style)FindResource("PrimaryButtonStyle");
+    }
+
+    private void ResetChildRequestView()
+    {
+        if (pairCodeSession is null)
+        {
+            CheckPendingRequestButton.Visibility = Visibility.Collapsed;
+        }
+
+        PendingRequestPanel.Visibility = Visibility.Collapsed;
+        ChildDecisionPanel.Visibility = Visibility.Collapsed;
+        PendingRequestTextBlock.Text = "No parent request yet.";
+        pendingPairingRequest = null;
+        SetChildDecisionButtonsEnabled(isEnabled: false);
     }
 
     private static bool TryValidateLoginInput(
@@ -553,6 +619,7 @@ public partial class MainWindow : Window
         string apiBaseUrl,
         string email,
         string password,
+        string confirmPassword,
         string fullName,
         out Uri baseUri,
         out string message)
@@ -564,7 +631,13 @@ public partial class MainWindow : Window
 
         if (string.IsNullOrWhiteSpace(fullName))
         {
-            message = "Full name is required.";
+            message = "Username is required.";
+            return false;
+        }
+
+        if (!string.Equals(password, confirmPassword, StringComparison.Ordinal))
+        {
+            message = "Confirm password must match password.";
             return false;
         }
 
@@ -649,9 +722,15 @@ public partial class MainWindow : Window
     {
         ParentLoginButton.IsEnabled = !isLoading;
         ParentRegisterButton.IsEnabled = !isLoading;
+        LoginTabButton.IsEnabled = !isLoading;
+        RegisterTabButton.IsEnabled = !isLoading;
         ParentLoginButton.Content = isLoading ? "Logging in" : "Login";
+        ParentRegisterButton.Content = isLoading ? "Creating account" : "Create account";
         ParentEmailTextBox.IsEnabled = !isLoading;
         ParentPasswordBox.IsEnabled = !isLoading;
+        ParentRegisterEmailTextBox.IsEnabled = !isLoading;
+        ParentRegisterPasswordBox.IsEnabled = !isLoading;
+        ParentRegisterConfirmPasswordBox.IsEnabled = !isLoading;
         ParentFullNameTextBox.IsEnabled = !isLoading;
         ParentPhoneNumberTextBox.IsEnabled = !isLoading;
         ApiBaseUrlTextBox.IsEnabled = !isLoading;
@@ -910,7 +989,7 @@ public partial class MainWindow : Window
         }
 
         SetChildPendingLoadingState(isLoading: true);
-        SetChildStatus(approve ? "Approving request..." : "Rejecting request...", isError: false);
+        SetChildStatus(approve ? "Granting permission..." : "Denying permission...", isError: false);
 
         try
         {
@@ -929,14 +1008,17 @@ public partial class MainWindow : Window
             if (approve && result.DeviceId is Guid deviceId && !string.IsNullOrWhiteSpace(result.DeviceToken))
             {
                 await credentialStore.SaveCredentialsAsync(deviceId, result.DeviceToken, CancellationToken.None);
-                PendingRequestTextBlock.Text = $"Approved {result.DeviceName}. Credentials saved for the Windows Service.";
+                var serviceStatus = await agentServiceManager.GetStatusAsync(CancellationToken.None);
+                PendingRequestTextBlock.Text = $"Approved {result.DeviceName}. Credentials saved for the Windows Service. {serviceStatus.Message}";
             }
             else
             {
-                PendingRequestTextBlock.Text = "Pairing request rejected.";
+                PendingRequestTextBlock.Text = "Permission denied. Pairing request rejected.";
             }
 
             pendingPairingRequest = null;
+            CheckPendingRequestButton.Visibility = Visibility.Collapsed;
+            ChildDecisionPanel.Visibility = Visibility.Collapsed;
             SetChildDecisionButtonsEnabled(isEnabled: false);
             SetChildStatus($"Pairing {result.Status}.", isError: false);
         }

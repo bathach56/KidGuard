@@ -1096,3 +1096,30 @@ Next
 - Run full approval pairing locally against Backend.
 - Start Windows Service with saved credentials and verify heartbeat, mode sync, notepad.exe blocking, and log upload.
 - Run the real Windows UI flow and offline/reconnect test as Administrator.
+
+---
+
+## 2026-07-06
+
+### Pham Ba Thach
+
+Done
+
+- Redesigned Windows Client startup screen to show only Parent Mode and Child Mode without the left sidebar.
+- Separated Parent authentication from Parent dashboard so pairing, devices, mode control, and logs appear only after successful login.
+- Updated Parent login form to use username/Gmail and password only.
+- Updated Parent register form to use username, Gmail, password, confirm password, and phone number.
+- Hid API base URL from the normal form and defaulted local demo Backend to http://127.0.0.1:5133 when KIDGUARD_API_BASE_URL is not set.
+- Verified windows-agent solution builds with 0 warnings and 0 errors.
+
+In Progress
+
+- Preparing manual visual check of the redesigned Windows Client.
+
+Blocked
+
+- None recorded.
+
+Next
+
+- Run KidGuard.Client and compare the screens with the requested screenshots.

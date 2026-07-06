@@ -38,4 +38,5 @@ New-Service `
     -Description "KidGuard Windows Agent for Demo V1."
 
 Write-Host "Installed service '$ServiceName'."
+Write-Host "The service runs as LocalSystem by default, which is required for administrator-level protection."
 Write-Host "Start it with: .\Start-KidGuardAgentService.ps1"
