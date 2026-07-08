@@ -53,6 +53,16 @@ public partial class MainWindow : Window
         ShowPanel(RoleSelectionPanel);
     }
 
+    private void ParentLogoutButton_Click(object sender, RoutedEventArgs e)
+    {
+        authSession = null;
+        ParentEmailTextBox.Text = string.Empty;
+        ParentPasswordBox.Password = string.Empty;
+        if (ParentPasswordPlaceholder is not null) ParentPasswordPlaceholder.Visibility = Visibility.Visible;
+        ShowParentDashboard(isLoggedIn: false);
+        ShowLoginForm();
+    }
+
     private void LoginTabButton_Click(object sender, RoutedEventArgs e)
     {
         ShowLoginForm();
@@ -310,16 +320,26 @@ public partial class MainWindow : Window
     {
         if (DeviceListBox.SelectedItem is not DeviceSummary device)
         {
+            if (SelectedDeviceNameTextBlock is not null) SelectedDeviceNameTextBlock.Text = "Select a device...";
             SetDeviceActionsEnabled(isEnabled: false);
             ModeStatusTextBlock.Text = "Select an approved device to change mode.";
             LogsStatusTextBlock.Text = "Select a device to load logs.";
             return;
         }
 
+        if (SelectedDeviceNameTextBlock is not null) SelectedDeviceNameTextBlock.Text = device.DeviceName;
         SelectMode(device.Mode);
         SetDeviceActionsEnabled(isEnabled: true);
         ModeStatusTextBlock.Text = $"Selected {device.DeviceName}.";
         LogsStatusTextBlock.Text = "Refresh logs to view recent activity.";
+    }
+
+    private void DeleteDeviceButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is System.Windows.Controls.Button btn && btn.Tag is Guid deviceId)
+        {
+            MessageBox.Show("Tính năng Xóa thiết bị sẽ được cập nhật trong phiên bản sau!", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
     }
 
     private async void UpdateModeButton_Click(object sender, RoutedEventArgs e)
@@ -511,6 +531,10 @@ public partial class MainWindow : Window
 
     private void ShowParentDashboard(bool isLoggedIn)
     {
+        if (ParentCommonHeader is not null)
+        {
+            ParentCommonHeader.Visibility = isLoggedIn ? Visibility.Collapsed : Visibility.Visible;
+        }
         ParentAuthPanel.Visibility = isLoggedIn ? Visibility.Collapsed : Visibility.Visible;
         ParentDashboardPanel.Visibility = isLoggedIn ? Visibility.Visible : Visibility.Collapsed;
     }
@@ -519,16 +543,50 @@ public partial class MainWindow : Window
     {
         LoginFormPanel.Visibility = Visibility.Visible;
         RegisterFormPanel.Visibility = Visibility.Collapsed;
-        LoginTabButton.Style = (Style)FindResource("PrimaryButtonStyle");
-        RegisterTabButton.Style = (Style)FindResource("SecondaryButtonStyle");
+        if (LoginTitlePanel is not null) LoginTitlePanel.Visibility = Visibility.Visible;
+        if (RegisterTitlePanel is not null) RegisterTitlePanel.Visibility = Visibility.Collapsed;
+        LoginTabButton.Style = (Style)FindResource("TabActiveButtonStyle");
+        RegisterTabButton.Style = (Style)FindResource("TabInactiveButtonStyle");
     }
 
     private void ShowRegisterForm()
     {
         LoginFormPanel.Visibility = Visibility.Collapsed;
         RegisterFormPanel.Visibility = Visibility.Visible;
-        LoginTabButton.Style = (Style)FindResource("SecondaryButtonStyle");
-        RegisterTabButton.Style = (Style)FindResource("PrimaryButtonStyle");
+        if (LoginTitlePanel is not null) LoginTitlePanel.Visibility = Visibility.Collapsed;
+        if (RegisterTitlePanel is not null) RegisterTitlePanel.Visibility = Visibility.Visible;
+        LoginTabButton.Style = (Style)FindResource("TabInactiveButtonStyle");
+        RegisterTabButton.Style = (Style)FindResource("TabActiveButtonStyle");
+    }
+
+    private void ParentPasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
+    {
+        if (ParentPasswordPlaceholder is not null)
+        {
+            ParentPasswordPlaceholder.Visibility = string.IsNullOrEmpty(ParentPasswordBox.Password)
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+        }
+    }
+
+    private void ParentRegisterPasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
+    {
+        if (ParentRegisterPasswordPlaceholder is not null)
+        {
+            ParentRegisterPasswordPlaceholder.Visibility = string.IsNullOrEmpty(ParentRegisterPasswordBox.Password)
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+        }
+    }
+
+    private void ParentRegisterConfirmPasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
+    {
+        if (ParentRegisterConfirmPasswordPlaceholder is not null)
+        {
+            ParentRegisterConfirmPasswordPlaceholder.Visibility = string.IsNullOrEmpty(ParentRegisterConfirmPasswordBox.Password)
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+        }
     }
 
     private void ResetChildRequestView()

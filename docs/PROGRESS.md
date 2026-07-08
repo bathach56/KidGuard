@@ -1119,7 +1119,233 @@ In Progress
 Blocked
 
 - None recorded.
+### Pham Ba Thach
+
+Done
+
+- Added Parent pairing status view for the Windows Client.
+- Added visible pairing states for not started, waiting, paired, and failed.
+- Added paired device summary after successful Demo V1 bridge pairing.
+- Added Copy Token action for the one-time Device Token.
+- Verified windows-agent solution builds with 0 warnings and 0 errors.
+
+In Progress
+
+- Preparing the pairing status view to be replaced with Version 1.0.1 pending, approved, rejected, and expired states.
+
+Blocked
+
+- Final status values still depend on Backend pairing status APIs.
+
+Next
+
+- Replace Demo V1 bridge states with Version 1.0.1 pairing status API results after Backend is ready.
+
+---
+
+## 2026-07-01
+
+### Tran Phuc Thinh
+
+Done
+
+- Added Backend Parent Register API at POST /auth/register.
+- Added RegisterRequest and RegisterResponse contracts.
+- Extended password hashing service to hash new parent passwords with BCrypt.
+- Verified Parent Login API still works by logging in with a newly registered parent account.
+- Verified backend build with 0 warnings and 0 errors.
+- Ran register/login smoke test successfully.
+
+In Progress
+
+- Preparing Version 1.0.1 backend pairing request model and approval-based pairing APIs.
+
+Blocked
+
+- Protected API documentation files require verified Admin authority for updates.
+
+Next
+
+- Design PairingRequests database model.
+- Add EF migration for Version 1.0.1 pairing flow after the model is implemented.
+
+---
+
+## 2026-07-01
+
+### Tran Phuc Thinh
+
+Done
+
+- Added PairingRequest entity and approved Version 1.0.1 pairing request statuses.
+- Added EF DbSet and mappings for PairingRequests.
+- Linked pairing requests to parent users and child devices.
+- Verified backend build with 0 warnings and 0 errors.
+
+In Progress
+
+- Preparing EF migration for the Version 1.0.1 pairing flow.
+
+Blocked
+
+- Protected database/API documentation files require verified Admin authority for updates.
+
+Next
+
+- Add EF migration for PairingRequests.
+- Implement Child Connection Code API.
+
+---
+
+## 2026-07-01
+
+### Tran Phuc Thinh
+
+Done
+
+- Added EF migration for PairingRequests.
+- Added Child Connection Code API.
+- Added Parent Pairing Request API.
+- Added Child Pending Request Poll API.
+- Added Child Approve Pairing API with one-time Device Token return.
+- Added Child Reject Pairing API.
+- Added Parent Pairing Status API.
+- Verified approve and reject pairing smoke tests against local Backend and LocalDB.
+
+In Progress
+
+- Preparing approved-device compatibility checks for device list, mode update, mode sync, heartbeat, and log upload.
+
+Blocked
+
+- Protected API documentation files require verified Admin authority for updates.
+
+Next
+
+- Update Device List API for approved devices.
+- Keep Mode Update, Mode Sync, Heartbeat, and Log Upload APIs compatible with approved devices.
+
+---
+
+## 2026-07-01
+
+### Tran Phuc Thinh
+
+Done
+
+- Updated Device List API to return only approved devices for the authenticated parent.
+- Kept Mode Update compatible with approved owned devices only.
+- Kept Mode Sync, Heartbeat, and Log Upload compatible with approved Windows Service Device Token flow.
+- Updated Swagger metadata and endpoint descriptions for Version 1.0.1 approval-based pairing.
+- Added backend approval pairing smoke script.
+- Verified backend build and approval pairing smoke test successfully.
+
+In Progress
+
+- Backend Version 1.0.1 core approval pairing flow is ready for Windows Client integration.
+
+Blocked
+
+- Protected API documentation files require verified Admin authority for updates.
+
+Next
+
+- Coordinate Windows Client integration against the Version 1.0.1 pairing APIs.
+
+---
+
+## 2026-07-05
+
+### Pham Ba Thach
+
+Done
+
+- Switched work to feature/agent/windows-approval-pairing.
+- Wired Windows Parent Client register to POST /auth/register.
+- Replaced Demo V1 direct pair bridge with Version 1.0.1 POST /pairing/requests.
+- Added parent pairing status refresh through GET /pairing/requests/{pairingRequestId}/status.
+- Replaced child code creation with POST /pairing/child/connection-code.
+- Added child pending request check, approve, and reject actions.
+- Saved approved device credentials with DPAPI LocalMachine for Windows Service reuse.
+- Verified windows-agent solution builds with 0 warnings and 0 errors.
+- Added Parent dashboard mode control for approved devices.
+- Added Parent dashboard recent log loading for approved devices.
+- Verified windows-agent solution builds again with 0 warnings and 0 errors.
+- Updated Windows Service so protection waits for approved credentials instead of using the legacy unpaired pair-code flow.
+- Fixed BackendApiClient HttpClient reuse so heartbeat, mode sync, and log upload can run in the same Agent process.
+- Added Agent approval smoke script for credentials, heartbeat, mode sync, and pending log upload.
+- Verified backend approval pairing smoke test passed.
+- Verified Agent approval flow smoke test passed.
+- Verified windows-agent solution builds with 0 warnings and 0 errors after the service fixes.
+
+In Progress
+
+- Preparing final manual Windows UI and Administrator tests.
+
+Blocked
+
+- Real visual notepad.exe blocking and offline/reconnect protection still require manual Windows Agent execution with Administrator permission.
+
+Next
+
+- Run full approval pairing locally against Backend.
+- Start Windows Service with saved credentials and verify heartbeat, mode sync, notepad.exe blocking, and log upload.
+- Run the real Windows UI flow and offline/reconnect test as Administrator.
+
+---
+
+## 2026-07-06
+
+### Pham Ba Thach
+
+Done
+
+- Redesigned Windows Client startup screen to show only Parent Mode and Child Mode without the left sidebar.
+- Separated Parent authentication from Parent dashboard so pairing, devices, mode control, and logs appear only after successful login.
+- Updated Parent login form to use username/Gmail and password only.
+- Updated Parent register form to use username, Gmail, password, confirm password, and phone number.
+- Hid API base URL from the normal form and defaulted local demo Backend to http://127.0.0.1:5133 when KIDGUARD_API_BASE_URL is not set.
+- Verified windows-agent solution builds with 0 warnings and 0 errors.
+
+In Progress
+
+- Preparing manual visual check of the redesigned Windows Client.
+
+Blocked
+
+- None recorded.
 
 Next
 
 - Run KidGuard.Client and compare the screens with the requested screenshots.
+
+---
+
+## 2026-07-06
+
+### Admin (Trần Phúc Thịnh)
+
+Done
+
+- Initiated and completed Windows Client UI modernization matching mockup screenshots.
+- Added modern global styling tokens, templates, textbox inner icons, and button styles to App.xaml.
+- Added organic vector curves and logo geometries to MainWindow.xaml.
+- Redesigned Role Selection screen to feature mockup-accurate cards and vector illustrations.
+- Redesigned Parent Login & Register screens with dynamic headers, pill tabs, and animated fields.
+- Redesigned Parent Dashboard with pairing panels, approved device lists, and log grids.
+- Redesigned Child setup panel with waiting states and warning cards.
+- Implemented parent logout button and click logic to securely clear auth session and reset textboxes.
+- Fixed overlapping headers, text/button cutoffs (including Gửi Yêu Cầu, Làm Mới Trạng Thái and other dashboard buttons using Auto-Width and Padding), and rasterization text blurriness (using ClearTypeHint and LayoutRounding).
+- Verified compilation and launched test execution.
+
+In Progress
+
+- None.
+
+Blocked
+
+- None.
+
+Next
+
+- Proceed with mobile/phone layout modernization and backend services tests.

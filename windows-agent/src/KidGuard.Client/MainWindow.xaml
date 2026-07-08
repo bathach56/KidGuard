@@ -11,44 +11,136 @@
         MinWidth="760"
         Background="{StaticResource WindowBackgroundBrush}"
         WindowStartupLocation="CenterScreen">
-    <Grid Margin="24">
-        <TextBox x:Name="ApiBaseUrlTextBox" Visibility="Collapsed" />
-        <TextBox x:Name="ChildApiBaseUrlTextBox" Visibility="Collapsed" />
-        <PasswordBox x:Name="ChildSetupTokenPasswordBox" Visibility="Collapsed" />
-
-        <Grid x:Name="RoleSelectionPanel">
-            <ScrollViewer VerticalScrollBarVisibility="Auto"
-                          HorizontalScrollBarVisibility="Auto">
-            <StackPanel VerticalAlignment="Center"
-                        HorizontalAlignment="Center"
-                        MaxWidth="700"
-                        MinWidth="560">
-                <TextBlock Text="Choose how this Windows device will use KidGuard"
-                           FontSize="30"
-                           FontWeight="Bold"
-                           TextAlignment="Left" />
-                <TextBlock Text="Parent manages approved child devices. Child shows a connection code and approves pairing before protection starts."
-                           Margin="0,14,0,28"
-                           FontSize="15"
-                           Foreground="{StaticResource MutedTextBrush}"
-                           TextWrapping="Wrap" />
-                <UniformGrid Columns="2">
-                    <Button Content="Parent Mode"
-                            Height="96"
-                            Margin="0,0,10,0"
-                            FontSize="17"
-                            Style="{StaticResource PrimaryButtonStyle}"
-                            Click="ParentModeButton_Click" />
-                    <Button Content="Child Mode"
-                            Height="96"
-                            Margin="10,0,0,0"
-                            FontSize="17"
-                            Style="{StaticResource SecondaryButtonStyle}"
-                            Click="ChildModeButton_Click" />
-                </UniformGrid>
-            </StackPanel>
-            </ScrollViewer>
+    <Grid>
+        <!-- Background Curves Grid -->
+        <Grid x:Name="BackgroundCurvesGrid" IsHitTestVisible="False">
+            <!-- Top Left Blue Shapes (layered) -->
+            <Path Data="M 0,0 C 150,0 320,120 320,280 C 320,380 180,420 0,420 Z" Fill="#DCE9F9" Opacity="0.95" Stretch="Fill" Width="320" Height="420" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+            <Path Data="M 0,0 C 100,0 230,80 230,200 C 230,270 130,300 0,300 Z" Fill="#A5C9EB" Opacity="0.8" Stretch="Fill" Width="230" Height="300" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+            
+            <!-- Top Right Yellow Shape -->
+            <Path Data="M 350,0 C 200,0 120,80 120,200 C 120,280 200,320 350,320 Z" Fill="#FEF3C7" Opacity="0.95" Stretch="Fill" Width="350" Height="320" HorizontalAlignment="Right" VerticalAlignment="Top"/>
+            
+            <!-- Bottom Left Green Shape -->
+            <Path Data="M 0,400 C 120,400 240,320 240,200 C 240,110 120,0 0,0 Z" Fill="#DCFCE7" Opacity="0.95" Stretch="Fill" Width="240" Height="400" HorizontalAlignment="Left" VerticalAlignment="Bottom"/>
+            
+            <!-- Bottom Right Green/Blue Shape -->
+            <Path Data="M 300,450 C 150,450 60,350 60,220 C 60,120 150,0 300,0 Z" Fill="#D1FAE5" Opacity="0.95" Stretch="Fill" Width="300" Height="450" HorizontalAlignment="Right" VerticalAlignment="Bottom"/>
+            
+            <!-- Bottom Right small circle -->
+            <Ellipse Fill="#BFDBFE" Width="32" Height="32" Margin="0,0,140,180" HorizontalAlignment="Right" VerticalAlignment="Bottom" Opacity="0.95"/>
         </Grid>
+
+        <!-- Main Content Wrapper -->
+        <Grid Margin="24">
+            <TextBox x:Name="ApiBaseUrlTextBox" Visibility="Collapsed" />
+            <TextBox x:Name="ChildApiBaseUrlTextBox" Visibility="Collapsed" />
+            <PasswordBox x:Name="ChildSetupTokenPasswordBox" Visibility="Collapsed" />
+
+            <Grid x:Name="RoleSelectionPanel">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+                    <Grid VerticalAlignment="Center" HorizontalAlignment="Center" MaxWidth="860" MinWidth="740">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        
+                        <TextBlock Text="Chào mừng bạn đến với KidGuard! Hãy thiết lập thiết bị này."
+                                   FontSize="18"
+                                   FontWeight="Medium"
+                                   Foreground="#1E293B"
+                                   Margin="0,0,0,8"
+                                   Grid.Row="0"/>
+                        
+                        <TextBlock Text="Choose how this Windows device will use KidGuard"
+                                   FontSize="32"
+                                   FontWeight="Bold"
+                                   Foreground="#0F172A"
+                                   Margin="0,0,0,18"
+                                   Grid.Row="1"/>
+                        
+                        <TextBlock Text="Phụ huynh quản lý các thiết bị trẻ em đã được phê duyệt. Child shows a connection code với approves pairing before protection starts."
+                                   FontSize="14"
+                                   Foreground="{StaticResource MutedTextBrush}"
+                                   Margin="0,0,0,32"
+                                   Grid.Row="2"/>
+                        
+                        <UniformGrid Columns="2" Grid.Row="3" Margin="0,0,0,40">
+                            <!-- Parent Card Button -->
+                            <Button Style="{StaticResource CardButtonStyle}"
+                                    Margin="0,0,12,0"
+                                    Height="190"
+                                    Click="ParentModeButton_Click">
+                                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="130"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <!-- Left Column: Shield and Hands Illustration -->
+                                    <Grid Grid.Column="0" VerticalAlignment="Stretch" Margin="0,0,10,0">
+                                        <!-- Shield Icon -->
+                                        <Path Data="M 12,2 C 6.5,3.8 2,5.5 2,12 C 2,18 6.5,21.5 12,23 C 17.5,21.5 22,18 22,12 C 22,5.5 17.5,3.8 12,2 Z"
+                                              Fill="#3A887C" Width="36" Height="42" Stretch="Fill"
+                                              HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                                        
+                                        <!-- Hands Clasping Drawing -->
+                                        <Path Data="M 40,80 C 40,80 60,60 80,60 C 100,60 110,80 110,80 C 110,80 120,70 130,80 C 130,90 110,110 90,110 C 70,110 50,90 40,80 Z"
+                                              Fill="#E3A857" Opacity="0.8" Width="70" Height="50" Stretch="Fill"
+                                              HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,0,10"/>
+                                    </Grid>
+                                    <!-- Right Column: Heading & Description -->
+                                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                        <TextBlock Text="Parent Mode" FontSize="18" FontWeight="Bold" Foreground="#0F172A" Margin="0,0,0,8"/>
+                                        <TextBlock Text="Phụ huynh quản lý các thiết bị trẻ em đã được phê duyệt, set usage rules, change modes and view activity logs."
+                                                   FontSize="12" Foreground="{StaticResource MutedTextBrush}" LineHeight="18"/>
+                                    </StackPanel>
+                                </Grid>
+                            </Button>
+
+                            <!-- Child Card Button -->
+                            <Button Style="{StaticResource CardButtonStyle}"
+                                    Margin="12,0,0,0"
+                                    Height="190"
+                                    Click="ChildModeButton_Click">
+                                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="130"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <!-- Left Column: Laptop and Screen Illustration -->
+                                    <Grid Grid.Column="0" VerticalAlignment="Stretch" Margin="0,0,10,0">
+                                        <!-- Laptop Yellow Icon -->
+                                        <Path Data="M 20,18 H 4 C 2.9,18 2,17.1 2,16 V 4 C 2,2.9 2.9,2 4,2 H 20 C 21.1,2 22,2.9 22,4 V 16 C 22,17.1 21.1,18 20,18 M 22,19 H 2 A 1,1 0 0,0 1,20 H 23 A 1,1 0 0,0 22,19 Z"
+                                              Fill="#D8B44A" Width="36" Height="30" Stretch="Fill"
+                                              HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                                        
+                                        <!-- Computer and Cloud Apps Icon Drawing -->
+                                        <Path Data="M21,2H3C1.9,2,1,2.9,1,4v12c0,1.1,0.9,2,2,2h7v2H8v2h8v-2h-2v-2h7c1.1,0,2-0.9,2-2V4C23,2.9,22.1,2,21,2 M21,14H3V4h18V14z"
+                                              Fill="#3E7B92" Width="70" Height="50" Stretch="Fill"
+                                              HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,0,10"/>
+                                    </Grid>
+                                    <!-- Right Column: Heading & Description -->
+                                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                        <TextBlock Text="Child Mode" FontSize="18" FontWeight="Bold" Foreground="#0F172A" Margin="0,0,0,8"/>
+                                        <TextBlock Text="Tạo mã ghép đôi để kết nối to a parent account, approve access, and receive remote mode configurations."
+                                                   FontSize="12" Foreground="{StaticResource MutedTextBrush}" LineHeight="18"/>
+                                    </StackPanel>
+                                </Grid>
+                            </Button>
+                        </UniformGrid>
+
+                        <!-- Bottom KG Leaf Logo -->
+                        <StackPanel Grid.Row="3" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0,20,0,10" Orientation="Horizontal">
+                            <!-- Vector Leaf Path -->
+                            <Path Data="M20,35 C20,20 30,10 40,10 C40,25 35,35 20,35 M20,35 C30,30 40,35 45,25 C35,25 25,30 20,35 M10,25 C10,15 20,5 30,5 C30,15 25,25 10,25"
+                                  Fill="#3A887C" Width="26" Height="26" Stretch="Fill" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                            <TextBlock Text="KG" FontSize="20" FontWeight="Bold" Foreground="#3A887C" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Grid>
+                </ScrollViewer>
+            </Grid>
 
         <Grid x:Name="ParentPanel" Visibility="Collapsed">
             <Grid.RowDefinitions>
@@ -56,17 +148,19 @@
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
-            <DockPanel Margin="0,0,0,24">
-                <Button Content="Back"
+            <DockPanel x:Name="ParentCommonHeader" Margin="0,10,0,24" VerticalAlignment="Center">
+                <Button Content="← Trở lại"
                         DockPanel.Dock="Right"
-                        Width="92"
+                        Width="Auto"
+                        Padding="16,4"
+                        Height="38"
                         Style="{StaticResource SecondaryButtonStyle}"
                         Click="BackButton_Click" />
-                <StackPanel>
-                    <TextBlock Text="Parent Mode" FontSize="28" FontWeight="Bold" />
-                    <TextBlock Text="Login or register before opening the parent dashboard."
-                               Foreground="{StaticResource MutedTextBrush}"
-                               Margin="0,4,0,0" />
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <!-- Leaf Icon Logo -->
+                    <Path Data="M20,35 C20,20 30,10 40,10 C40,25 35,35 20,35 M20,35 C30,30 40,35 45,25 C35,25 25,30 20,35 M10,25 C10,15 20,5 30,5 C30,15 25,25 10,25"
+                          Fill="#3A887C" Width="26" Height="26" Stretch="Fill" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                    <TextBlock Text="KidGuard" FontSize="22" FontWeight="Bold" Foreground="#3A887C" VerticalAlignment="Center"/>
                 </StackPanel>
             </DockPanel>
 
@@ -75,85 +169,214 @@
                           VerticalScrollBarVisibility="Auto"
                           HorizontalScrollBarVisibility="Auto">
                 <Grid MinWidth="430">
-                <Border Width="430"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Top"
-                        Margin="0,12,0,24"
-                        Background="{StaticResource PanelBackgroundBrush}"
-                        BorderBrush="{StaticResource BorderBrush}"
-                        BorderThickness="1"
-                        CornerRadius="8"
-                        Padding="30">
-                    <StackPanel>
-                        <TextBlock Text="Welcome back"
-                                   FontSize="28"
-                                   FontWeight="Bold"
-                                   TextAlignment="Center" />
-                        <TextBlock Text="Sign in or create a parent account to continue."
-                                   Margin="0,8,0,22"
-                                   Foreground="{StaticResource MutedTextBrush}"
-                                   TextAlignment="Center" />
+                    <StackPanel HorizontalAlignment="Center" Width="430" Margin="0,12,0,24">
+                        <!-- Dynamic Title for Login -->
+                        <StackPanel x:Name="LoginTitlePanel">
+                            <TextBlock Text="Nâng cấp bảo mật&#x0a;cho con yêu."
+                                       FontSize="30"
+                                       FontWeight="Bold"
+                                       TextAlignment="Center"
+                                       Foreground="#0F172A"
+                                       Margin="0,0,0,8"/>
+                            <TextBlock Text="Login: parent or guardian dashboard."
+                                       FontSize="14"
+                                       Foreground="{StaticResource MutedTextBrush}"
+                                       TextAlignment="Center"
+                                       Margin="0,0,0,24"/>
+                        </StackPanel>
+                        
+                        <!-- Dynamic Title for Register (default Collapsed) -->
+                        <StackPanel x:Name="RegisterTitlePanel" Visibility="Collapsed">
+                            <TextBlock Text="Tạo tài khoản KidGuard&#x0a;ngay hôm nay!"
+                                       FontSize="30"
+                                       FontWeight="Bold"
+                                       TextAlignment="Center"
+                                       Foreground="#0F172A"
+                                       Margin="0,0,0,8"/>
+                            <TextBlock Text="Register: parent or guardian dashboard."
+                                       FontSize="14"
+                                       Foreground="{StaticResource MutedTextBrush}"
+                                       TextAlignment="Center"
+                                       Margin="0,0,0,24"/>
+                        </StackPanel>
 
-                        <Border Background="#F3F4F6"
-                                CornerRadius="8"
-                                Padding="4"
-                                Margin="0,0,0,24">
-                            <UniformGrid Columns="2">
-                                <Button x:Name="LoginTabButton"
-                                        Content="Login"
-                                        Height="42"
-                                        Margin="0,0,4,0"
-                                        Style="{StaticResource PrimaryButtonStyle}"
-                                        Click="LoginTabButton_Click" />
-                                <Button x:Name="RegisterTabButton"
-                                        Content="Register"
-                                        Height="42"
-                                        Margin="4,0,0,0"
-                                        Style="{StaticResource SecondaryButtonStyle}"
-                                        Click="RegisterTabButton_Click" />
-                            </UniformGrid>
+                        <!-- White Card Wrapper -->
+                        <Border Style="{StaticResource ModernCardStyle}">
+                            <StackPanel>
+                                <!-- Tab Switcher -->
+                                <Border Background="#F1F5F9"
+                                        CornerRadius="10"
+                                        Padding="4"
+                                        Margin="0,0,0,20">
+                                    <UniformGrid Columns="2">
+                                        <Button x:Name="LoginTabButton"
+                                                Content="Đăng nhập"
+                                                Height="38"
+                                                Style="{StaticResource TabActiveButtonStyle}"
+                                                Click="LoginTabButton_Click" />
+                                        <Button x:Name="RegisterTabButton"
+                                                Content="Đăng ký"
+                                                Height="38"
+                                                Style="{StaticResource TabInactiveButtonStyle}"
+                                                Click="RegisterTabButton_Click" />
+                                    </UniformGrid>
+                                </Border>
+
+                                <!-- Login Form -->
+                                <StackPanel x:Name="LoginFormPanel">
+                                    <TextBlock Text="Chào mừng quay trở lại"
+                                               FontSize="18"
+                                               FontWeight="Bold"
+                                               TextAlignment="Center"
+                                               Margin="0,0,0,16"/>
+                                    
+                                    <!-- Email Field with Icon and Placeholder -->
+                                    <Grid>
+                                        <TextBox x:Name="ParentEmailTextBox" Style="{StaticResource UserTextBoxStyle}"/>
+                                        <TextBlock IsHitTestVisible="False" Text="Tài khoản hoặc Gmail" VerticalAlignment="Center" Margin="48,0,0,8" Foreground="#94A3B8" FontSize="14">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Text, ElementName=ParentEmailTextBox}" Value="">
+                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                    </Grid>
+
+                                    <!-- Password Field with Icon and Placeholder -->
+                                    <Grid>
+                                        <!-- Note: PasswordBox doesn't have direct Text binding, but we can bind to Password or handle in template, or just check length if we want pure XAML trigger, but wait, PasswordBox.Password is not a dependency property so we cannot bind to it in standard XAML without a helper, but wait! We can bind to PasswordBox.Password length or just omit placeholder when typed, wait, actually we can just let PasswordBox have standard XAML styling, or wait, we can bind to isFocused or similar, or we can use PasswordBoxHelper, or we can just use the label or standard text. Let's see: can we bind to the Password length using a PasswordBox wrapper? No. But we can bind to IsKeyboardFocusWithin or let C# clear it, or we can bind to Tag! If we set the Tag in PasswordChanged event we can bind to Tag, or we can just use a standard TextBlock for label, or let's use a standard label inside if it's simpler. Or wait, is there a simple way to bind to Password length? No. Let's just use Tag: in PasswordBox, we can handle the PasswordChanged event and set Tag equal to the password. Let's check: does MainWindow have a password box event? We can add one or we can just let it show the label.
+                                        Wait, a simple way to do Password placeholder in WPF is to have a PasswordBox and a TextBox overlay, or we can just use a TextBox styled as Password if needed, but a PasswordBox is more secure.
+                                        Let's look: we can just add a simple TextBlock placeholder that hides when KeyboardFocusWithin is true, OR we can handle the PasswordChanged event in code-behind to set the visibility of the placeholder.
+                                        Yes! That is extremely simple and works 100%!
+                                        Let's write in MainWindow.xaml:
+                                        -->
+                                        <PasswordBox x:Name="ParentPasswordBox" Style="{StaticResource IconPasswordBoxStyle}" PasswordChanged="ParentPasswordBox_PasswordChanged"/>
+                                        <TextBlock x:Name="ParentPasswordPlaceholder" IsHitTestVisible="False" Text="Mật khẩu" VerticalAlignment="Center" Margin="48,0,0,8" Foreground="#94A3B8" FontSize="14"/>
+                                    </Grid>
+
+                                    <!-- Forgot Password Link -->
+                                    <TextBlock Text="Quên mật khẩu?" Foreground="#4B56D2" Cursor="Hand" HorizontalAlignment="Right" Margin="0,0,0,16" FontSize="13" FontWeight="SemiBold"/>
+
+                                    <Button x:Name="ParentLoginButton"
+                                            Content="Đăng nhập 🔒"
+                                            Height="42"
+                                            Style="{StaticResource PrimaryButtonStyle}"
+                                            Click="ParentLoginButton_Click" />
+                                </StackPanel>
+
+                                <!-- Register Form -->
+                                <StackPanel x:Name="RegisterFormPanel" Visibility="Collapsed">
+                                    <TextBlock Text="Chào mừng bạn mới!"
+                                               FontSize="18"
+                                               FontWeight="Bold"
+                                               TextAlignment="Center"
+                                               Margin="0,0,0,16"/>
+                                    
+                                    <!-- Full Name Field -->
+                                    <Grid>
+                                        <TextBox x:Name="ParentFullNameTextBox" Style="{StaticResource UserTextBoxStyle}"/>
+                                        <TextBlock IsHitTestVisible="False" Text="Tên tài khoản" VerticalAlignment="Center" Margin="48,0,0,8" Foreground="#94A3B8" FontSize="14">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Text, ElementName=ParentFullNameTextBox}" Value="">
+                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                    </Grid>
+
+                                    <!-- Register Email Field -->
+                                    <Grid>
+                                        <TextBox x:Name="ParentRegisterEmailTextBox" Style="{StaticResource EmailTextBoxStyle}"/>
+                                        <TextBlock IsHitTestVisible="False" Text="Gmail" VerticalAlignment="Center" Margin="48,0,0,8" Foreground="#94A3B8" FontSize="14">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Text, ElementName=ParentRegisterEmailTextBox}" Value="">
+                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                    </Grid>
+
+                                    <!-- Register Password Field -->
+                                    <Grid>
+                                        <PasswordBox x:Name="ParentRegisterPasswordBox" Style="{StaticResource IconPasswordBoxStyle}" PasswordChanged="ParentRegisterPasswordBox_PasswordChanged"/>
+                                        <TextBlock x:Name="ParentRegisterPasswordPlaceholder" IsHitTestVisible="False" Text="Mật khẩu" VerticalAlignment="Center" Margin="48,0,0,8" Foreground="#94A3B8" FontSize="14"/>
+                                    </Grid>
+
+                                    <!-- Register Confirm Password Field -->
+                                    <Grid>
+                                        <PasswordBox x:Name="ParentRegisterConfirmPasswordBox" Style="{StaticResource IconPasswordBoxStyle}" PasswordChanged="ParentRegisterConfirmPasswordBox_PasswordChanged"/>
+                                        <TextBlock x:Name="ParentRegisterConfirmPasswordPlaceholder" IsHitTestVisible="False" Text="Xác nhận mật khẩu" VerticalAlignment="Center" Margin="48,0,0,8" Foreground="#94A3B8" FontSize="14"/>
+                                    </Grid>
+
+                                    <!-- Register Phone Field -->
+                                    <Grid>
+                                        <TextBox x:Name="ParentPhoneNumberTextBox" Style="{StaticResource PhoneTextBoxStyle}"/>
+                                        <TextBlock IsHitTestVisible="False" Text="Số điện thoại" VerticalAlignment="Center" Margin="48,0,0,8" Foreground="#94A3B8" FontSize="14">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Text, ElementName=ParentPhoneNumberTextBox}" Value="">
+                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                    </Grid>
+
+                                    <TextBlock Text="Để chúng tôi có thể liên hệ khi cần"
+                                               FontSize="12"
+                                               Foreground="{StaticResource MutedTextBrush}"
+                                               Margin="0,0,0,16"/>
+
+                                    <Button x:Name="ParentRegisterButton"
+                                            Content="Đăng ký"
+                                            Height="42"
+                                            Style="{StaticResource PrimaryButtonStyle}"
+                                            Click="ParentRegisterButton_Click" />
+                                </StackPanel>
+
+                                <!-- Social Logins -->
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,18,0,0">
+                                    <TextBlock x:Name="SocialLoginTextBlock" Text="Đăng nhập bằng:" Foreground="{StaticResource MutedTextBrush}" VerticalAlignment="Center" Margin="0,0,10,0" FontSize="13"/>
+                                    <!-- Google -->
+                                    <Border Width="34" Height="34" CornerRadius="17" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1.5" Background="White" Cursor="Hand" Margin="0,0,8,0">
+                                        <Path Data="M12.24 10.285V13.4h6.887C18.2 15.614 15.645 18 12.24 18c-3.86 0-7-3.14-7-7s3.14-7 7-7c1.86 0 3.42.73 4.6 1.91l2.455-2.455C17.785 2.045 15.23 1 12.24 1c-5.523 0-10 4.477-10 10s4.477 10 10 10c5.786 0 9.614-4.068 9.614-9.773 0-.66-.06-1.286-.173-1.854l-9.44.012z"
+                                              Fill="#EA4335" Width="16" Height="16" Stretch="Fill" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <!-- Apple -->
+                                    <Border Width="34" Height="34" CornerRadius="17" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1.5" Background="White" Cursor="Hand">
+                                        <Path Data="M17.05 20.28c-.98.95-2.05.94-3.08.4-1.09-.55-2.02-.56-3.14 0-1.08.53-2.01.5-2.92-.4C3.96 16.32 3.32 9.77 6.64 6.44c1.65-1.65 3.51-1.77 4.86-1.08 1.48.74 2.3 1.15 3.53 1.15 1.2 0 1.83-.37 3.25-1.12 1.34-.72 3.19-.53 4.43.76-3.03 3.54-2.22 8.78 1.17 10.23-1.5 3.39-3.4 5.9-6.83 2.9zM15.52.88c0 2.21-1.8 4.02-4.02 4.02-.13 0-.25-.01-.38-.03.07-2.18 1.86-3.96 4.02-4.02.13 0 .25.01.38.03z"
+                                              Fill="Black" Width="16" Height="16" Stretch="Fill" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                </StackPanel>
+
+                                <TextBlock x:Name="ParentLoginStatusTextBlock"
+                                           Text="Backend: http://127.0.0.1:5133"
+                                           Margin="0,16,0,0"
+                                           Foreground="{StaticResource MutedTextBrush}"
+                                           TextWrapping="Wrap"
+                                           TextAlignment="Center"
+                                           FontSize="12" />
+                            </StackPanel>
                         </Border>
-
-                        <StackPanel x:Name="LoginFormPanel">
-                            <TextBlock Text="Username or Gmail" />
-                            <TextBox x:Name="ParentEmailTextBox" />
-                            <TextBlock Text="Password" />
-                            <PasswordBox x:Name="ParentPasswordBox" />
-                            <Button x:Name="ParentLoginButton"
-                                    Content="Login"
-                                    Height="44"
-                                    Margin="0,8,0,0"
-                                    Style="{StaticResource PrimaryButtonStyle}"
-                                    Click="ParentLoginButton_Click" />
-                        </StackPanel>
-
-                        <StackPanel x:Name="RegisterFormPanel" Visibility="Collapsed">
-                            <TextBlock Text="Username" />
-                            <TextBox x:Name="ParentFullNameTextBox" />
-                            <TextBlock Text="Gmail" />
-                            <TextBox x:Name="ParentRegisterEmailTextBox" />
-                            <TextBlock Text="Password" />
-                            <PasswordBox x:Name="ParentRegisterPasswordBox" />
-                            <TextBlock Text="Confirm password" />
-                            <PasswordBox x:Name="ParentRegisterConfirmPasswordBox" />
-                            <TextBlock Text="Phone number" />
-                            <TextBox x:Name="ParentPhoneNumberTextBox" />
-                            <Button x:Name="ParentRegisterButton"
-                                    Content="Create account"
-                                    Height="44"
-                                    Margin="0,8,0,0"
-                                    Style="{StaticResource PrimaryButtonStyle}"
-                                    Click="ParentRegisterButton_Click" />
-                        </StackPanel>
-
-                        <TextBlock x:Name="ParentLoginStatusTextBlock"
-                                   Text="Backend: http://127.0.0.1:5133"
-                                   Margin="0,16,0,0"
-                                   Foreground="{StaticResource MutedTextBrush}"
-                                   TextWrapping="Wrap"
-                                   TextAlignment="Center" />
                     </StackPanel>
-                </Border>
                 </Grid>
             </ScrollViewer>
 
@@ -162,174 +385,355 @@
                           Visibility="Collapsed"
                           VerticalScrollBarVisibility="Auto"
                           HorizontalScrollBarVisibility="Auto">
-                <Grid MinWidth="860">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="0.95*" />
-                        <ColumnDefinition Width="1.05*" />
-                    </Grid.ColumnDefinitions>
-
-                    <Border Background="{StaticResource PanelBackgroundBrush}"
-                            BorderBrush="{StaticResource BorderBrush}"
-                            BorderThickness="1"
-                            CornerRadius="8"
-                            Padding="24"
-                            Margin="0,0,12,0">
-                        <StackPanel>
-                            <TextBlock Text="Pairing" FontSize="20" FontWeight="SemiBold" />
-                            <TextBlock Text="Child connection code" Margin="0,18,0,0" />
-                            <TextBox x:Name="ChildCodeTextBox" CharacterCasing="Upper" MaxLength="12" />
-                            <StackPanel Orientation="Horizontal">
-                                <Button x:Name="SendPairRequestButton"
-                                        Content="Send Request"
-                                        Width="140"
-                                        Style="{StaticResource PrimaryButtonStyle}"
-                                        Click="SendPairRequestButton_Click" />
-                                <Button x:Name="RefreshPairingStatusButton"
-                                        Content="Refresh Status"
-                                        Width="140"
-                                        Margin="10,0,0,0"
-                                        Style="{StaticResource SecondaryButtonStyle}"
-                                        Click="RefreshPairingStatusButton_Click" />
+                <StackPanel Margin="0,0,0,24">
+                    <!-- Dashboard Header -->
+                    <Grid Margin="0,0,0,20">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <!-- Left: Parent Mode Title -->
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <Path Data="M 12,2 C 6.5,3.8 2,5.5 2,12 C 2,18 6.5,21.5 12,23 C 17.5,21.5 22,18 22,12 C 22,5.5 17.5,3.8 12,2 Z"
+                                  Fill="#3A887C" Width="24" Height="28" Stretch="Fill" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                            <StackPanel>
+                                <TextBlock Text="Parent Dashboard" FontSize="22" FontWeight="Bold" Foreground="#0F172A"/>
+                                <TextBlock Text="Quản lý thiết bị của con và cấu hình chế độ bảo vệ." FontSize="13" Foreground="{StaticResource MutedTextBrush}"/>
                             </StackPanel>
-                            <Border Background="#F9FAFB"
-                                    BorderBrush="{StaticResource BorderBrush}"
-                                    BorderThickness="1"
-                                    CornerRadius="8"
-                                    Padding="14"
-                                    Margin="0,22,0,0">
+                        </StackPanel>
+                        <!-- Right: Back/Logout buttons -->
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                            <Button Content="Trở lại" Width="Auto" Padding="16,0" Height="36" Style="{StaticResource LightGreenButtonStyle}" Click="BackButton_Click" Margin="0,0,10,0"/>
+                            <Button Content="Đăng xuất 🚪" Width="Auto" Padding="16,0" Height="36" Style="{StaticResource SecondaryButtonStyle}" Click="ParentLogoutButton_Click"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- Columns Layout -->
+                    <Grid MinWidth="860">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="0.95*" />
+                            <ColumnDefinition Width="1.05*" />
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Column 0: Pairing Card -->
+                        <Border Background="{StaticResource PanelBackgroundBrush}"
+                                BorderBrush="{StaticResource BorderBrush}"
+                                BorderThickness="1"
+                                CornerRadius="10"
+                                Padding="24"
+                                Margin="0,0,12,0"
+                                Style="{StaticResource ModernCardStyle}">
+                            <Grid>
+                                <!-- Shield Watermark -->
+                                <Path Data="M 12,2 L 2,6 V 12 C 2,17.5 6.2,22.7 12,24 C 17.7,22.7 22,17.5 22,12 V 6 L 12,2 Z" 
+                                      Fill="#3A887C" Opacity="0.03" Width="90" Height="100" Stretch="Fill" 
+                                      HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,-10,-10"/>
                                 <StackPanel>
-                                    <TextBlock Text="Pairing status" FontWeight="SemiBold" />
-                                    <Border x:Name="PairingStateBadge"
-                                            Background="#EEF2FF"
-                                            BorderBrush="#C7D2FE"
-                                            BorderThickness="1"
-                                            CornerRadius="8"
-                                            Padding="10,6"
-                                            Margin="0,8,0,10"
-                                            HorizontalAlignment="Left">
-                                        <TextBlock x:Name="PairingStateTextBlock"
-                                                   Text="Not started"
-                                                   FontWeight="SemiBold"
-                                                   Foreground="#1E3A8A" />
-                                    </Border>
-                                    <TextBlock x:Name="PairingStatusTextBlock"
-                                               Text="Enter a child code to send a request."
-                                               Foreground="{StaticResource MutedTextBrush}"
-                                               TextWrapping="Wrap" />
-                                    <Border x:Name="PairedDevicePanel"
-                                            Background="#FFFFFF"
+                                    <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                                        <Path Data="M12,20A8,8 0 0,0 20,12A8,8 0 0,0 12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22C6.47,22 2,17.5 2,12A10,10 0 0,1 12,2M12.5,7V12.25L17,14.92L16.25,16.15L11,13V7H12.5Z" 
+                                              Fill="#3A887C" Width="18" Height="18" Stretch="Fill" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                        <TextBlock Text="Pairing" FontSize="20" FontWeight="SemiBold" Foreground="#0F172A"/>
+                                    </StackPanel>
+                                    
+                                    <TextBlock Text="Mã kết nối của con" Margin="0,6,0,6" Foreground="#64748B" FontSize="13" FontWeight="Medium"/>
+                                    <TextBox x:Name="ChildCodeTextBox" CharacterCasing="Upper" MaxLength="12" Height="40" Style="{StaticResource UserTextBoxStyle}" Padding="12,0,12,0" Margin="0,0,0,12"/>
+                                    
+                                    <TextBlock Text="Vị trí tìm mã kết nối trên máy của con?" Foreground="#4B56D2" Cursor="Hand" TextDecorations="Underline" Margin="0,0,0,16" FontSize="12"/>
+                                    
+                                    <StackPanel Orientation="Horizontal" Margin="0,0,0,20">
+                                        <Button x:Name="SendPairRequestButton"
+                                                Content="Gửi Yêu Cầu"
+                                                Width="Auto"
+                                                Padding="16,0"
+                                                Height="38"
+                                                Style="{StaticResource DarkGreenButtonStyle}"
+                                                Click="SendPairRequestButton_Click" />
+                                        <Button x:Name="RefreshPairingStatusButton"
+                                                Content="Làm Mới Trạng Thái"
+                                                Width="Auto"
+                                                Padding="16,0"
+                                                Height="38"
+                                                Margin="10,0,0,0"
+                                                Style="{StaticResource LightGreenButtonStyle}"
+                                                Click="RefreshPairingStatusButton_Click" />
+                                    </StackPanel>
+                                    
+                                    <Border Background="#F8FAFC"
                                             BorderBrush="{StaticResource BorderBrush}"
-                                            BorderThickness="1"
-                                            CornerRadius="8"
-                                            Padding="12"
-                                            Margin="0,12,0,0"
-                                            Visibility="Collapsed">
+                                            BorderThickness="1.5"
+                                            CornerRadius="10"
+                                            Padding="18"
+                                            Margin="0,4,0,0">
                                         <StackPanel>
-                                            <TextBlock Text="Paired device" FontWeight="SemiBold" />
-                                            <TextBlock x:Name="PairedDeviceNameTextBlock" Margin="0,6,0,0" />
-                                            <TextBlock x:Name="PairedDeviceIdTextBlock"
-                                                       Margin="0,4,0,0"
-                                                       Foreground="{StaticResource MutedTextBrush}" />
-                                            <TextBlock x:Name="PairedDeviceModeTextBlock"
-                                                       Margin="0,4,0,0"
-                                                       Foreground="{StaticResource MutedTextBrush}" />
+                                            <TextBlock Text="Trạng thái kết nối" FontWeight="Bold" FontSize="14" Foreground="#1E293B" Margin="0,0,0,10"/>
+                                            <Border x:Name="PairingStateBadge"
+                                                    Background="#EFF6FF"
+                                                    BorderBrush="#BFDBFE"
+                                                    BorderThickness="1.5"
+                                                    CornerRadius="8"
+                                                    Padding="12,6"
+                                                    Margin="0,0,0,10"
+                                                    HorizontalAlignment="Left">
+                                                <TextBlock x:Name="PairingStateTextBlock"
+                                                           Text="Not started"
+                                                           FontWeight="SemiBold"
+                                                           Foreground="#1E40AF" />
+                                            </Border>
+                                            <TextBlock x:Name="PairingStatusTextBlock"
+                                                       Text="Enter a child code to send a request."
+                                                       Foreground="{StaticResource MutedTextBrush}"
+                                                       FontSize="13"
+                                                       TextWrapping="Wrap" />
+                                            <Border x:Name="PairedDevicePanel"
+                                                    Background="#FFFFFF"
+                                                    BorderBrush="{StaticResource BorderBrush}"
+                                                    BorderThickness="1"
+                                                    CornerRadius="8"
+                                                    Padding="12"
+                                                    Margin="0,12,0,0"
+                                                    Visibility="Collapsed">
+                                                <StackPanel>
+                                                    <TextBlock Text="Paired device" FontWeight="SemiBold" />
+                                                    <TextBlock x:Name="PairedDeviceNameTextBlock" Margin="0,6,0,0" />
+                                                    <TextBlock x:Name="PairedDeviceIdTextBlock"
+                                                               Margin="0,4,0,0"
+                                                               Foreground="{StaticResource MutedTextBrush}" />
+                                                    <TextBlock x:Name="PairedDeviceModeTextBlock"
+                                                               Margin="0,4,0,0"
+                                                               Foreground="{StaticResource MutedTextBrush}" />
+                                                </StackPanel>
+                                            </Border>
+                                            <TextBox x:Name="DeviceTokenTextBox"
+                                                     Margin="0,12,0,0"
+                                                     MinHeight="72"
+                                                     TextWrapping="Wrap"
+                                                     AcceptsReturn="True"
+                                                     IsReadOnly="True"
+                                                     Visibility="Collapsed" />
+                                            <Button x:Name="CopyDeviceTokenButton"
+                                                    Content="Copy Token"
+                                                    Width="116"
+                                                    Margin="0,10,0,0"
+                                                    HorizontalAlignment="Left"
+                                                    Style="{StaticResource SecondaryButtonStyle}"
+                                                    Visibility="Collapsed"
+                                                    Click="CopyDeviceTokenButton_Click" />
                                         </StackPanel>
                                     </Border>
-                                    <TextBox x:Name="DeviceTokenTextBox"
-                                             Margin="0,12,0,0"
-                                             MinHeight="72"
-                                             TextWrapping="Wrap"
-                                             AcceptsReturn="True"
-                                             IsReadOnly="True"
-                                             Visibility="Collapsed" />
-                                    <Button x:Name="CopyDeviceTokenButton"
-                                            Content="Copy Token"
-                                            Width="116"
-                                            Margin="0,10,0,0"
-                                            HorizontalAlignment="Left"
-                                            Style="{StaticResource SecondaryButtonStyle}"
-                                            Visibility="Collapsed"
-                                            Click="CopyDeviceTokenButton_Click" />
                                 </StackPanel>
-                            </Border>
-                        </StackPanel>
-                    </Border>
+                            </Grid>
+                        </Border>
 
-                    <Border Grid.Column="1"
-                            Background="{StaticResource PanelBackgroundBrush}"
-                            BorderBrush="{StaticResource BorderBrush}"
-                            BorderThickness="1"
-                            CornerRadius="8"
-                            Padding="24"
-                            Margin="12,0,0,0">
-                        <StackPanel>
-                            <DockPanel Margin="0,0,0,10">
-                                <Button x:Name="RefreshDevicesButton"
-                                        Content="Refresh"
-                                        DockPanel.Dock="Right"
-                                        Width="96"
-                                        Style="{StaticResource SecondaryButtonStyle}"
-                                        Click="RefreshDevicesButton_Click" />
-                                <TextBlock Text="Approved devices"
-                                           VerticalAlignment="Center"
-                                           FontSize="20"
-                                           FontWeight="SemiBold" />
-                            </DockPanel>
-                            <ListBox x:Name="DeviceListBox"
-                                     MinHeight="120"
-                                     DisplayMemberPath="DisplayText"
-                                     SelectionChanged="DeviceListBox_SelectionChanged" />
-                            <TextBlock x:Name="DeviceListStatusTextBlock"
-                                       Text="No devices loaded."
-                                       Margin="0,12,0,0"
-                                       Foreground="{StaticResource MutedTextBrush}" />
-                            <TextBlock Text="Mode control"
-                                       Margin="0,18,0,0"
-                                       FontSize="18"
-                                       FontWeight="SemiBold" />
-                            <StackPanel Orientation="Horizontal">
-                                <ComboBox x:Name="DeviceModeComboBox"
-                                          Width="150"
-                                          IsEnabled="False">
-                                    <ComboBoxItem Content="fun" />
-                                    <ComboBoxItem Content="study" />
-                                    <ComboBoxItem Content="punishment" />
-                                </ComboBox>
-                                <Button x:Name="UpdateModeButton"
-                                        Content="Update Mode"
-                                        Width="126"
-                                        Margin="10,0,0,0"
-                                        Style="{StaticResource PrimaryButtonStyle}"
-                                        IsEnabled="False"
-                                        Click="UpdateModeButton_Click" />
-                            </StackPanel>
-                            <TextBlock x:Name="ModeStatusTextBlock"
-                                       Text="Select an approved device to change mode."
-                                       Margin="0,8,0,0"
-                                       Foreground="{StaticResource MutedTextBrush}" />
-                            <DockPanel Margin="0,18,0,10">
-                                <Button x:Name="RefreshLogsButton"
-                                        Content="Refresh Logs"
-                                        DockPanel.Dock="Right"
-                                        Width="116"
-                                        Style="{StaticResource SecondaryButtonStyle}"
-                                        IsEnabled="False"
-                                        Click="RefreshLogsButton_Click" />
-                                <TextBlock Text="Recent logs"
-                                           VerticalAlignment="Center"
+                        <!-- Column 1: Approved Devices, Mode Control, Logs -->
+                        <Border Grid.Column="1"
+                                Background="{StaticResource PanelBackgroundBrush}"
+                                BorderBrush="{StaticResource BorderBrush}"
+                                BorderThickness="1"
+                                CornerRadius="10"
+                                Padding="24"
+                                Margin="12,0,0,0"
+                                Style="{StaticResource ModernCardStyle}">
+                            <StackPanel>
+                                <!-- Approved Devices Header -->
+                                <DockPanel Margin="0,0,0,12">
+                                    <Button x:Name="RefreshDevicesButton"
+                                            Content="Làm mới"
+                                            DockPanel.Dock="Right"
+                                            Width="Auto"
+                                            Padding="12,0"
+                                            Height="30"
+                                            Style="{StaticResource LightGreenButtonStyle}"
+                                            Click="RefreshDevicesButton_Click" />
+                                    <TextBlock Text="Thiết bị đã phê duyệt"
+                                               VerticalAlignment="Center"
+                                               FontSize="18"
+                                               FontWeight="Bold"
+                                               Foreground="#0F172A" />
+                                </DockPanel>
+                                
+                                <ListBox x:Name="DeviceListBox"
+                                         MinHeight="120"
+                                         BorderThickness="0"
+                                         Background="Transparent"
+                                         SelectionChanged="DeviceListBox_SelectionChanged">
+                                    <ListBox.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <UniformGrid Columns="2" IsItemsHost="True" />
+                                        </ItemsPanelTemplate>
+                                    </ListBox.ItemsPanel>
+                                    <ListBox.ItemContainerStyle>
+                                        <Style TargetType="ListBoxItem">
+                                            <Setter Property="Background" Value="Transparent"/>
+                                            <Setter Property="BorderThickness" Value="0"/>
+                                            <Setter Property="Padding" Value="0"/>
+                                            <Setter Property="Margin" Value="4"/>
+                                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                        </Style>
+                                    </ListBox.ItemContainerStyle>
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border BorderBrush="{StaticResource BorderBrush}" BorderThickness="1.5" CornerRadius="10" Padding="12" Background="White">
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto" />
+                                                        <ColumnDefinition Width="*" />
+                                                        <ColumnDefinition Width="Auto" />
+                                                    </Grid.ColumnDefinitions>
+                                                    <Path Data="M4,6H20V16H4V6M20,18A2,2 0 0,0 22,16V6A2,2 0 0,0 20,4H4A2,2 0 0,0 2,6V16A2,2 0 0,0 4,18H0V20H24V18H20Z"
+                                                          Fill="#3A887C" Width="20" Height="16" Stretch="Fill" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                                                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                                        <TextBlock Text="{Binding DeviceName}" FontWeight="Bold" FontSize="13" Foreground="#1E293B"/>
+                                                        <StackPanel Orientation="Horizontal" Margin="0,2,0,0">
+                                                            <Ellipse x:Name="statusBullet" Width="6" Height="6" Fill="#94A3B8" VerticalAlignment="Center" Margin="0,0,4,0"/>
+                                                            <TextBlock x:Name="statusText" Text="Offline" FontSize="11" Foreground="{StaticResource MutedTextBrush}" VerticalAlignment="Center"/>
+                                                        </StackPanel>
+                                                    </StackPanel>
+                                                    <Button Grid.Column="2" Content="× Xóa" FontSize="11" Foreground="#EF4444" Background="Transparent" BorderThickness="0" Cursor="Hand" VerticalAlignment="Center" Click="DeleteDeviceButton_Click" Tag="{Binding DeviceId}"/>
+                                                </Grid>
+                                            </Border>
+                                            <DataTemplate.Triggers>
+                                                <DataTrigger Binding="{Binding IsOnline}" Value="True">
+                                                    <Setter TargetName="statusBullet" Property="Fill" Value="#10B981" />
+                                                    <Setter TargetName="statusText" Property="Text" Value="Online" />
+                                                </DataTrigger>
+                                            </DataTemplate.Triggers>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
+
+                                <TextBlock x:Name="DeviceListStatusTextBlock"
+                                           Text="No devices loaded."
+                                           Margin="0,8,0,0"
+                                           Foreground="{StaticResource MutedTextBrush}"
+                                           FontSize="12" />
+
+                                <!-- Mode Control Header -->
+                                <TextBlock Text="Điều khiển chế độ"
+                                           Margin="0,18,0,10"
                                            FontSize="18"
-                                           FontWeight="SemiBold" />
-                            </DockPanel>
-                            <ListBox x:Name="DeviceLogsListBox"
-                                     MinHeight="100"
-                                     DisplayMemberPath="DisplayText" />
-                            <TextBlock x:Name="LogsStatusTextBlock"
-                                       Text="Select a device to load logs."
-                                       Margin="0,8,0,0"
-                                       Foreground="{StaticResource MutedTextBrush}" />
-                        </StackPanel>
-                    </Border>
-                </Grid>
+                                           FontWeight="Bold"
+                                           Foreground="#0F172A" />
+                                
+                                <Grid Margin="0,0,0,8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Border BorderBrush="{StaticResource BorderBrush}" BorderThickness="1.5" CornerRadius="10" Padding="12,8" Background="#F8FAFC" Width="170" Height="40" VerticalAlignment="Center">
+                                            <TextBlock x:Name="SelectedDeviceNameTextBlock" Text="Select a device..." VerticalAlignment="Center" FontWeight="Medium" FontSize="12" Foreground="#64748B"/>
+                                        </Border>
+                                        
+                                        <ComboBox x:Name="DeviceModeComboBox" Width="170" Height="40" Margin="10,0,0,0" VerticalAlignment="Center" IsEnabled="False">
+                                            <ComboBox.ItemTemplate>
+                                                <DataTemplate>
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <TextBlock x:Name="icon" Margin="0,0,8,0" FontSize="14" VerticalAlignment="Center"/>
+                                                        <TextBlock x:Name="txt" Text="{Binding Content}" FontSize="13" VerticalAlignment="Center"/>
+                                                    </StackPanel>
+                                                    <DataTemplate.Triggers>
+                                                        <DataTrigger Binding="{Binding Content}" Value="fun">
+                                                            <Setter TargetName="icon" Property="Text" Value="⚙️" />
+                                                            <Setter TargetName="txt" Property="Text" Value="Normal Mode" />
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Content}" Value="study">
+                                                            <Setter TargetName="icon" Property="Text" Value="🎮" />
+                                                            <Setter TargetName="txt" Property="Text" Value="Game Blocked" />
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Content}" Value="punishment">
+                                                            <Setter TargetName="icon" Property="Text" Value="⏱️" />
+                                                            <Setter TargetName="txt" Property="Text" Value="Strict Time Limit" />
+                                                        </DataTrigger>
+                                                    </DataTemplate.Triggers>
+                                                </DataTemplate>
+                                            </ComboBox.ItemTemplate>
+                                            <ComboBoxItem Content="fun" />
+                                            <ComboBoxItem Content="study" />
+                                            <ComboBoxItem Content="punishment" />
+                                        </ComboBox>
+                                    </StackPanel>
+                                    
+                                    <Button x:Name="UpdateModeButton"
+                                            Grid.Column="1"
+                                            Content="Cập Nhật"
+                                            Width="Auto"
+                                            Padding="16,0"
+                                            Height="40"
+                                            Style="{StaticResource DarkGreenButtonStyle}"
+                                            IsEnabled="False"
+                                            Click="UpdateModeButton_Click" />
+                                </Grid>
+
+                                <TextBlock x:Name="ModeStatusTextBlock"
+                                           Text="Select an approved device to change mode."
+                                           Margin="0,0,0,12"
+                                           Foreground="{StaticResource MutedTextBrush}"
+                                           FontSize="12" />
+
+                                <!-- Recent Logs Header -->
+                                <DockPanel Margin="0,12,0,10">
+                                    <Button x:Name="RefreshLogsButton"
+                                            Content="Cập nhật nhật ký"
+                                            DockPanel.Dock="Right"
+                                            Width="Auto"
+                                            Padding="12,0"
+                                            Height="30"
+                                            Style="{StaticResource LightGreenButtonStyle}"
+                                            IsEnabled="False"
+                                            Click="RefreshLogsButton_Click" />
+                                    <TextBlock Text="Lịch sử gần đây"
+                                               VerticalAlignment="Center"
+                                               FontSize="18"
+                                               FontWeight="Bold"
+                                               Foreground="#0F172A" />
+                                </DockPanel>
+
+                                <ListBox x:Name="DeviceLogsListBox" 
+                                         MinHeight="100" 
+                                         MaxHeight="160"
+                                         BorderThickness="0" 
+                                         Background="Transparent">
+                                    <ListBox.ItemContainerStyle>
+                                        <Style TargetType="ListBoxItem">
+                                            <Setter Property="Background" Value="Transparent"/>
+                                            <Setter Property="BorderThickness" Value="0"/>
+                                            <Setter Property="Padding" Value="0"/>
+                                            <Setter Property="Margin" Value="0"/>
+                                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                        </Style>
+                                    </ListBox.ItemContainerStyle>
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,0,0,1.5" Padding="8,8" Background="Transparent">
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto" />
+                                                        <ColumnDefinition Width="*" />
+                                                    </Grid.ColumnDefinitions>
+                                                    <Path x:Name="logIcon" Data="M9,22A1,1 0 0,1 8,21V18H4A2,2 0 0,1 2,16V4C2,2.89 2.9,2 4,2H20A2,2 0 0,1 22,4V16A2,2 0 0,1 20,18H16V21A1,1 0 0,1 15,22H9M10,20H14V18H10V20M4,4V16H20V4H4Z"
+                                                          Fill="#64748B" Width="14" Height="14" Stretch="Fill" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                                    <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                                        <TextBlock Text="{Binding CreatedAt, StringFormat='[{0:HH:mm:ss}] '}" Foreground="#64748B" FontWeight="Bold" FontSize="11" VerticalAlignment="Center"/>
+                                                        <TextBlock Text="{Binding Action}" FontSize="12" Foreground="#0F172A" VerticalAlignment="Center" Margin="2,0,2,0"/>
+                                                        <TextBlock Text="{Binding ProcessName}" FontSize="12" Foreground="#EF4444" FontWeight="Bold" VerticalAlignment="Center"/>
+                                                        <TextBlock Text=" in " FontSize="12" Foreground="#64748B" VerticalAlignment="Center"/>
+                                                        <TextBlock Text="{Binding Mode}" FontSize="12" Foreground="#3A887C" FontWeight="Bold" VerticalAlignment="Center"/>
+                                                    </StackPanel>
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
+
+                                <TextBlock x:Name="LogsStatusTextBlock"
+                                           Text="Select a device to load logs."
+                                           Margin="0,8,0,0"
+                                           Foreground="{StaticResource MutedTextBrush}"
+                                           FontSize="12" />
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+                </StackPanel>
             </ScrollViewer>
         </Grid>
 
@@ -339,17 +743,18 @@
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
-            <DockPanel Margin="0,0,0,24">
-                <Button Content="Back"
+            <DockPanel Margin="0,10,0,24" VerticalAlignment="Center">
+                <Button Content="← Trở lại"
                         DockPanel.Dock="Right"
-                        Width="92"
+                        Width="96"
+                        Height="38"
                         Style="{StaticResource SecondaryButtonStyle}"
                         Click="BackButton_Click" />
-                <StackPanel>
-                    <TextBlock Text="Child Mode" FontSize="28" FontWeight="Bold" />
-                    <TextBlock Text="Create a connection code, then approve or reject the parent request."
-                               Foreground="{StaticResource MutedTextBrush}"
-                               Margin="0,4,0,0" />
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <!-- Leaf Icon Logo -->
+                    <Path Data="M20,35 C20,20 30,10 40,10 C40,25 35,35 20,35 M20,35 C30,30 40,35 45,25 C35,25 25,30 20,35 M10,25 C10,15 20,5 30,5 C30,15 25,25 10,25"
+                          Fill="#3A887C" Width="26" Height="26" Stretch="Fill" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                    <TextBlock Text="KidGuard" FontSize="22" FontWeight="Bold" Foreground="#3A887C" VerticalAlignment="Center"/>
                 </StackPanel>
             </DockPanel>
 
@@ -357,98 +762,129 @@
                           VerticalScrollBarVisibility="Auto"
                           HorizontalScrollBarVisibility="Auto">
                 <Grid MinWidth="620">
-                    <Border Width="560"
+                    <Border Width="500"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Top"
                             Margin="0,12,0,24"
-                            Background="{StaticResource PanelBackgroundBrush}"
-                            BorderBrush="{StaticResource BorderBrush}"
-                            BorderThickness="1"
-                            CornerRadius="8"
-                            Padding="30">
+                            Style="{StaticResource ModernCardStyle}">
                         <StackPanel>
-                            <TextBlock Text="Child connection"
-                                       FontSize="28"
+                            <TextBlock Text="Thiết lập thiết bị Trẻ em"
+                                       FontSize="22"
                                        FontWeight="Bold"
-                                       TextAlignment="Center" />
-                            <TextBlock Text="Create a code, wait for the parent request, then approve or reject it."
+                                       TextAlignment="Center"
+                                       Foreground="#0F172A" />
+                            <TextBlock Text="Tạo mã ghép đôi để kết nối với tài khoản phụ huynh."
                                        Margin="0,8,0,24"
                                        Foreground="{StaticResource MutedTextBrush}"
-                                       TextAlignment="Center" />
+                                       TextAlignment="Center"
+                                       FontSize="13" />
 
-                            <TextBlock Text="Device name" />
-                            <TextBox x:Name="ChildDeviceNameTextBox" />
+                            <TextBlock Text="Tên máy của con" Margin="0,0,0,6" Foreground="#64748B" FontSize="13" FontWeight="Medium"/>
+                            <!-- TextBox with Placeholder -->
+                            <Grid Margin="0,0,0,16">
+                                <TextBox x:Name="ChildDeviceNameTextBox" Style="{StaticResource UserTextBoxStyle}"/>
+                                <TextBlock IsHitTestVisible="False" Text="Tên máy (ví dụ: Máy tính của Leo)" VerticalAlignment="Center" Margin="48,0,0,8" Foreground="#94A3B8" FontSize="14">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Text, ElementName=ChildDeviceNameTextBox}" Value="">
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </Grid>
 
+                            <!-- Connection Code Panel -->
                             <Border Background="#EFF6FF"
                                     BorderBrush="#BFDBFE"
-                                    BorderThickness="1"
-                                    CornerRadius="8"
+                                    BorderThickness="1.5"
+                                    CornerRadius="10"
                                     Padding="18"
-                                    Margin="0,10,0,16">
+                                    Margin="0,4,0,18">
                                 <StackPanel>
-                                    <TextBlock Text="Connection code"
-                                               Foreground="{StaticResource MutedTextBrush}"
+                                    <TextBlock Text="Mã kết nối"
+                                               Foreground="#1E40AF"
+                                               FontWeight="SemiBold"
+                                               FontSize="13"
                                                TextAlignment="Center" />
                                     <TextBlock x:Name="ConnectionCodeTextBlock"
                                                Text="WAITING"
-                                               FontSize="34"
+                                               FontSize="36"
                                                FontWeight="Bold"
                                                TextAlignment="Center"
-                                               Foreground="#1D4ED8" />
+                                               Foreground="#1D4ED8"
+                                               Margin="0,6,0,0" />
                                 </StackPanel>
                             </Border>
 
                             <Button x:Name="CreateCodeButton"
-                                    Content="Create Code"
-                                    Height="44"
+                                    Content="Tạo Mã"
+                                    Height="42"
                                     Style="{StaticResource PrimaryButtonStyle}"
                                     Click="CreateCodeButton_Click" />
+                                    
                             <TextBlock x:Name="ChildCodeStatusTextBlock"
-                                       Text="Create a code before pairing."
-                                       Margin="0,14,0,22"
+                                       Text="Tạo mã trước khi ghép đôi."
+                                       Margin="0,12,0,18"
                                        Foreground="{StaticResource MutedTextBrush}"
                                        TextAlignment="Center"
+                                       FontSize="12"
                                        TextWrapping="Wrap" />
 
                             <Button x:Name="CheckPendingRequestButton"
-                                    Content="Check parent request"
-                                    Height="42"
+                                    Content="Kiểm tra yêu cầu từ phụ huynh"
+                                    Height="40"
                                     Margin="0,0,0,16"
                                     Style="{StaticResource SecondaryButtonStyle}"
                                     Visibility="Collapsed"
                                     Click="CheckPendingRequestButton_Click" />
 
+                            <!-- Pending Request Card -->
                             <Border x:Name="PendingRequestPanel"
-                                    Background="#F9FAFB"
-                                    BorderBrush="{StaticResource BorderBrush}"
-                                    BorderThickness="1"
-                                    CornerRadius="8"
+                                    Background="#FEF3C7"
+                                    BorderBrush="#FDE68A"
+                                    BorderThickness="1.5"
+                                    CornerRadius="10"
                                     Padding="16"
                                     Margin="0,0,0,16"
                                     Visibility="Collapsed">
                                 <StackPanel>
-                                    <TextBlock Text="Pending request"
-                                               FontSize="18"
-                                               FontWeight="SemiBold" />
+                                    <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                                        <!-- Warning Icon -->
+                                        <Path Data="M12,2L1,21H23L12,2M12,6L19.8,20H4.2L12,6M11,10V14H13V10H11M11,16V18H13V16H11Z"
+                                              Fill="#B45309" Width="18" Height="18" Stretch="Fill" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                        <TextBlock Text="Yêu cầu ghép đôi đang chờ"
+                                                   FontSize="15"
+                                                   FontWeight="Bold"
+                                                   Foreground="#92400E"
+                                                   VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                    
                                     <TextBlock x:Name="PendingRequestTextBlock"
                                                Text="No parent request yet."
-                                               Margin="0,8,0,0"
-                                               Foreground="{StaticResource MutedTextBrush}"
+                                               Margin="0,4,0,8"
+                                               Foreground="#92400E"
+                                               FontSize="13"
                                                TextWrapping="Wrap" />
-                                    <TextBlock Text="Grant permission allows the KidGuard Agent service to protect this computer with administrator-level service permissions. Deny will reject pairing with this parent."
-                                               Margin="0,12,0,0"
+                                    
+                                    <TextBlock Text="Đồng ý để cấp quyền quản trị cho KidGuard Agent bảo vệ máy tính này. Từ chối sẽ hủy ghép đôi."
                                                Foreground="#B45309"
+                                               FontSize="12"
                                                TextWrapping="Wrap" />
                                 </StackPanel>
                             </Border>
 
-                            <Grid x:Name="ChildDecisionPanel" Visibility="Collapsed">
+                            <!-- Decision Buttons -->
+                            <Grid x:Name="ChildDecisionPanel" Visibility="Collapsed" Margin="0,4,0,0">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
                                 <Button x:Name="ApprovePairingButton"
-                                        Content="Grant permission"
+                                        Content="Đồng ý"
                                         Height="42"
                                         Margin="0,0,6,0"
                                         Style="{StaticResource PrimaryButtonStyle}"
@@ -456,7 +892,7 @@
                                         Click="ApprovePairingButton_Click" />
                                 <Button x:Name="RejectPairingButton"
                                         Grid.Column="1"
-                                        Content="Deny"
+                                        Content="Từ chối"
                                         Height="42"
                                         Margin="6,0,0,0"
                                         Style="{StaticResource SecondaryButtonStyle}"
@@ -469,4 +905,5 @@
             </ScrollViewer>
         </Grid>
     </Grid>
+</Grid>
 </Window>
