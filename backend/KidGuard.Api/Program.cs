@@ -15,7 +15,7 @@ builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection(JwtSett
 builder.Services.Configure<SetupTokenSettings>(builder.Configuration.GetSection(SetupTokenSettings.SectionName));
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddScoped<IPasswordHasher, BCryptPasswordHasher>();
 builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
@@ -83,12 +83,9 @@ builder.Services.AddSwaggerGen(options =>
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-    await DemoDataSeeder.SeedAsync(app.Services);
-}
+app.UseSwagger();
+app.UseSwaggerUI();
+await DemoDataSeeder.SeedAsync(app.Services);
 
 app.UseHttpsRedirection();
 app.UseAuthentication();
