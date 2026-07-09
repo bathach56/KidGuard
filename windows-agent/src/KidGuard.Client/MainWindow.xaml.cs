@@ -8,7 +8,7 @@ namespace KidGuard.Client;
 
 public partial class MainWindow : Window
 {
-    private const string DefaultApiBaseUrl = "http://127.0.0.1:5133";
+    private const string DefaultApiBaseUrl = "https://kidguard-api.onrender.com";
 
     private readonly AuthApiClient authApiClient = new();
     private readonly DeviceApiClient deviceApiClient = new();
