@@ -1349,3 +1349,31 @@ Blocked
 Next
 
 - Proceed with mobile/phone layout modernization and backend services tests.
+
+---
+
+## 2026-07-09
+
+### Admin (Trần Phúc Thịnh)
+
+Done
+
+- Migrated Backend API database provider from SQL Server to PostgreSQL using Npgsql.
+- Replaced SQL Server GETUTCDATE() default constraints with PostgreSQL now() in ApplicationDbContext.cs.
+- Fixed index filter SQL Server square bracket syntax [deviceToken] to PostgreSQL double quotes \"deviceToken\" in ApplicationDbContext.cs.
+- Created new PostgreSQL database migrations and deleted old SQL Server ones.
+- Added Dockerfile to backend/KidGuard.Api for containerized builds.
+- Integrated Swagger and database seeding to run in all hosting environments.
+- Staged, committed, and pushed all database/deployment changes to GitHub branch kidguardv1.0.1.
+
+In Progress
+
+- None.
+
+Blocked
+
+- None.
+
+Next
+
+- Deploy the pushed code to Render and configure the database link.
