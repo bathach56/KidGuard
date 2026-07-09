@@ -85,7 +85,7 @@ namespace KidGuard.Api.Data.Migrations
 
                     b.HasIndex("DeviceToken")
                         .IsUnique()
-                        .HasFilter("[deviceToken] IS NOT NULL");
+                        .HasFilter("\"deviceToken\" IS NOT NULL");
 
                     b.HasIndex("UserId");
 

@@ -206,7 +206,7 @@ namespace KidGuard.Api.Data.Migrations
                 table: "Devices",
                 column: "deviceToken",
                 unique: true,
-                filter: "[deviceToken] IS NOT NULL");
+                filter: "\"deviceToken\" IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Devices_userId",

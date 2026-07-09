@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace KidGuard.Api.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260709133445_InitialPostgres")]
+    [Migration("20260709133954_InitialPostgres")]
     partial class InitialPostgres
     {
         /// <inheritdoc />
@@ -88,7 +88,7 @@ namespace KidGuard.Api.Data.Migrations
 
                     b.HasIndex("DeviceToken")
                         .IsUnique()
-                        .HasFilter("[deviceToken] IS NOT NULL");
+                        .HasFilter("\"deviceToken\" IS NOT NULL");
 
                     b.HasIndex("UserId");
 

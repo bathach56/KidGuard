@@ -83,7 +83,7 @@ public class ApplicationDbContext : DbContext
         {
             entity.ToTable("Devices");
             entity.HasKey(device => device.Id);
-            entity.HasIndex(device => device.DeviceToken).IsUnique().HasFilter("[deviceToken] IS NOT NULL");
+            entity.HasIndex(device => device.DeviceToken).IsUnique().HasFilter("\"deviceToken\" IS NOT NULL");
             entity.HasIndex(device => device.UserId);
             entity.HasIndex(device => device.CurrentMode);
 
