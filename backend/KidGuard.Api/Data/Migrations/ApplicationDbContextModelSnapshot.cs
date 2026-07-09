@@ -39,7 +39,7 @@ namespace KidGuard.Api.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("createdAt")
-                        .HasDefaultValueSql("GETUTCDATE()");
+                        .HasDefaultValueSql("now()");
 
                     b.Property<string>("CurrentMode")
                         .IsRequired()
@@ -73,7 +73,7 @@ namespace KidGuard.Api.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updatedAt")
-                        .HasDefaultValueSql("GETUTCDATE()");
+                        .HasDefaultValueSql("now()");
 
                     b.Property<Guid?>("UserId")
                         .HasColumnType("uuid")
@@ -109,7 +109,7 @@ namespace KidGuard.Api.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("createdAt")
-                        .HasDefaultValueSql("GETUTCDATE()");
+                        .HasDefaultValueSql("now()");
 
                     b.Property<Guid>("DeviceId")
                         .HasColumnType("uuid")
@@ -158,7 +158,7 @@ namespace KidGuard.Api.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("createdAt")
-                        .HasDefaultValueSql("GETUTCDATE()");
+                        .HasDefaultValueSql("now()");
 
                     b.Property<Guid>("DeviceId")
                         .HasColumnType("uuid")
@@ -242,7 +242,7 @@ namespace KidGuard.Api.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("createdAt")
-                        .HasDefaultValueSql("GETUTCDATE()");
+                        .HasDefaultValueSql("now()");
 
                     b.Property<Guid>("DeviceId")
                         .HasColumnType("uuid")
@@ -288,7 +288,7 @@ namespace KidGuard.Api.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("createdAt")
-                        .HasDefaultValueSql("GETUTCDATE()");
+                        .HasDefaultValueSql("now()");
 
                     b.Property<Guid>("DeviceId")
                         .HasColumnType("uuid")
@@ -316,7 +316,7 @@ namespace KidGuard.Api.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updatedAt")
-                        .HasDefaultValueSql("GETUTCDATE()");
+                        .HasDefaultValueSql("now()");
 
                     b.HasKey("Id");
 
@@ -344,7 +344,7 @@ namespace KidGuard.Api.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("createdAt")
-                        .HasDefaultValueSql("GETUTCDATE()");
+                        .HasDefaultValueSql("now()");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -372,7 +372,7 @@ namespace KidGuard.Api.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updatedAt")
-                        .HasDefaultValueSql("GETUTCDATE()");
+                        .HasDefaultValueSql("now()");
 
                     b.HasKey("Id");
 

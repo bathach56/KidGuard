@@ -38,8 +38,8 @@ namespace KidGuard.Api.Data.Migrations
                     email = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
                     passwordHash = table.Column<string>(type: "text", nullable: false),
                     phoneNumber = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: true),
-                    createdAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "GETUTCDATE()"),
-                    updatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "GETUTCDATE()")
+                    createdAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now()"),
+                    updatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now()")
                 },
                 constraints: table =>
                 {
@@ -58,8 +58,8 @@ namespace KidGuard.Api.Data.Migrations
                     currentMode = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false, defaultValue: "fun"),
                     isOnline = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false),
                     lastSeen = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    createdAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "GETUTCDATE()"),
-                    updatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "GETUTCDATE()")
+                    createdAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now()"),
+                    updatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now()")
                 },
                 constraints: table =>
                 {
@@ -88,7 +88,7 @@ namespace KidGuard.Api.Data.Migrations
                     action = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     mode = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
                     message = table.Column<string>(type: "text", nullable: false),
-                    createdAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "GETUTCDATE()")
+                    createdAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now()")
                 },
                 constraints: table =>
                 {
@@ -109,7 +109,7 @@ namespace KidGuard.Api.Data.Migrations
                     deviceId = table.Column<Guid>(type: "uuid", nullable: false),
                     status = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
                     agentVersion = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
-                    createdAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "GETUTCDATE()")
+                    createdAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now()")
                 },
                 constraints: table =>
                 {
@@ -131,7 +131,7 @@ namespace KidGuard.Api.Data.Migrations
                     pairCode = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
                     expiresAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     isUsed = table.Column<bool>(type: "boolean", nullable: false),
-                    createdAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "GETUTCDATE()")
+                    createdAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now()")
                 },
                 constraints: table =>
                 {
@@ -156,8 +156,8 @@ namespace KidGuard.Api.Data.Migrations
                     expiresAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     approvedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     rejectedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    createdAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "GETUTCDATE()"),
-                    updatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "GETUTCDATE()")
+                    createdAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now()"),
+                    updatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now()")
                 },
                 constraints: table =>
                 {
