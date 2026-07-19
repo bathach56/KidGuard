@@ -38,6 +38,10 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
             Console.WriteLine($"Error parsing DATABASE_URL: {ex.Message}");
         }
     }
+    if (string.IsNullOrEmpty(connectionString) || connectionString.Contains("[YOUR-PASSWORD]") || connectionString.Contains("[YOUR_PASSWORD]"))
+    {
+        throw new InvalidOperationException("DATABASE ERROR: Chuỗi kết nối Database chưa được cấu hình! Vui lòng thiết lập biến môi trường DATABASE_URL hoặc cấu hình mật khẩu thực tế.");
+    }
     options.UseNpgsql(connectionString);
 });
 
