@@ -30,6 +30,10 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
             var password = userInfo.Length > 1 ? userInfo[1] : string.Empty;
             var host = uri.Host;
             var port = uri.Port > 0 ? uri.Port : 5432;
+            if (port == 6543)
+            {
+                port = 5432;
+            }
             var database = uri.AbsolutePath.TrimStart('/');
             connectionString = $"Host={host};Port={port};Database={database};Username={username};Password={password};SSL Mode=Require;Trust Server Certificate=true";
         }
@@ -37,6 +41,10 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
         {
             Console.WriteLine($"Error parsing DATABASE_URL: {ex.Message}");
         }
+    }
+    if (!string.IsNullOrEmpty(connectionString))
+    {
+        connectionString = connectionString.Replace("Port=6543", "Port=5432").Replace("port=6543", "port=5432");
     }
     if (string.IsNullOrEmpty(connectionString) || connectionString.Contains("[YOUR-PASSWORD]") || connectionString.Contains("[YOUR_PASSWORD]"))
     {
