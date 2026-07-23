@@ -8,7 +8,12 @@ public static class ClientConfiguration
 
     public static string GetConfiguredApiBaseUrl()
     {
-        return Environment.GetEnvironmentVariable(ApiBaseUrlEnvironmentVariable)?.Trim() ?? string.Empty;
+        var url = Environment.GetEnvironmentVariable(ApiBaseUrlEnvironmentVariable)?.Trim();
+        if (!string.IsNullOrWhiteSpace(url))
+        {
+            return url;
+        }
+        return Environment.GetEnvironmentVariable("Agent__ApiBaseUrl")?.Trim() ?? string.Empty;
     }
 
     public static string GetConfiguredSetupToken()

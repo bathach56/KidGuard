@@ -1,6 +1,5 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
-using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
@@ -9,7 +8,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace KidGuard.Api.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialPostgres : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -18,10 +17,10 @@ namespace KidGuard.Api.Data.Migrations
                 name: "Modes",
                 columns: table => new
                 {
-                    id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    name = table.Column<string>(type: "character varying(30)", maxLength: 30, nullable: false),
-                    description = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false)
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    name = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
+                    description = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -33,13 +32,13 @@ namespace KidGuard.Api.Data.Migrations
                 name: "Users",
                 columns: table => new
                 {
-                    id = table.Column<Guid>(type: "uuid", nullable: false),
-                    fullName = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    email = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
-                    passwordHash = table.Column<string>(type: "text", nullable: false),
-                    phoneNumber = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: true),
-                    createdAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now()"),
-                    updatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now()")
+                    id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    fullName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    email = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    passwordHash = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    phoneNumber = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
+                    createdAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()"),
+                    updatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()")
                 },
                 constraints: table =>
                 {
@@ -50,16 +49,16 @@ namespace KidGuard.Api.Data.Migrations
                 name: "Devices",
                 columns: table => new
                 {
-                    id = table.Column<Guid>(type: "uuid", nullable: false),
-                    userId = table.Column<Guid>(type: "uuid", nullable: true),
-                    deviceName = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    computerName = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    deviceToken = table.Column<string>(type: "text", nullable: true),
-                    currentMode = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false, defaultValue: "fun"),
-                    isOnline = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false),
-                    lastSeen = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    createdAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now()"),
-                    updatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now()")
+                    id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    userId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    deviceName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    computerName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    deviceToken = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    currentMode = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false, defaultValue: "fun"),
+                    isOnline = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    lastSeen = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    createdAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()"),
+                    updatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()")
                 },
                 constraints: table =>
                 {
@@ -82,13 +81,13 @@ namespace KidGuard.Api.Data.Migrations
                 name: "DeviceLogs",
                 columns: table => new
                 {
-                    id = table.Column<Guid>(type: "uuid", nullable: false),
-                    deviceId = table.Column<Guid>(type: "uuid", nullable: false),
-                    processName = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
-                    action = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    mode = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
-                    message = table.Column<string>(type: "text", nullable: false),
-                    createdAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now()")
+                    id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    deviceId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    processName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    action = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    mode = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    message = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    createdAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()")
                 },
                 constraints: table =>
                 {
@@ -105,11 +104,11 @@ namespace KidGuard.Api.Data.Migrations
                 name: "Heartbeats",
                 columns: table => new
                 {
-                    id = table.Column<Guid>(type: "uuid", nullable: false),
-                    deviceId = table.Column<Guid>(type: "uuid", nullable: false),
-                    status = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
-                    agentVersion = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
-                    createdAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now()")
+                    id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    deviceId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    status = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    agentVersion = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    createdAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()")
                 },
                 constraints: table =>
                 {
@@ -126,12 +125,12 @@ namespace KidGuard.Api.Data.Migrations
                 name: "PairCodes",
                 columns: table => new
                 {
-                    id = table.Column<Guid>(type: "uuid", nullable: false),
-                    deviceId = table.Column<Guid>(type: "uuid", nullable: false),
-                    pairCode = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
-                    expiresAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    isUsed = table.Column<bool>(type: "boolean", nullable: false),
-                    createdAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now()")
+                    id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    deviceId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    pairCode = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    expiresAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    isUsed = table.Column<bool>(type: "bit", nullable: false),
+                    createdAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()")
                 },
                 constraints: table =>
                 {
@@ -148,16 +147,16 @@ namespace KidGuard.Api.Data.Migrations
                 name: "PairingRequests",
                 columns: table => new
                 {
-                    id = table.Column<Guid>(type: "uuid", nullable: false),
-                    parentId = table.Column<Guid>(type: "uuid", nullable: false),
-                    deviceId = table.Column<Guid>(type: "uuid", nullable: false),
-                    connectionCode = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
-                    status = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
-                    expiresAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    approvedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    rejectedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    createdAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now()"),
-                    updatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now()")
+                    id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    parentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    deviceId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    connectionCode = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    status = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    expiresAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    approvedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    rejectedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    createdAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()"),
+                    updatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()")
                 },
                 constraints: table =>
                 {
@@ -206,7 +205,7 @@ namespace KidGuard.Api.Data.Migrations
                 table: "Devices",
                 column: "deviceToken",
                 unique: true,
-                filter: "\"deviceToken\" IS NOT NULL");
+                filter: "[deviceToken] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Devices_userId",

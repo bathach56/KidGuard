@@ -54,8 +54,8 @@ public class ApplicationDbContext : DbContext
             entity.Property(user => user.Email).HasMaxLength(255).IsRequired();
             entity.Property(user => user.PasswordHash).IsRequired();
             entity.Property(user => user.PhoneNumber).HasMaxLength(20);
-            entity.Property(user => user.CreatedAt).HasDefaultValueSql("now()");
-            entity.Property(user => user.UpdatedAt).HasDefaultValueSql("now()");
+            entity.Property(user => user.CreatedAt).HasDefaultValueSql("GETUTCDATE()");
+            entity.Property(user => user.UpdatedAt).HasDefaultValueSql("GETUTCDATE()");
         });
     }
 
@@ -83,16 +83,16 @@ public class ApplicationDbContext : DbContext
         {
             entity.ToTable("Devices");
             entity.HasKey(device => device.Id);
-            entity.HasIndex(device => device.DeviceToken).IsUnique().HasFilter("\"deviceToken\" IS NOT NULL");
+            entity.HasIndex(device => device.DeviceToken).IsUnique().HasFilter("[deviceToken] IS NOT NULL");
             entity.HasIndex(device => device.UserId);
             entity.HasIndex(device => device.CurrentMode);
 
             entity.Property(device => device.DeviceName).HasMaxLength(100).IsRequired();
             entity.Property(device => device.ComputerName).HasMaxLength(100).IsRequired();
-            entity.Property(device => device.CurrentMode).HasMaxLength(20).HasDefaultValue("fun").IsRequired();
+            entity.Property(device => device.CurrentMode).HasMaxLength(30).HasDefaultValue("fun").IsRequired();
             entity.Property(device => device.IsOnline).HasDefaultValue(false);
-            entity.Property(device => device.CreatedAt).HasDefaultValueSql("now()");
-            entity.Property(device => device.UpdatedAt).HasDefaultValueSql("now()");
+            entity.Property(device => device.CreatedAt).HasDefaultValueSql("GETUTCDATE()");
+            entity.Property(device => device.UpdatedAt).HasDefaultValueSql("GETUTCDATE()");
 
             entity.HasOne(device => device.User)
                 .WithMany(user => user.Devices)
@@ -117,7 +117,7 @@ public class ApplicationDbContext : DbContext
             entity.HasIndex(pairCode => pairCode.Code).IsUnique();
 
             entity.Property(pairCode => pairCode.Code).HasColumnName("pairCode").HasMaxLength(20).IsRequired();
-            entity.Property(pairCode => pairCode.CreatedAt).HasDefaultValueSql("now()");
+            entity.Property(pairCode => pairCode.CreatedAt).HasDefaultValueSql("GETUTCDATE()");
 
             entity.HasOne(pairCode => pairCode.Device)
                 .WithOne(device => device.PairCode)
@@ -141,8 +141,8 @@ public class ApplicationDbContext : DbContext
 
             entity.Property(pairingRequest => pairingRequest.ConnectionCode).HasMaxLength(20).IsRequired();
             entity.Property(pairingRequest => pairingRequest.Status).HasMaxLength(20).IsRequired();
-            entity.Property(pairingRequest => pairingRequest.CreatedAt).HasDefaultValueSql("now()");
-            entity.Property(pairingRequest => pairingRequest.UpdatedAt).HasDefaultValueSql("now()");
+            entity.Property(pairingRequest => pairingRequest.CreatedAt).HasDefaultValueSql("GETUTCDATE()");
+            entity.Property(pairingRequest => pairingRequest.UpdatedAt).HasDefaultValueSql("GETUTCDATE()");
 
             entity.HasOne(pairingRequest => pairingRequest.Parent)
                 .WithMany(parent => parent.PairingRequests)
@@ -166,7 +166,7 @@ public class ApplicationDbContext : DbContext
 
             entity.Property(heartbeat => heartbeat.Status).HasMaxLength(20).IsRequired();
             entity.Property(heartbeat => heartbeat.AgentVersion).HasMaxLength(20).IsRequired();
-            entity.Property(heartbeat => heartbeat.CreatedAt).HasDefaultValueSql("now()");
+            entity.Property(heartbeat => heartbeat.CreatedAt).HasDefaultValueSql("GETUTCDATE()");
 
             entity.HasOne(heartbeat => heartbeat.Device)
                 .WithMany(device => device.Heartbeats)
@@ -188,7 +188,7 @@ public class ApplicationDbContext : DbContext
             entity.Property(deviceLog => deviceLog.Action).HasMaxLength(100).IsRequired();
             entity.Property(deviceLog => deviceLog.Mode).HasMaxLength(20).IsRequired();
             entity.Property(deviceLog => deviceLog.Message).IsRequired();
-            entity.Property(deviceLog => deviceLog.CreatedAt).HasDefaultValueSql("now()");
+            entity.Property(deviceLog => deviceLog.CreatedAt).HasDefaultValueSql("GETUTCDATE()");
 
             entity.HasOne(deviceLog => deviceLog.Device)
                 .WithMany(device => device.DeviceLogs)

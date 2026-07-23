@@ -19,38 +19,7 @@ builder.Services.Configure<SetupTokenSettings>(builder.Configuration.GetSection(
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-    var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
-    if (!string.IsNullOrEmpty(databaseUrl))
-    {
-        try
-        {
-            var uri = new Uri(databaseUrl);
-            var userInfo = uri.UserInfo.Split(':');
-            var username = userInfo[0];
-            var password = userInfo.Length > 1 ? userInfo[1] : string.Empty;
-            var host = uri.Host;
-            var port = uri.Port > 0 ? uri.Port : 5432;
-            if (port == 6543)
-            {
-                port = 5432;
-            }
-            var database = uri.AbsolutePath.TrimStart('/');
-            connectionString = $"Host={host};Port={port};Database={database};Username={username};Password={password};SSL Mode=Require;Trust Server Certificate=true";
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error parsing DATABASE_URL: {ex.Message}");
-        }
-    }
-    if (!string.IsNullOrEmpty(connectionString))
-    {
-        connectionString = connectionString.Replace("Port=6543", "Port=5432").Replace("port=6543", "port=5432");
-    }
-    if (string.IsNullOrEmpty(connectionString) || connectionString.Contains("[YOUR-PASSWORD]") || connectionString.Contains("[YOUR_PASSWORD]"))
-    {
-        throw new InvalidOperationException("DATABASE ERROR: Chuỗi kết nối Database chưa được cấu hình! Vui lòng thiết lập biến môi trường DATABASE_URL hoặc cấu hình mật khẩu thực tế.");
-    }
-    options.UseNpgsql(connectionString);
+    options.UseSqlServer(connectionString);
 });
 
 builder.Services.AddScoped<IPasswordHasher, BCryptPasswordHasher>();
